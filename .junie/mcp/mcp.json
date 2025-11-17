@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/jacquesvanwyk/Library/Application Support/Herd/bin/php83",
+            "args": [
+                "/Users/jacquesvanwyk/Developer/motionstack/pma/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
