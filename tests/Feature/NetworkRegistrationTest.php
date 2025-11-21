@@ -50,6 +50,40 @@ describe('network registration pages', function () {
             ->assertSee('Register Fellowship Group')
             ->assertSee('Group Name');
     });
+
+    test('users with existing network member are redirected to dashboard from individual registration', function () {
+        $user = User::factory()->create();
+        NetworkMember::create([
+            'user_id' => $user->id,
+            'type' => 'individual',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'latitude' => -26.2041,
+            'longitude' => 28.0473,
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('network.register.individual'))
+            ->assertRedirect(route('dashboard'));
+    });
+
+    test('users with existing network member are redirected to dashboard from fellowship registration', function () {
+        $user = User::factory()->create();
+        NetworkMember::create([
+            'user_id' => $user->id,
+            'type' => 'group',
+            'name' => 'Test Fellowship',
+            'email' => 'fellowship@example.com',
+            'latitude' => -26.2041,
+            'longitude' => 28.0473,
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('network.register.fellowship'))
+            ->assertRedirect(route('dashboard'));
+    });
 });
 
 describe('individual registration', function () {

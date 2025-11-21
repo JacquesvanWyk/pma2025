@@ -77,11 +77,23 @@ class NetworkController extends Controller
 
     public function registerIndividual()
     {
+        $networkMember = auth()->user()->networkMember;
+
+        if ($networkMember) {
+            return redirect()->route('dashboard');
+        }
+
         return view('network.register', ['type' => 'individual']);
     }
 
     public function registerFellowship()
     {
+        $networkMember = auth()->user()->networkMember;
+
+        if ($networkMember) {
+            return redirect()->route('dashboard');
+        }
+
         return view('network.register', ['type' => 'group']);
     }
 
