@@ -267,18 +267,17 @@ html {
 
 /* Smooth Page Transitions */
 .page-content {
-    opacity: 0;
-    animation: modernFadeIn 1s ease-out forwards;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes modernFadeIn {
     from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
+        opacity: 0.95;
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
     }
 }
 

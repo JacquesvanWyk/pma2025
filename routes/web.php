@@ -27,5 +27,9 @@ Route::middleware(['auth'])->group(function () {
 // User Profile Route (public)
 Route::get('users/{user}', [\App\Http\Controllers\UserProfileController::class, 'show'])->name('users.show');
 
+// Prayer Room Routes
+Route::get('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'index'])->name('prayer-room.index');
+Route::post('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'store'])->name('prayer-room.store');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/public.php';

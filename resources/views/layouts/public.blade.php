@@ -56,12 +56,28 @@
             background-color: rgba(59, 130, 246, 0.1);
             transform: translateX(4px);
         }
+
+        /* NEW badge styling with subtle up-down animation */
+        .new-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            animation: float-subtle 2s ease-in-out infinite;
+        }
+
+        @keyframes float-subtle {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
     </style>
 </head>
-<body>
-    <div class="page-content">
+<body class="min-h-screen flex flex-col">
     <!-- Navbar -->
-    <div class="navbar bg-base-100 shadow-lg fixed top-0 z-50">
+    <div class="navbar bg-base-100 shadow-lg fixed top-0 z-50 w-full">
         <div class="navbar-start">
             <div class="dropdown">
                 <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -94,6 +110,15 @@
                     </li>
                     <li><a href="{{ route('sermons') }}">Sermons</a></li>
                     <li><a href="{{ route('contact') }}">Contact</a></li>
+                    <li>
+                        <a href="{{ route('prayer-room.index') }}" class="font-bold flex items-center gap-2" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-pma-green-light)); color: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                            </svg>
+                            Prayer Room
+                            <span class="badge badge-xs badge-error">NEW</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ route('network.index') }}" class="font-bold" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-indigo)); color: white;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,7 +173,16 @@
                 </li>
                 <li><a href="{{ route('sermons') }}">Sermons</a></li>
                 <li><a href="{{ route('contact') }}">Contact</a></li>
-                <li>
+                <li class="ml-2">
+                    <a href="{{ route('prayer-room.index') }}" class="btn btn-sm font-bold gap-1 relative" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-pma-green-light)); color: white; border: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                        </svg>
+                        Prayer Room
+                        <span class="badge badge-xs badge-error new-badge">NEW</span>
+                    </a>
+                </li>
+                <li class="ml-2">
                     <a href="{{ route('network.index') }}" class="btn btn-sm font-bold gap-1" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-indigo)); color: white; border: none;">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -170,7 +204,7 @@
         </div>
     </div>
 
-    <main class="pt-16">
+    <main class="flex-grow pt-16">
         @yield('content')
     </main>
 
@@ -230,8 +264,6 @@
             <p>&copy; {{ date('Y') }} Pioneer Missions Africa. All rights reserved. | Proclaiming the Everlasting Gospel</p>
         </div>
     </div>
-
-    </div> <!-- End page-content -->
 
     @stack('scripts')
 </body>
