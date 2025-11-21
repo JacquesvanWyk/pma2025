@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -53,6 +54,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'last_login_at' => 'datetime',
+            'is_approved' => 'boolean',
+            'approved_at' => 'datetime',
         ];
     }
 
@@ -111,5 +114,57 @@ class User extends Authenticatable
     public function createdChurchAssets(): HasMany
     {
         return $this->hasMany(ChurchAsset::class, 'created_by');
+    }
+
+    // Believer Network Relationships
+
+    public function individuals(): HasMany
+    {
+        return $this->hasMany(Individual::class);
+    }
+
+    public function fellowships(): HasMany
+    {
+        return $this->hasMany(Fellowship::class);
+    }
+
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'from_user_id');
+    }
+
+    public function postReactions(): HasMany
+    {
+        return $this->hasMany(PostReaction::class);
+    }
+
+    public function postComments(): HasMany
+    {
+        return $this->hasMany(PostComment::class);
+    }
+
+    public function eventRsvps(): HasMany
+    {
+        return $this->hasMany(EventRsvp::class);
+    }
+
+    public function approvedIndividuals(): HasMany
+    {
+        return $this->hasMany(Individual::class, 'approved_by');
+    }
+
+    public function approvedFellowships(): HasMany
+    {
+        return $this->hasMany(Fellowship::class, 'approved_by');
+    }
+
+    public function approvedMinistries(): HasMany
+    {
+        return $this->hasMany(Ministry::class, 'approved_by');
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }
