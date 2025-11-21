@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             LanguageSeeder::class,
             NetworkMemberSeeder::class,
+            BelieverNetworkSeeder::class,
         ]);
     }
 }

@@ -1,0 +1,162 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Individual;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+
+class IndividualSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $adminUser = User::where('role', 'admin')->first();
+
+        $users = User::factory()->count(10)->create();
+
+        $individualsData = [
+            [
+                'name' => 'Sarah Johnson',
+                'bio' => 'Passionate about youth ministry and discipleship. Serving in Cape Town for 5 years.',
+                'phone' => '+27 82 456 7890',
+                'email' => 'sarah.johnson@example.com',
+                'show_phone' => true,
+                'show_email' => true,
+                'country' => 'South Africa',
+                'city' => 'Cape Town',
+                'latitude' => -33.9249,
+                'longitude' => 18.4241,
+                'focus_areas' => ['Youth', 'Discipleship', 'Teaching'],
+                'languages' => ['English', 'Afrikaans'],
+                'skills' => ['Teaching', 'Mentoring', 'Worship Leading'],
+                'needs' => ['Prayer Support', 'Financial Support'],
+                'offers' => ['Youth Training', 'Bible Study Materials'],
+                'tags' => ['Youth Worker', 'Cape Town'],
+                'privacy_level' => 'public',
+                'is_approved' => true,
+                'approved_at' => now(),
+                'approved_by' => $adminUser?->id,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'David Mwangi',
+                'bio' => 'Medical missionary with 10 years experience in rural healthcare and community health education.',
+                'phone' => '+254 712 345 678',
+                'email' => 'david.mwangi@example.com',
+                'show_phone' => false,
+                'show_email' => true,
+                'country' => 'Kenya',
+                'city' => 'Nairobi',
+                'latitude' => -1.2921,
+                'longitude' => 36.8219,
+                'focus_areas' => ['Medical', 'Community Development', 'Evangelism'],
+                'languages' => ['English', 'Swahili', 'Kikuyu'],
+                'skills' => ['Medical Care', 'Public Health', 'Community Mobilization'],
+                'needs' => ['Medical Supplies', 'Volunteers'],
+                'offers' => ['Medical Training', 'Health Education'],
+                'tags' => ['Medical Professional', 'Kenya'],
+                'privacy_level' => 'network_only',
+                'is_approved' => true,
+                'approved_at' => now(),
+                'approved_by' => $adminUser?->id,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Grace Adeyemi',
+                'bio' => 'Bible translator working with unreached people groups in Northern Nigeria.',
+                'phone' => '+234 803 456 7890',
+                'email' => 'grace.adeyemi@example.com',
+                'show_phone' => false,
+                'show_email' => false,
+                'country' => 'Nigeria',
+                'city' => 'Abuja',
+                'latitude' => 9.0765,
+                'longitude' => 7.3986,
+                'focus_areas' => ['Bible Translation', 'Linguistics', 'Evangelism'],
+                'languages' => ['English', 'Hausa', 'Yoruba'],
+                'skills' => ['Translation', 'Language Analysis', 'Cross-Cultural Communication'],
+                'needs' => ['Translation Software', 'Prayer Support'],
+                'offers' => ['Translation Expertise', 'Cultural Insights'],
+                'tags' => ['Bible Translator', 'Linguist'],
+                'privacy_level' => 'network_only',
+                'is_approved' => true,
+                'approved_at' => now(),
+                'approved_by' => $adminUser?->id,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Peter Kamau',
+                'bio' => 'Agricultural specialist helping farmers improve crop yields and food security.',
+                'phone' => '+254 722 789 012',
+                'email' => 'peter.kamau@example.com',
+                'show_phone' => true,
+                'show_email' => true,
+                'country' => 'Kenya',
+                'city' => 'Nakuru',
+                'latitude' => -0.3031,
+                'longitude' => 36.0800,
+                'focus_areas' => ['Agriculture', 'Community Development', 'Training'],
+                'languages' => ['English', 'Swahili'],
+                'skills' => ['Agricultural Training', 'Sustainable Farming', 'Business Development'],
+                'needs' => ['Funding', 'Seeds and Tools'],
+                'offers' => ['Farming Training', 'Agricultural Consulting'],
+                'tags' => ['Agriculture', 'Farmer Training'],
+                'privacy_level' => 'public',
+                'is_approved' => true,
+                'approved_at' => now(),
+                'approved_by' => $adminUser?->id,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Ruth Moyo',
+                'bio' => 'Children\'s ministry coordinator with a heart for orphans and vulnerable children.',
+                'phone' => '+263 77 123 4567',
+                'email' => 'ruth.moyo@example.com',
+                'show_phone' => true,
+                'show_email' => true,
+                'country' => 'Zimbabwe',
+                'city' => 'Bulawayo',
+                'latitude' => -20.1619,
+                'longitude' => 28.5809,
+                'focus_areas' => ['Children', 'Education', 'Counseling'],
+                'languages' => ['English', 'Ndebele', 'Shona'],
+                'skills' => ['Child Psychology', 'Teaching', 'Counseling'],
+                'needs' => ['Educational Materials', 'Volunteers'],
+                'offers' => ['Children\'s Curriculum', 'Training Materials'],
+                'tags' => ['Children Ministry', 'Orphan Care'],
+                'privacy_level' => 'public',
+                'is_approved' => true,
+                'approved_at' => now(),
+                'approved_by' => $adminUser?->id,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'John Banda',
+                'bio' => 'New believer profile awaiting approval. Interested in evangelism and church planting.',
+                'phone' => '+265 999 123 456',
+                'email' => 'john.banda@example.com',
+                'show_phone' => true,
+                'show_email' => true,
+                'country' => 'Malawi',
+                'city' => 'Lilongwe',
+                'latitude' => -13.9626,
+                'longitude' => 33.7741,
+                'focus_areas' => ['Evangelism', 'Church Planting'],
+                'languages' => ['English', 'Chichewa'],
+                'skills' => ['Public Speaking'],
+                'needs' => ['Mentorship', 'Training'],
+                'offers' => ['Local Knowledge'],
+                'tags' => ['New Believer', 'Eager to Serve'],
+                'privacy_level' => 'network_only',
+                'is_approved' => false,
+                'is_active' => true,
+            ],
+        ];
+
+        foreach ($individualsData as $index => $data) {
+            Individual::create(array_merge($data, [
+                'user_id' => $users[$index]->id,
+            ]));
+        }
+    }
+}
