@@ -31,6 +31,12 @@ class User extends Authenticatable
         'timezone',
         'avatar_url',
         'last_login_at',
+        'city',
+        'province',
+        'country',
+        'latitude',
+        'longitude',
+        'location_type',
     ];
 
     /**
@@ -117,6 +123,11 @@ class User extends Authenticatable
     }
 
     // Believer Network Relationships
+
+    public function networkMember()
+    {
+        return $this->hasOne(NetworkMember::class);
+    }
 
     public function individuals(): HasMany
     {

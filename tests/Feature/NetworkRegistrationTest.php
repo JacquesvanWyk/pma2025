@@ -53,7 +53,7 @@ describe('network registration pages', function () {
 });
 
 describe('individual registration', function () {
-    test('can register as individual believer', function () {
+    test('can register as individual believer with location', function () {
         $user = User::factory()->create();
 
         $this->actingAs($user)
@@ -64,13 +64,16 @@ describe('individual registration', function () {
                 'phone' => '+27123456789',
                 'bio' => 'A believer in South Africa',
                 'total_believers' => 1,
-                'latitude' => -26.2041,
-                'longitude' => 28.0473,
-                'address' => '123 Main St, Johannesburg',
+                'latitude' => -28.7323601,
+                'longitude' => 20.501435,
+                'city' => 'Kakamas',
+                'province' => 'Northern Cape',
+                'country' => 'South Africa',
+                'address' => 'Kakamas, Northern Cape',
                 'show_email' => true,
                 'show_phone' => false,
             ])
-            ->assertRedirect(route('network.index'))
+            ->assertRedirect(route('dashboard'))
             ->assertSessionHas('success');
 
         $this->assertDatabaseHas('network_members', [
@@ -80,6 +83,9 @@ describe('individual registration', function () {
             'email' => 'john@example.com',
             'status' => 'pending',
             'total_believers' => 1,
+            'city' => 'Kakamas',
+            'province' => 'Northern Cape',
+            'country' => 'South Africa',
         ]);
     });
 
@@ -102,7 +108,7 @@ describe('individual registration', function () {
                 'household_members' => $householdMembers,
                 'show_household_members' => true,
             ])
-            ->assertRedirect(route('network.index'));
+            ->assertRedirect(route('dashboard'));
 
         $member = NetworkMember::where('email', 'john@example.com')->first();
 
@@ -124,7 +130,7 @@ describe('individual registration', function () {
                 'longitude' => 28.0473,
                 'languages' => $languages->pluck('id')->toArray(),
             ])
-            ->assertRedirect(route('network.index'));
+            ->assertRedirect(route('dashboard'));
 
         $member = NetworkMember::where('email', 'john@example.com')->first();
 
@@ -150,7 +156,7 @@ describe('fellowship registration', function () {
                 'show_email' => true,
                 'show_phone' => true,
             ])
-            ->assertRedirect(route('network.index'))
+            ->assertRedirect(route('dashboard'))
             ->assertSessionHas('success');
 
         $this->assertDatabaseHas('network_members', [
@@ -175,7 +181,7 @@ describe('privacy controls', function () {
                 'latitude' => -26.2041,
                 'longitude' => 28.0473,
             ])
-            ->assertRedirect(route('network.index'));
+            ->assertRedirect(route('dashboard'));
 
         $member = NetworkMember::where('email', 'john@example.com')->first();
 
@@ -193,7 +199,7 @@ describe('privacy controls', function () {
                 'latitude' => -26.2041,
                 'longitude' => 28.0473,
             ])
-            ->assertRedirect(route('network.index'));
+            ->assertRedirect(route('dashboard'));
 
         $member = NetworkMember::where('email', 'john@example.com')->first();
 
@@ -212,11 +218,60 @@ describe('privacy controls', function () {
                 'longitude' => 28.0473,
                 'household_members' => [['name' => 'Jane Doe']],
             ])
-            ->assertRedirect(route('network.index'));
+            ->assertRedirect(route('dashboard'));
 
         $member = NetworkMember::where('email', 'john@example.com')->first();
 
         expect($member->show_household_members)->toBeFalse();
+    });
+});
+
+describe('dashboard display', function () {
+    test('dashboard shows network member profile after registration', function () {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('network.store'), [
+                'type' => 'individual',
+                'name' => 'John Doe',
+                'email' => 'john@example.com',
+                'latitude' => -26.2041,
+                'longitude' => 28.0473,
+                'city' => 'Johannesburg',
+                'province' => 'Gauteng',
+                'country' => 'South Africa',
+            ])
+            ->assertRedirect(route('dashboard'));
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertOk()
+            ->assertSee('Your Network Profile')
+            ->assertSee('John Doe')
+            ->assertSee('Johannesburg')
+            ->assertSee('Gauteng')
+            ->assertSee('South Africa')
+            ->assertSee('Edit Profile')
+            ->assertSee('Pending');
+    });
+
+    test('dashboard shows edit button for network member', function () {
+        $user = User::factory()->create();
+        $networkMember = NetworkMember::create([
+            'user_id' => $user->id,
+            'type' => 'individual',
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'latitude' => -26.2041,
+            'longitude' => 28.0473,
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Edit Profile')
+            ->assertSee(route('network.edit', $networkMember));
     });
 });
 

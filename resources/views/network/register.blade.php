@@ -166,81 +166,56 @@
                             Location Information
                         </h2>
 
-                        <div class="space-y-5">
-                            <!-- Address -->
+                        <div class="pma-card p-6 mb-4" style="background: rgba(10, 117, 58, 0.05);">
+                            <p class="pma-body text-sm" style="color: var(--color-olive);">
+                                <strong>Privacy Note:</strong> We only need your general area (city/town), not your street address. This helps us connect believers in the same region.
+                            </p>
+                        </div>
+
+                        <div id="location-picker-container" class="space-y-4">
+                            <!-- Location Search -->
                             <div>
-                                <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
-                                    Address
+                                <label for="location-search-input" class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
+                                    Search for your city or town *
                                 </label>
-                                <textarea
-                                    name="address"
-                                    rows="2"
-                                    placeholder="Street address, city, province"
+                                <input
+                                    type="text"
+                                    id="location-search-input"
+                                    placeholder="Enter your city or town (e.g., Cape Town, Johannesburg)"
                                     class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
                                     style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);"
                                     onfocus="this.style.borderColor='var(--color-pma-green)'; this.style.background='white';"
-                                    onblur="this.style.borderColor='var(--color-cream-dark)'; this.style.background='var(--color-cream)';">{{ old('address', $networkMember->address ?? '') }}</textarea>
-                                @error('address')
-                                    <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
-                                @enderror
+                                    onblur="this.style.borderColor='var(--color-cream-dark)'; this.style.background='var(--color-cream)';">
                             </div>
 
-                            <!-- Coordinates Helper -->
-                            <div class="pma-card p-4" style="background: rgba(10, 117, 58, 0.1);">
-                                <p class="pma-body text-sm mb-2" style="color: var(--color-indigo);">
-                                    <strong>Need help finding your coordinates?</strong>
+                            <!-- Map Container -->
+                            <div>
+                                <div id="registration-map" class="w-full h-96 rounded-lg border-2" style="border-color: var(--color-cream-dark);"></div>
+                            </div>
+
+                            <!-- Hidden Fields for Form Submission -->
+                            <input type="hidden" name="latitude" id="latitude-input" value="{{ old('latitude', $networkMember->latitude ?? '') }}" required>
+                            <input type="hidden" name="longitude" id="longitude-input" value="{{ old('longitude', $networkMember->longitude ?? '') }}" required>
+                            <input type="hidden" name="city" id="city-input" value="{{ old('city', $networkMember->city ?? '') }}">
+                            <input type="hidden" name="province" id="province-input" value="{{ old('province', $networkMember->province ?? '') }}">
+                            <input type="hidden" name="country" id="country-input" value="{{ old('country', $networkMember->country ?? '') }}">
+
+                            <!-- Selected Location Display -->
+                            <div id="selected-location" class="hidden pma-card p-4" style="background: rgba(10, 117, 58, 0.1);">
+                                <h4 class="pma-heading text-sm mb-2" style="color: var(--color-indigo);">Selected Location:</h4>
+                                <p class="pma-body text-sm" style="color: var(--color-olive);">
+                                    <strong>City:</strong> <span id="display-city">-</span><br>
+                                    <strong>Province/State:</strong> <span id="display-province">-</span><br>
+                                    <strong>Country:</strong> <span id="display-country">-</span>
                                 </p>
-                                <ol class="pma-body text-sm space-y-1 ml-4 list-decimal" style="color: var(--color-olive);">
-                                    <li>Go to <a href="https://www.google.com/maps" target="_blank" class="underline" style="color: var(--color-pma-green);">Google Maps</a></li>
-                                    <li>Right-click on your location</li>
-                                    <li>Click on the coordinates to copy them</li>
-                                    <li>Paste them in the fields below</li>
-                                </ol>
                             </div>
 
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <!-- Latitude -->
-                                <div>
-                                    <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
-                                        Latitude *
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="latitude"
-                                        value="{{ old('latitude', $networkMember->latitude ?? '') }}"
-                                        required
-                                        placeholder="-26.2041"
-                                        class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
-                                        style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);"
-                                        onfocus="this.style.borderColor='var(--color-pma-green)'; this.style.background='white';"
-                                        onblur="this.style.borderColor='var(--color-cream-dark)'; this.style.background='var(--color-cream)';">
-                                    @error('latitude')
-                                        <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- Longitude -->
-                                <div>
-                                    <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
-                                        Longitude *
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="longitude"
-                                        value="{{ old('longitude', $networkMember->longitude ?? '') }}"
-                                        required
-                                        placeholder="28.0473"
-                                        class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
-                                        style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);"
-                                        onfocus="this.style.borderColor='var(--color-pma-green)'; this.style.background='white';"
-                                        onblur="this.style.borderColor='var(--color-cream-dark)'; this.style.background='var(--color-cream)';">
-                                    @error('longitude')
-                                        <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
+                            @error('latitude')
+                                <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
+                            @enderror
+                            @error('longitude')
+                                <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -271,4 +246,169 @@
                 </form>
             </div>
     </div>
+
+    @push('scripts')
+    <script>
+        let registrationMap;
+        let registrationMarker;
+        let registrationAutocomplete;
+        let registrationMapInitialized = false;
+
+        function initRegistrationMap() {
+            if (registrationMapInitialized) return;
+
+            const mapContainer = document.getElementById('registration-map');
+            const addressInput = document.getElementById('location-search-input');
+
+            if (!mapContainer || !addressInput) {
+                console.log('Map container or input not found, retrying...');
+                setTimeout(initRegistrationMap, 100);
+                return;
+            }
+
+            console.log('Initializing registration map...');
+
+            // Get existing coordinates or use default
+            const existingLat = parseFloat(document.getElementById('latitude-input').value);
+            const existingLng = parseFloat(document.getElementById('longitude-input').value);
+
+            const defaultCenter = { lat: -30.5595, lng: 22.9375 };
+            const position = (existingLat && existingLng)
+                ? { lat: existingLat, lng: existingLng }
+                : defaultCenter;
+
+            const initialZoom = (existingLat && existingLng) ? 10 : 5;
+
+            // Create map
+            registrationMap = new google.maps.Map(mapContainer, {
+                center: position,
+                zoom: initialZoom,
+                mapTypeId: 'roadmap',
+                mapTypeControl: true,
+                streetViewControl: false,
+            });
+
+            // Create draggable marker
+            registrationMarker = new google.maps.Marker({
+                position: position,
+                map: registrationMap,
+                draggable: true,
+                animation: google.maps.Animation.DROP,
+                title: 'Drag to adjust location'
+            });
+
+            // Show existing location if available
+            if (existingLat && existingLng) {
+                const cityVal = document.getElementById('city-input').value;
+                const provinceVal = document.getElementById('province-input').value;
+                const countryVal = document.getElementById('country-input').value;
+
+                if (cityVal) {
+                    document.getElementById('display-city').textContent = cityVal;
+                    document.getElementById('display-province').textContent = provinceVal || '-';
+                    document.getElementById('display-country').textContent = countryVal;
+                    document.getElementById('selected-location').classList.remove('hidden');
+                }
+            }
+
+            // Initialize autocomplete - allows cities, towns, and localities across Africa
+            registrationAutocomplete = new google.maps.places.Autocomplete(addressInput, {
+                fields: ['geometry', 'address_components', 'name']
+                // No restrictions - allows all African countries and all place types
+            });
+
+            // Handle place selection
+            registrationAutocomplete.addListener('place_changed', function() {
+                const place = registrationAutocomplete.getPlace();
+
+                if (!place.geometry || !place.geometry.location) {
+                    alert('No location found. Please try again.');
+                    return;
+                }
+
+                const location = place.geometry.location;
+                const addressComponents = place.address_components || [];
+
+                let city = '';
+                let province = '';
+                let country = '';
+
+                // Parse address components
+                addressComponents.forEach(component => {
+                    if (component.types.includes('locality')) {
+                        city = component.long_name;
+                    } else if (component.types.includes('administrative_area_level_1')) {
+                        province = component.long_name;
+                    } else if (component.types.includes('country')) {
+                        country = component.long_name;
+                    }
+                });
+
+                // Fallback for city
+                if (!city) {
+                    addressComponents.forEach(component => {
+                        if (component.types.includes('sublocality') ||
+                            component.types.includes('administrative_area_level_2')) {
+                            city = component.long_name;
+                        }
+                    });
+                }
+
+                // Update marker and map
+                registrationMarker.setPosition(location);
+                registrationMap.setCenter(location);
+                registrationMap.setZoom(12);
+
+                // Update form fields
+                document.getElementById('latitude-input').value = location.lat();
+                document.getElementById('longitude-input').value = location.lng();
+                document.getElementById('city-input').value = city;
+                document.getElementById('province-input').value = province;
+                document.getElementById('country-input').value = country;
+
+                // Update display
+                document.getElementById('display-city').textContent = city || '-';
+                document.getElementById('display-province').textContent = province || '-';
+                document.getElementById('display-country').textContent = country || '-';
+                document.getElementById('selected-location').classList.remove('hidden');
+
+                console.log('Location updated:', { city, province, country, lat: location.lat(), lng: location.lng() });
+            });
+
+            // Handle marker drag
+            google.maps.event.addListener(registrationMarker, 'dragend', function() {
+                const newPosition = registrationMarker.getPosition();
+                document.getElementById('latitude-input').value = newPosition.lat();
+                document.getElementById('longitude-input').value = newPosition.lng();
+                console.log('Marker dragged to:', newPosition.lat(), newPosition.lng());
+            });
+
+            // Handle map click
+            google.maps.event.addListener(registrationMap, 'click', function(event) {
+                registrationMarker.setPosition(event.latLng);
+                document.getElementById('latitude-input').value = event.latLng.lat();
+                document.getElementById('longitude-input').value = event.latLng.lng();
+            });
+
+            registrationMapInitialized = true;
+            console.log('Registration map initialized successfully');
+        }
+
+        // Load Google Maps API if not already loaded
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Loading Google Maps API...');
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.api_key') }}&libraries=places&callback=initRegistrationMap';
+            script.async = true;
+            script.defer = true;
+            script.onerror = function() {
+                console.error('Failed to load Google Maps API');
+            };
+            document.head.appendChild(script);
+        } else {
+            console.log('Google Maps already loaded, initializing...');
+            setTimeout(initRegistrationMap, 100);
+        }
+    </script>
+    @endpush
 </x-layouts.app>

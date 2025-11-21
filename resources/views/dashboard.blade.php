@@ -5,6 +5,109 @@
     </flux:callout>
     @endif
 
+    @if(session('success'))
+    <flux:callout variant="success" class="mb-6">
+        {{ session('success') }}
+    </flux:callout>
+    @endif
+
+    @php
+        $networkMember = auth()->user()->networkMember;
+    @endphp
+
+    @if($networkMember)
+    <!-- User's Network Profile -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-8 mb-8">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h2 class="text-2xl font-bold" style="color: var(--color-indigo);">Your Network Profile</h2>
+                <p class="text-sm mt-1">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                        @if($networkMember->status === 'approved') bg-green-100 text-green-800
+                        @elseif($networkMember->status === 'pending') bg-yellow-100 text-yellow-800
+                        @else bg-red-100 text-red-800 @endif">
+                        {{ ucfirst($networkMember->status) }}
+                    </span>
+                </p>
+            </div>
+            <a href="{{ route('network.edit', $networkMember) }}" class="px-4 py-2 rounded-lg font-medium transition" style="background: var(--color-pma-green); color: white;">
+                Edit Profile
+            </a>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Basic Information</h3>
+                <dl class="space-y-2">
+                    <div>
+                        <dt class="text-sm text-gray-600">Name:</dt>
+                        <dd class="font-medium">{{ $networkMember->name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm text-gray-600">Type:</dt>
+                        <dd class="font-medium">{{ $networkMember->type === 'individual' ? 'Individual Believer' : 'Fellowship Group' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm text-gray-600">Email:</dt>
+                        <dd class="font-medium">{{ $networkMember->email }}</dd>
+                    </div>
+                    @if($networkMember->phone)
+                    <div>
+                        <dt class="text-sm text-gray-600">Phone:</dt>
+                        <dd class="font-medium">{{ $networkMember->phone }}</dd>
+                    </div>
+                    @endif
+                </dl>
+            </div>
+
+            <div>
+                <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Location</h3>
+                <dl class="space-y-2">
+                    @if($networkMember->city)
+                    <div>
+                        <dt class="text-sm text-gray-600">City:</dt>
+                        <dd class="font-medium">{{ $networkMember->city }}</dd>
+                    </div>
+                    @endif
+                    @if($networkMember->province)
+                    <div>
+                        <dt class="text-sm text-gray-600">Province:</dt>
+                        <dd class="font-medium">{{ $networkMember->province }}</dd>
+                    </div>
+                    @endif
+                    @if($networkMember->country)
+                    <div>
+                        <dt class="text-sm text-gray-600">Country:</dt>
+                        <dd class="font-medium">{{ $networkMember->country }}</dd>
+                    </div>
+                    @endif
+                    @if($networkMember->type === 'individual' && $networkMember->total_believers)
+                    <div>
+                        <dt class="text-sm text-gray-600">Total Believers in Household:</dt>
+                        <dd class="font-medium">{{ $networkMember->total_believers }}</dd>
+                    </div>
+                    @endif
+                </dl>
+            </div>
+        </div>
+
+        @if($networkMember->bio)
+        <div class="mt-6">
+            <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Bio</h3>
+            <p class="text-gray-700">{{ $networkMember->bio }}</p>
+        </div>
+        @endif
+
+        @if($networkMember->status === 'pending')
+        <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p class="text-sm text-yellow-800">
+                <strong>Pending Approval:</strong> Your profile is currently under review by our team. You'll receive an email notification once it's approved.
+            </p>
+        </div>
+        @endif
+    </div>
+    @endif
+
     <!-- Stats Overview -->
     <div class="mb-8">
         <h2 class="text-2xl font-bold mb-4" style="color: var(--color-indigo);">Dashboard Overview</h2>

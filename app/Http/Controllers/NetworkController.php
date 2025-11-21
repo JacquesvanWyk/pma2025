@@ -99,6 +99,9 @@ class NetworkController extends Controller
             'show_household_members' => 'boolean',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
+            'city' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:500',
             'meeting_times' => 'nullable|string|max:255',
             'languages' => 'array',
@@ -119,6 +122,9 @@ class NetworkController extends Controller
             'show_household_members' => $validated['show_household_members'] ?? false,
             'latitude' => $validated['latitude'],
             'longitude' => $validated['longitude'],
+            'city' => $validated['city'] ?? null,
+            'province' => $validated['province'] ?? null,
+            'country' => $validated['country'] ?? null,
             'address' => $validated['address'] ?? null,
             'meeting_times' => $validated['meeting_times'] ?? null,
             'show_email' => $validated['show_email'] ?? true,
@@ -131,7 +137,7 @@ class NetworkController extends Controller
             $networkMember->languages()->attach($validated['languages']);
         }
 
-        return redirect()->route('network.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Your network submission has been received! It will be reviewed by our team and you\'ll receive an email notification once approved.');
     }
 
@@ -167,6 +173,9 @@ class NetworkController extends Controller
             'show_household_members' => 'boolean',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
+            'city' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:500',
             'meeting_times' => 'nullable|string|max:255',
             'languages' => 'array',
@@ -186,6 +195,9 @@ class NetworkController extends Controller
             'show_household_members' => $validated['show_household_members'] ?? false,
             'latitude' => $validated['latitude'],
             'longitude' => $validated['longitude'],
+            'city' => $validated['city'] ?? null,
+            'province' => $validated['province'] ?? null,
+            'country' => $validated['country'] ?? null,
             'address' => $validated['address'] ?? null,
             'meeting_times' => $validated['meeting_times'] ?? null,
             'show_email' => $validated['show_email'] ?? true,
@@ -199,7 +211,7 @@ class NetworkController extends Controller
             $networkMember->languages()->detach();
         }
 
-        return redirect()->route('network.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Your network profile has been updated successfully!');
     }
 }
