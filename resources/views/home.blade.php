@@ -166,11 +166,11 @@
                     <!-- Stats -->
                     <div class="grid grid-cols-3 gap-4 mb-8">
                         <div class="pma-stat pma-stagger-1">
-                            <div class="pma-stat-number">15+</div>
+                            <div class="pma-stat-number">8+</div>
                             <div class="pma-stat-label">Years Serving</div>
                         </div>
                         <div class="pma-stat pma-stagger-2">
-                            <div class="pma-stat-number">1000+</div>
+                            <div class="pma-stat-number">100+</div>
                             <div class="pma-stat-label">Lives Touched</div>
                         </div>
                         <div class="pma-stat pma-stagger-3">
@@ -184,8 +184,8 @@
                 <div class="order-1 lg:order-2 pma-animate-on-scroll">
                     <!-- Image with fallback -->
                     <div class="relative rounded-3xl overflow-hidden" style="box-shadow: var(--shadow-xl);">
-                        @if(file_exists(public_path('images/ministry-team.jpg')))
-                            <img src="/images/ministry-team.jpg" alt="Ministry Team" class="w-full h-full object-cover aspect-[4/3]">
+                        @if(file_exists(public_path('images/camp_1.jpg')))
+                            <img src="/images/camp_1.jpg" alt="Ministry Team" class="w-full h-full object-cover aspect-[4/3]">
                         @else
                             <div class="w-full aspect-[4/3] flex items-center justify-center text-white p-8"
                                  style="background: var(--gradient-warm);">

@@ -33,7 +33,7 @@ class NetworkMemberRejectionNotification extends Notification implements ShouldQ
     {
         return (new MailMessage)
             ->subject('Regarding Your Network Member Submission - Pioneer Missions Africa')
-            ->greeting('Dear ' . $this->networkMember->name . ',')
+            ->greeting('Dear '.$this->networkMember->name.',')
             ->line('Thank you for your interest in joining the Pioneer Missions Africa network.')
             ->line('After careful review of your submission, we regret to inform you that we are unable to approve your profile at this time.')
             ->line('This decision helps us maintain the integrity and safety of our network for all members.')

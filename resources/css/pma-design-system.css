@@ -500,3 +500,253 @@ body {
     display: none;
   }
 }
+
+/* ==================== ENHANCED ANIMATIONS & MICRO-INTERACTIONS ==================== */
+
+/* Livewire Loading States */
+[wire\:loading] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+[wire\:loading] .reaction-btn,
+[wire\:loading] button {
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Button Click Feedback */
+.pma-btn:active {
+  transform: scale(0.96);
+  transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pma-btn-primary:active {
+  transform: scale(0.96) translateY(-2px);
+}
+
+.pma-btn-secondary:active {
+  transform: scale(0.96);
+}
+
+.reaction-btn:active {
+  transform: scale(1.1);
+}
+
+/* Form Input Focus Animations */
+input:focus,
+textarea:focus,
+select:focus {
+  transform: translateY(-1px);
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(10, 117, 58, 0.15);
+}
+
+/* Comment/Reaction Success Animation */
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.comment-item {
+  animation: pop-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.reaction-count {
+  transition: all var(--transition-fast);
+}
+
+.reaction-count.updated {
+  animation: pop-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Skeleton Loaders */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0px,
+    #e0e0e0 40px,
+    #f0f0f0 80px
+  );
+  background-size: 200px 100%;
+  animation: skeleton-shimmer 1.5s infinite linear;
+}
+
+.skeleton-text {
+  height: 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+}
+
+.skeleton-card {
+  height: 10rem;
+  border-radius: var(--radius-lg);
+}
+
+/* Toast Notifications */
+@keyframes slide-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-right {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.toast-notification {
+  animation: slide-in-right 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.toast-notification.leaving {
+  animation: slide-out-right 200ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Modal Animations */
+@keyframes modal-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-backdrop {
+  animation: modal-fade-in 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-content {
+  animation: modal-scale-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Smooth State Transitions */
+.transition-opacity {
+  transition: opacity var(--transition-base);
+}
+
+.transition-transform {
+  transition: transform var(--transition-base);
+}
+
+.transition-all {
+  transition: all var(--transition-base);
+}
+
+/* Hover Effects Enhancement */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hover-scale {
+  transition: transform var(--transition-fast);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Badge Bounce Animation */
+@keyframes badge-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.badge-new {
+  animation: badge-bounce 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Loading Spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Stagger Animations for Lists */
+.stagger-animation > * {
+  animation: fade-up 0.5s var(--transition-entrance) both;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-animation > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-animation > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-animation > *:nth-child(8) { animation-delay: 0.4s; }
+
+/* Accessibility - Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .comment-item,
+  .reaction-count,
+  .toast-notification,
+  .modal-content,
+  .hover-lift,
+  .hover-scale,
+  [wire\:loading] button {
+    animation: none !important;
+    transition: none !important;
+  }
+}

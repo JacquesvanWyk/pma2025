@@ -33,7 +33,7 @@ class NetworkMemberApprovalNotification extends Notification implements ShouldQu
     {
         return (new MailMessage)
             ->subject('Welcome to the Pioneer Missions Africa Network! - Your Profile is Approved')
-            ->greeting('Praise God, ' . $this->networkMember->name . '!')
+            ->greeting('Praise God, '.$this->networkMember->name.'!')
             ->line('Your network member profile has been reviewed and approved!')
             ->line('You are now part of our growing community of believers across South Africa.')
             ->line('**What happens next?**')

@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FeedPost;
+use App\Models\Fellowship;
+use App\Models\Individual;
+use App\Models\Ministry;
 use App\Models\NetworkMember;
 use Illuminate\Http\Request;
 
@@ -9,7 +13,45 @@ class NetworkController extends Controller
 {
     public function index()
     {
-        return view('network.index');
+        $ministries = Ministry::where('is_approved', true)
+            ->where('is_active', true)
+            ->with(['feedPosts' => function ($query) {
+                $query->where('is_approved', true)
+                    ->with(['reactions', 'comments'])
+                    ->latest()
+                    ->limit(5);
+            }])
+            ->latest()
+            ->get();
+
+        $individuals = Individual::where('is_approved', true)
+            ->where('is_active', true)
+            ->with(['feedPosts' => function ($query) {
+                $query->where('is_approved', true)
+                    ->with(['reactions', 'comments'])
+                    ->latest()
+                    ->limit(5);
+            }])
+            ->latest()
+            ->get();
+
+        $fellowships = Fellowship::where('is_approved', true)
+            ->where('is_active', true)
+            ->with(['feedPosts' => function ($query) {
+                $query->where('is_approved', true)
+                    ->with(['reactions', 'comments'])
+                    ->latest()
+                    ->limit(5);
+            }])
+            ->latest()
+            ->get();
+
+        $feedPosts = FeedPost::with(['author', 'reactions', 'comments'])
+            ->where('is_approved', true)
+            ->latest()
+            ->paginate(10);
+
+        return view('network.index', compact('ministries', 'individuals', 'fellowships', 'feedPosts'));
     }
 
     public function show(NetworkMember $networkMember)

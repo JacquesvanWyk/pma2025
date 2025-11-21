@@ -24,5 +24,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('slides/export/pdf', [\App\Http\Controllers\SlideExportController::class, 'exportPdf'])->name('slides.export.pdf');
 });
 
+// User Profile Route (public)
+Route::get('users/{user}', [\App\Http\Controllers\UserProfileController::class, 'show'])->name('users.show');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/public.php';

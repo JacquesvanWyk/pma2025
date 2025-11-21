@@ -69,7 +69,7 @@
                     </div>
                     <h2 class="pma-heading text-3xl mb-4" style="color: var(--color-indigo);">What We Are</h2>
                     <p class="pma-body text-lg leading-relaxed mb-4 font-semibold" style="color: var(--color-pma-green);">
-                        PMA is not an organization, it is not a conference, it is not a church—IT IS A MINISTRY.
+                        PMA is not an organisation, it is not a conference, it is not a church—IT IS A MINISTRY.
                     </p>
                     <p class="pma-body text-lg leading-relaxed" style="color: var(--color-olive);">
                         Individuals and groups answer to Christ, not the ministry itself. We are here to support and encourage believers in their walk with God.
