@@ -136,7 +136,7 @@ class NetworkMemberSeeder extends Seeder
                 'show_phone' => true,
             ]));
 
-            $member->languages()->attach($languages->pluck('id'));
+            $member->languages()->attach(collect($languages)->pluck('id'));
         }
     }
 }

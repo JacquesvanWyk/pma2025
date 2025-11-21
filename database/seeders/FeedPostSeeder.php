@@ -93,12 +93,14 @@ class FeedPostSeeder extends Seeder
         foreach ($posts as $postData) {
             $post = FeedPost::create($postData);
 
-            $reactionCount = rand(3, 15);
-            for ($i = 0; $i < $reactionCount; $i++) {
+            $reactionCount = rand(3, min(15, $users->count()));
+            $selectedUsers = $users->random($reactionCount);
+
+            foreach ($selectedUsers as $user) {
                 PostReaction::create([
                     'feed_post_id' => $post->id,
-                    'user_id' => $users->random()->id,
-                    'reaction_type' => ['like', 'love', 'pray', 'amen'][ rand(0, 3)],
+                    'user_id' => $user->id,
+                    'type' => ['like', 'pray', 'amen', 'heart'][ rand(0, 3)],
                 ]);
             }
 
