@@ -84,14 +84,6 @@
                     </li>
                     <li><a href="{{ route('studies') }}">Studies</a></li>
                     <li>
-                        <a href="{{ route('network.index') }}" class="font-bold" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-indigo)); color: white;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            Network
-                        </a>
-                    </li>
-                    <li>
                         <details>
                             <summary>Resources</summary>
                             <ul class="p-2">
@@ -102,6 +94,21 @@
                     </li>
                     <li><a href="{{ route('sermons') }}">Sermons</a></li>
                     <li><a href="{{ route('contact') }}">Contact</a></li>
+                    <li>
+                        <a href="{{ route('network.index') }}" class="font-bold" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-indigo)); color: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Network
+                        </a>
+                    </li>
+                    <li class="menu-title">Account</li>
+                    @auth
+                        <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    @else
+                        <li><a href="{{ route('login') }}">Login</a></li>
+                        <li><a href="{{ route('register') }}">Register</a></li>
+                    @endauth
                 </ul>
             </div>
             <a href="{{ route('home') }}" class="btn btn-ghost text-xl">
@@ -127,14 +134,6 @@
                     </ul>
                 </li>
                 <li><a href="{{ route('studies') }}">Studies</a></li>
-                <li>
-                    <a href="{{ route('network.index') }}" class="btn btn-sm font-bold gap-1" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-indigo)); color: white; border: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        Network
-                    </a>
-                </li>
                 <li class="dropdown dropdown-hover relative">
                     <a tabindex="0" role="button" class="flex items-center gap-1">
                         Resources
@@ -149,10 +148,24 @@
                 </li>
                 <li><a href="{{ route('sermons') }}">Sermons</a></li>
                 <li><a href="{{ route('contact') }}">Contact</a></li>
+                <li>
+                    <a href="{{ route('network.index') }}" class="btn btn-sm font-bold gap-1" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-indigo)); color: white; border: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Network
+                    </a>
+                </li>
             </ul>
         </div>
 
-        <div class="navbar-end">
+        <div class="navbar-end gap-2">
+            @auth
+                <a href="{{ route('dashboard') }}" class="btn btn-ghost">Dashboard</a>
+            @else
+                <a href="{{ route('login') }}" class="btn btn-ghost">Login</a>
+                <a href="{{ route('register') }}" class="btn btn-ghost">Register</a>
+            @endauth
             <a href="{{ route('donate') }}" class="btn btn-primary">Support</a>
         </div>
     </div>

@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NetworkMemberResource\Pages;
-use App\Models\Language;
 use App\Models\NetworkMember;
-use App\Models\User;
 use App\Notifications\NetworkMemberApprovalNotification;
 use App\Notifications\NetworkMemberRejectionNotification;
 use Filament\Forms;
@@ -14,7 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class NetworkMemberResource extends Resource
@@ -63,6 +60,37 @@ class NetworkMemberResource extends Resource
                     ->label('Bio / Description')
                     ->rows(4)
                     ->columnSpanFull(),
+
+                Forms\Components\Section::make('Household Information')
+                    ->description('This information helps PMA understand the reach of our network. Names can be kept private if desired.')
+                    ->visible(fn ($get) => $get('type') === 'individual')
+                    ->schema([
+                        Forms\Components\TextInput::make('total_believers')
+                            ->label('Total Believers in Household')
+                            ->numeric()
+                            ->default(1)
+                            ->minValue(1)
+                            ->required()
+                            ->helperText('Including yourself, how many believers are in your household?'),
+
+                        Forms\Components\Repeater::make('household_members')
+                            ->label('Household Member Names (Optional)')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Name')
+                                    ->required()
+                                    ->maxLength(255),
+                            ])
+                            ->helperText('You can optionally add the names of other believers in your household. This helps PMA but can be kept private.')
+                            ->defaultItems(0)
+                            ->reorderable(false)
+                            ->collapsible(),
+
+                        Forms\Components\Toggle::make('show_household_members')
+                            ->label('Show household member names publicly')
+                            ->default(false)
+                            ->helperText('If disabled, names will only be visible to PMA administrators'),
+                    ]),
 
                 Forms\Components\Section::make('Location Information')
                     ->schema([
@@ -150,6 +178,12 @@ class NetworkMemberResource extends Resource
                     ->label('Email')
                     ->searchable()
                     ->copyable(),
+
+                Tables\Columns\TextColumn::make('total_believers')
+                    ->label('Believers')
+                    ->default(1)
+                    ->sortable()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('languages.name')
                     ->label('Languages')

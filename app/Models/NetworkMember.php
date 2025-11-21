@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
+use App\Notifications\NetworkMemberSubmissionNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
-use App\Notifications\NetworkMemberSubmissionNotification;
 
 class NetworkMember extends Model
 {
@@ -33,6 +32,9 @@ class NetworkMember extends Model
         'email',
         'phone',
         'bio',
+        'total_believers',
+        'household_members',
+        'show_household_members',
         'latitude',
         'longitude',
         'address',
@@ -52,6 +54,9 @@ class NetworkMember extends Model
         'longitude' => 'float',
         'show_email' => 'boolean',
         'show_phone' => 'boolean',
+        'total_believers' => 'integer',
+        'household_members' => 'array',
+        'show_household_members' => 'boolean',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
     ];

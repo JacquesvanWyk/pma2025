@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../../vendor/livewire/flux/dist/flux.css";
 @import "./pma-design-system.css";
 @plugin "daisyui";
 

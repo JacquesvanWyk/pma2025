@@ -21,9 +21,13 @@ Route::get('/studies/{slug}', [StudiesController::class, 'show'])->name('studies
 
 // Network routes
 Route::get('/network', [NetworkController::class, 'index'])->name('network.index');
+Route::get('/network/join', [NetworkController::class, 'join'])->name('network.join');
+Route::get('/network/register/individual', [NetworkController::class, 'registerIndividual'])->name('network.register.individual')->middleware('auth');
+Route::get('/network/register/fellowship', [NetworkController::class, 'registerFellowship'])->name('network.register.fellowship')->middleware('auth');
+Route::post('/network/register', [NetworkController::class, 'store'])->name('network.store')->middleware('auth');
+Route::get('/network/{networkMember}/edit', [NetworkController::class, 'edit'])->name('network.edit')->middleware('auth');
+Route::put('/network/{networkMember}', [NetworkController::class, 'update'])->name('network.update')->middleware('auth');
 Route::get('/network/{networkMember}', [NetworkController::class, 'show'])->name('network.show');
-Route::get('/network/join', [NetworkController::class, 'join'])->name('network.join')->middleware('auth');
-Route::post('/network/join', [NetworkController::class, 'store'])->name('network.store')->middleware('auth');
 
 // Tract routes
 Route::get('/tracts', [TractController::class, 'index'])->name('tracts');

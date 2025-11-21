@@ -27,7 +27,7 @@
                 <div class="flex items-center mb-4">
                     <div class="w-16 h-16 rounded-full flex items-center justify-center text-3xl mr-4"
                          style="background: {{ $networkMember->type === 'individual' ? 'var(--color-indigo)' : 'var(--color-pma-green)' }}; border: 4px solid white;">
-                        {{ $networkMember->type === 'individual' ? '=d' : 'ê' }}
+                        {{ $networkMember->type === 'individual' ? '=d' : 'ï¿½' }}
                     </div>
                     <div>
                         <h1 class="pma-hero-title pma-display text-white mb-2">
@@ -58,6 +58,31 @@
                             {{ $networkMember->type === 'individual' ? 'About' : 'About Our Fellowship' }}
                         </h2>
                         <p class="pma-body whitespace-pre-line" style="color: var(--color-olive);">{{ $networkMember->bio }}</p>
+                    </div>
+                    @endif
+
+                    <!-- Household Information (Individuals Only) -->
+                    @if($networkMember->type === 'individual' && $networkMember->total_believers > 1)
+                    <div class="pma-card p-6 pma-animate-on-scroll pma-stagger-1">
+                        <h2 class="pma-heading text-2xl mb-4" style="color: var(--color-indigo);">
+                            <svg class="h-6 w-6 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Household
+                        </h2>
+                        <div class="pma-body mb-3" style="color: var(--color-olive);">
+                            <span class="font-semibold">Total Believers:</span> {{ $networkMember->total_believers }}
+                        </div>
+                        @if($networkMember->show_household_members && $networkMember->household_members && count($networkMember->household_members) > 0)
+                            <div class="pma-body" style="color: var(--color-olive);">
+                                <span class="font-semibold mb-2 block">Household Members:</span>
+                                <ul class="list-disc list-inside space-y-1 ml-2">
+                                    @foreach($networkMember->household_members as $member)
+                                        <li>{{ $member['name'] }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                     </div>
                     @endif
 
@@ -179,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add CartoDB Voyager tiles
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap contributors © CARTO',
+        attribution: 'ï¿½ OpenStreetMap contributors ï¿½ CARTO',
         subdomains: 'abcd',
         maxZoom: 20,
     }).addTo(profileMap);
@@ -189,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         html: `<div style="background: {{ $networkMember->type === 'individual' ? 'var(--color-indigo)' : 'var(--color-pma-green)' }};
              color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
              font-weight: bold; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-size: 20px;">
-            {{ $networkMember->type === 'individual' ? '=d' : 'ê' }}
+            {{ $networkMember->type === 'individual' ? '=d' : 'ï¿½' }}
         </div>`,
         className: 'custom-marker-icon',
         iconSize: [40, 40],
