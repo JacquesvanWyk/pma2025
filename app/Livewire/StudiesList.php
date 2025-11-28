@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Study;
+use App\Models\Tag;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -18,18 +19,10 @@ class StudiesList extends Component
     public $language = 'all';
 
     #[Url(as: 'tags')]
-    public $selectedTags = [];
+    public array $selectedTags = [];
 
     #[Url(as: 'sort')]
     public $sort = 'newest';
-
-    public $topics = [
-        'pioneers' => 'Pioneers',
-        'bible-scriptures' => 'Bible Scriptures',
-        'ellen-white' => 'Ellen White',
-        'evangelism' => 'Evangelism',
-        'the-issues' => 'The Issues',
-    ];
 
     public function updatingSearch()
     {
@@ -53,10 +46,7 @@ class StudiesList extends Component
 
     public function clearFilters()
     {
-        $this->search = '';
-        $this->language = 'all';
-        $this->selectedTags = [];
-        $this->sort = 'newest';
+        $this->reset(['search', 'language', 'selectedTags', 'sort']);
         $this->resetPage();
     }
 
@@ -80,10 +70,11 @@ class StudiesList extends Component
             $query->where('language', $this->language);
         }
 
-        // Topic tags filter
-        if (! empty($this->selectedTags)) {
-            $query->whereHas('tags', function ($q) {
-                $q->whereIn('slug', $this->selectedTags);
+        // Topic tags filter - ensure it's an array
+        $tagsToFilter = is_array($this->selectedTags) ? $this->selectedTags : [];
+        if (! empty($tagsToFilter)) {
+            $query->whereHas('tags', function ($q) use ($tagsToFilter) {
+                $q->whereIn('slug', $tagsToFilter);
             });
         }
 
@@ -97,8 +88,13 @@ class StudiesList extends Component
 
         $studies = $query->paginate(12);
 
+        $tags = Tag::whereHas('studies', function ($q) {
+            $q->published();
+        })->orderBy('name')->get();
+
         return view('livewire.studies-list', [
             'studies' => $studies,
+            'tags' => $tags,
         ]);
     }
 }

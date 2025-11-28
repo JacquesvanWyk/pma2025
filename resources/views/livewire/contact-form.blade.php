@@ -10,7 +10,6 @@ new class extends Component {
     public string $phone = '';
     public string $message_type = 'general';
     public string $message = '';
-    public bool $prayer_request = false;
     public bool $sent = false;
     public string $website = ''; // Honeypot field
 
@@ -28,12 +27,11 @@ new class extends Component {
             'phone' => 'nullable|string|max:50',
             'message_type' => 'required|in:general,prayer,partnership,support,resources',
             'message' => 'required|string|max:5000',
-            'prayer_request' => 'boolean',
         ]);
 
         Mail::to('jvw679@gmail.com')->send(new ContactFormMail($validated));
 
-        $this->reset(['name', 'email', 'phone', 'message_type', 'message', 'prayer_request', 'website']);
+        $this->reset(['name', 'email', 'phone', 'message_type', 'message', 'website']);
         $this->sent = true;
     }
 }; ?>
@@ -115,15 +113,6 @@ new class extends Component {
             @error('message')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-        </div>
-
-        <div class="flex items-start gap-3">
-            <input type="checkbox" wire:model="prayer_request" id="prayer_request"
-                   class="mt-1 w-5 h-5 rounded border-gray-300 focus:ring-2"
-                   style="color: var(--color-pma-green); focus:ring-color: var(--color-pma-green);">
-            <label for="prayer_request" class="pma-body text-sm" style="color: var(--color-olive);">
-                I would like this to be included in prayer requests
-            </label>
         </div>
 
         <button type="submit" class="pma-btn pma-btn-primary w-full inline-flex items-center justify-center" wire:loading.attr="disabled">

@@ -43,18 +43,19 @@
                 </div>
 
                 <!-- Topic Tags Row -->
+                @if($tags->count() > 0)
                 <div class="flex flex-wrap gap-2 items-center">
                     <span class="pma-body text-sm font-semibold" style="color: var(--color-indigo);">Topics:</span>
 
-                    @foreach($topics as $slug => $name)
+                    @foreach($tags as $tag)
                         <label class="inline-flex items-center cursor-pointer">
                             <input type="checkbox"
                                    wire:model.live="selectedTags"
-                                   value="{{ $slug }}"
+                                   value="{{ $tag->slug }}"
                                    class="hidden peer">
                             <span class="px-4 py-2 rounded-full text-sm pma-heading-light transition-all peer-checked:text-white"
-                                  style="background: {{ in_array($slug, $selectedTags) ? 'var(--color-pma-green)' : 'white' }}; border: 2px solid var(--color-pma-green); color: {{ in_array($slug, $selectedTags) ? 'white' : 'var(--color-pma-green)' }};">
-                                {{ $name }}
+                                  style="background: {{ in_array($tag->slug, $selectedTags) ? 'var(--color-pma-green)' : 'white' }}; border: 2px solid var(--color-pma-green); color: {{ in_array($tag->slug, $selectedTags) ? 'white' : 'var(--color-pma-green)' }};">
+                                {{ $tag->name }}
                             </span>
                         </label>
                     @endforeach
@@ -67,6 +68,7 @@
                         </button>
                     @endif
                 </div>
+                @endif
 
                 <!-- Active Filters Display -->
                 @if($search || !empty($selectedTags) || ($language && $language !== 'all'))
@@ -89,9 +91,12 @@
 
                         @if(!empty($selectedTags))
                             @foreach($selectedTags as $tagSlug)
+                                @php
+                                    $tagName = $tags->firstWhere('slug', $tagSlug)?->name ?? $tagSlug;
+                                @endphp
                                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm pma-body"
                                       style="background: var(--color-pma-green-light); color: white;">
-                                    {{ $topics[$tagSlug] ?? $tagSlug }}
+                                    {{ $tagName }}
                                 </span>
                             @endforeach
                         @endif
@@ -107,7 +112,7 @@
             @if($studies->count() > 0)
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($studies as $index => $study)
-                        <div class="pma-card pma-animate-on-scroll pma-stagger-{{ ($index % 6) + 1 }} group">
+                        <div class="pma-card group" wire:key="study-{{ $study->id }}">
                             <a href="{{ route('studies.show', $study->slug) }}" class="block p-6">
                                 <!-- Featured Image or Gradient -->
                                 <div class="w-full h-48 mb-4 rounded-lg overflow-hidden"
