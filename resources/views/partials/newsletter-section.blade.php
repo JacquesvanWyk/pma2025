@@ -9,36 +9,7 @@
                 Subscribe to our newsletter for updates, new studies, and ministry news
             </p>
 
-            <form action="{{ route('newsletter.subscribe') }}" method="POST" class="max-w-xl mx-auto w-full">
-                @csrf
-                <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Enter your email address"
-                        required
-                        class="flex-1 px-6 py-4 rounded-lg text-lg pma-body"
-                        style="background: white; color: var(--color-indigo); border: 2px solid transparent;"
-                    >
-                    <button type="submit" class="pma-btn pma-btn-primary px-8 py-4 text-lg whitespace-nowrap">
-                        Subscribe
-                    </button>
-                </div>
-                <div class="flex justify-center gap-8 text-sm">
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="radio" name="language" value="en" checked
-                               class="w-5 h-5 accent-current"
-                               style="accent-color: var(--color-ochre);" />
-                        <span class="pma-body text-white/90 group-hover:text-white transition-colors">English</span>
-                    </label>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="radio" name="language" value="af"
-                               class="w-5 h-5"
-                               style="accent-color: var(--color-ochre);" />
-                        <span class="pma-body text-white/90 group-hover:text-white transition-colors">Afrikaans</span>
-                    </label>
-                </div>
-            </form>
+            <livewire:newsletter-signup />
         </div>
     </div>
 </section>

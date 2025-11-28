@@ -53,23 +53,14 @@
             <div class="lg:col-span-4">
                 <h4 class="text-white font-bold text-lg mb-6">Stay Connected</h4>
                 <p class="text-gray-400 mb-4 text-sm">Join our newsletter to receive updates on new studies and mission reports.</p>
-                
-                <form action="{{ route('newsletter.subscribe') }}" method="POST" class="relative">
-                    @csrf
-                    <div class="relative">
-                        <input type="email" name="email" placeholder="Enter your email address" 
-                               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-pma-green)] focus:ring-1 focus:ring-[var(--color-pma-green)] transition-all">
-                        <button type="submit" class="absolute right-1.5 top-1.5 bg-[var(--color-pma-green)] hover:bg-[var(--color-pma-green-light)] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            Subscribe
-                        </button>
-                    </div>
-                </form>
+
+                <livewire:newsletter-signup variant="footer" />
 
                 <div class="mt-8 p-4 bg-white/5 rounded-xl border border-white/10">
                     <p class="text-sm text-gray-400 mb-1">Need prayer?</p>
-                    <a href="mailto:prayer@pioneermissionsafrica.co.za" class="text-white font-medium hover:text-[var(--color-ochre)] transition-colors flex items-center gap-2">
+                    <a href="mailto:prayers@pioneermissionsafrica.co.za" class="text-white font-medium hover:text-[var(--color-ochre)] transition-colors flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                        prayer@pioneermissionsafrica.co.za
+                        prayers@pioneermissionsafrica.co.za
                     </a>
                 </div>
             </div>
