@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonateController;
 use App\Http\Controllers\EbookController;
 use App\Http\Controllers\NetworkController;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ResourcesController;
 use App\Http\Controllers\SermonController;
 use App\Http\Controllers\StudiesController;
@@ -43,6 +44,7 @@ Route::get('/ebooks/{slug}/download', [EbookController::class, 'download'])->nam
 Route::get('/resources', [ResourcesController::class, 'index'])->name('resources');
 Route::get('/resources/tracts', [ResourcesController::class, 'tracts'])->name('resources.tracts');
 Route::get('/resources/ebooks', [ResourcesController::class, 'ebooks'])->name('resources.ebooks');
+Route::get('/resources/notes', [NoteController::class, 'index'])->name('resources.notes');
 
 // Other routes
 Route::get('/sermons', [SermonController::class, 'index'])->name('sermons');
