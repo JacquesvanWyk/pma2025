@@ -8,6 +8,7 @@ use App\Models\Individual;
 use App\Models\Ministry;
 use App\Models\NetworkMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class NetworkController extends Controller
 {
@@ -77,10 +78,10 @@ class NetworkController extends Controller
 
     public function registerIndividual()
     {
-        $networkMember = auth()->user()->networkMember;
+        $individualProfile = auth()->user()->individualProfile;
 
-        if ($networkMember) {
-            return redirect()->route('dashboard');
+        if ($individualProfile) {
+            return redirect()->route('network.edit', $individualProfile);
         }
 
         return view('network.register', ['type' => 'individual']);
@@ -88,12 +89,6 @@ class NetworkController extends Controller
 
     public function registerFellowship()
     {
-        $networkMember = auth()->user()->networkMember;
-
-        if ($networkMember) {
-            return redirect()->route('dashboard');
-        }
-
         return view('network.register', ['type' => 'group']);
     }
 
@@ -105,6 +100,9 @@ class NetworkController extends Controller
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:2000',
+            'image' => 'nullable|image|max:2048', // 2MB Max
+            'professional_skills' => 'nullable|string|max:1000',
+            'ministry_skills' => 'nullable|string|max:1000',
             'total_believers' => 'nullable|integer|min:1',
             'household_members' => 'nullable|array',
             'household_members.*.name' => 'required|string|max:255',
@@ -122,7 +120,7 @@ class NetworkController extends Controller
             'show_phone' => 'boolean',
         ]);
 
-        $networkMember = NetworkMember::create([
+        $data = [
             'user_id' => auth()->id() ?? null,
             'type' => $validated['type'],
             'name' => $validated['name'],
@@ -142,7 +140,27 @@ class NetworkController extends Controller
             'show_email' => $validated['show_email'] ?? true,
             'show_phone' => $validated['show_phone'] ?? false,
             'status' => 'pending',
-        ]);
+        ];
+
+        // Handle Image Upload
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('network', 'public');
+        }
+
+        // Handle Skills (Convert comma-separated string to array) - Individuals Only
+        if ($validated['type'] === 'individual') {
+            if ($request->filled('professional_skills')) {
+                $data['professional_skills'] = array_map('trim', explode(',', $request->professional_skills));
+            }
+            if ($request->filled('ministry_skills')) {
+                $data['ministry_skills'] = array_map('trim', explode(',', $request->ministry_skills));
+            }
+        } else {
+            $data['professional_skills'] = null;
+            $data['ministry_skills'] = null;
+        }
+
+        $networkMember = NetworkMember::create($data);
 
         // Attach languages
         if (! empty($validated['languages'])) {
@@ -179,6 +197,9 @@ class NetworkController extends Controller
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:255',
             'bio' => 'nullable|string|max:2000',
+            'image' => 'nullable|image|max:2048',
+            'professional_skills' => 'nullable|string|max:1000',
+            'ministry_skills' => 'nullable|string|max:1000',
             'total_believers' => 'nullable|integer|min:1',
             'household_members' => 'nullable|array',
             'household_members.*.name' => 'required|string|max:255',
@@ -196,7 +217,7 @@ class NetworkController extends Controller
             'show_phone' => 'boolean',
         ]);
 
-        $networkMember->update([
+        $data = [
             'type' => $validated['type'],
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -214,7 +235,37 @@ class NetworkController extends Controller
             'meeting_times' => $validated['meeting_times'] ?? null,
             'show_email' => $validated['show_email'] ?? true,
             'show_phone' => $validated['show_phone'] ?? false,
-        ]);
+        ];
+
+        // Handle Image Upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($networkMember->image_path) {
+                Storage::disk('public')->delete($networkMember->image_path);
+            }
+            $data['image_path'] = $request->file('image')->store('network', 'public');
+        }
+
+        // Handle Skills - Individuals Only
+        if ($validated['type'] === 'individual') {
+            if ($request->filled('professional_skills')) {
+                $data['professional_skills'] = array_map('trim', explode(',', $request->professional_skills));
+            } else {
+                $data['professional_skills'] = null;
+            }
+
+            if ($request->filled('ministry_skills')) {
+                $data['ministry_skills'] = array_map('trim', explode(',', $request->ministry_skills));
+            } else {
+                $data['ministry_skills'] = null;
+            }
+        } else {
+            // For groups, clear any existing skills just in case
+            $data['professional_skills'] = null;
+            $data['ministry_skills'] = null;
+        }
+
+        $networkMember->update($data);
 
         // Sync languages
         if (! empty($validated['languages'])) {

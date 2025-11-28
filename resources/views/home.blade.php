@@ -1,352 +1,259 @@
 @extends('layouts.public')
 
+@php $mainClass = 'pt-0'; @endphp
+
 @section('content')
-    <!-- Hero Section - Monthly Pledge Campaign -->
-    <section class="pma-hero">
-        <!-- Geometric Light Rays Background -->
+    <!-- Hero Section - Cinematic Mission-First -->
+    <section class="relative min-h-screen flex items-center overflow-hidden bg-[var(--color-indigo-dark)]">
+        <!-- Background Elements -->
         <div class="pma-light-rays"></div>
+        
+        <!-- Animated Blobs -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-pma-green)] opacity-20 rounded-full blur-[100px] animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-[var(--color-ochre)] opacity-10 rounded-full blur-[120px]" style="animation-delay: 2s;"></div>
 
-        <!-- Organic Blobs -->
-        <div class="pma-blob" style="top: 10%; left: 10%; width: 400px; height: 400px; background: var(--color-pma-green);"></div>
-        <div class="pma-blob" style="bottom: 20%; right: 15%; width: 300px; height: 300px; background: var(--color-pma-green-light);"></div>
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-0"></div>
 
-        <!-- Dark Overlay -->
-        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 z-0"></div>
-
-        <!-- Optional Background Image -->
-        @if(file_exists(public_path('images/hero_1.png')))
-        <div class="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-overlay z-0"
-             style="background-image: url('/images/hero_1.png');"></div>
-        @endif
-
-        <!-- Hero Content -->
-        <div class="pma-hero-content container mx-auto px-6 py-20 lg:py-32 text-center">
-            <div class="max-w-5xl mx-auto">
-                <!-- Main Heading -->
-                <h1 class="pma-hero-title pma-display text-white mb-6">
-                    Monthly Pledge
-                </h1>
-
-                <!-- Subheading -->
-                <p class="pma-hero-subtitle pma-accent text-white/90 mb-8">
-                    Proclaiming the Everlasting Gospel
-                </p>
-
-                <!-- Essential Knowledge Quote -->
-                <div class="pma-quote mb-12 max-w-3xl mx-auto">
-                    <p class="pma-quote-text text-white/95">
-                        "We believe a true Knowledge of God will lead to eternal life.
-                        This true knowledge of God, and Jesus Christ whom He sent, is truly the essential knowledge."
+        <!-- Content Container -->
+        <div class="container mx-auto px-6 pt-32 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+                <!-- Left Column: Mission Statement -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-medium mb-8 animate-fade-in-up">
+                        <span class="w-2 h-2 rounded-full bg-[var(--color-pma-green)] animate-pulse"></span>
+                        Proclaiming the Everlasting Gospel
+                    </div>
+                    
+                    <h1 class="text-5xl lg:text-7xl font-bold text-white leading-tight mb-6 tracking-tight">
+                        Connecting Africa to the <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-pma-green-light)] to-[var(--color-ochre-light)]">Knowledge of God</span>
+                    </h1>
+                    
+                    <p class="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                        We are a ministry dedicated to spreading the truth of the one true God and His Son, Jesus Christ, supporting spiritual growth through biblical resources and fellowship.
                     </p>
-                </div>
-
-                <!-- Monthly Pledge Progress Card -->
-                <div class="pma-card-elevated p-8 lg:p-12 mb-12 max-w-3xl mx-auto">
-                    <h3 class="pma-heading text-3xl mb-6 text-center" style="color: var(--color-indigo);">
-                        Monthly Pledge Goal
-                    </h3>
-
-                    <!-- Month Display -->
-                    <div class="text-center mb-8">
-                        <span class="inline-block px-6 py-3 rounded-full text-sm pma-heading"
-                              style="background: var(--gradient-warm); color: white; letter-spacing: 0.05em;">
-                            {{ $pledgeMonth }} PROGRESS
-                        </span>
-                    </div>
-
-                    <!-- Current Amount Display -->
-                    <div class="flex justify-between items-baseline mb-6">
-                        <span class="pma-heading-light text-lg" style="color: var(--color-olive);">Current:</span>
-                        <span class="pma-display text-5xl lg:text-6xl" style="color: var(--color-pma-green);">
-                            R{{ number_format($currentPledges, 0) }}
-                        </span>
-                    </div>
-
-                    <!-- Progress Bar -->
-                    <div class="pma-progress mb-4">
-                        <div
-                            id="hero-progress-bar"
-                            class="pma-progress-bar"
-                            style="width: 0%"
-                            data-percentage="{{ $pledgePercentage }}"
-                        ></div>
-                    </div>
-
-                    <!-- Progress Stats -->
-                    <div class="flex justify-between mb-8 pma-body text-sm" style="color: var(--color-olive);">
-                        <span class="font-semibold">{{ number_format($pledgePercentage, 1) }}% Complete</span>
-                        <span class="font-semibold">Goal: R{{ number_format($pledgeGoal, 0) }}</span>
-                    </div>
-
-                    <div class="pma-divider"></div>
-
-                    <!-- Call to Action -->
-                    <p class="pma-body text-lg mb-8 leading-relaxed text-center" style="color: var(--color-indigo);">
-                        Join us in supporting this vital ministry. Your monthly pledge helps us spread the knowledge
-                        of the one true God across Africa.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="{{ route('pledge') }}" class="pma-btn pma-btn-primary inline-flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="{{ route('studies') }}" class="px-8 py-4 bg-[var(--color-pma-green)] hover:bg-[var(--color-pma-green-light)] text-white rounded-xl font-semibold shadow-lg shadow-[var(--color-pma-green)]/30 transition-all hover:-translate-y-1 hover:shadow-xl flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
-                            Support Our Ministry
+                            Start a Study
                         </a>
-                        <a href="{{ route('about') }}" class="pma-btn pma-btn-secondary inline-flex items-center justify-center">
-                            Learn More
+                        <a href="{{ route('sermons') }}" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-semibold backdrop-blur-md transition-all hover:-translate-y-1 flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Watch Latest Sermon
                         </a>
                     </div>
                 </div>
 
-                <!-- Secondary CTAs -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center opacity-90">
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="btn btn-ghost text-white hover:bg-white/20 btn-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                            Dashboard
+                <!-- Right Column: Floating Pledge Card -->
+                <div class="lg:col-span-5 mt-12 lg:mt-0 relative perspective-1000">
+                    <!-- Glass Card -->
+                    <div class="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-2xl transform transition-transform hover:scale-[1.02] duration-500">
+                        <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-[var(--color-ochre)] to-[var(--color-terracotta)] rounded-2xl rotate-12 opacity-80 blur-md -z-10"></div>
+                        
+                        <h3 class="text-white text-2xl font-bold mb-6 flex items-center gap-3">
+                            <span class="p-2 rounded-lg bg-[var(--color-pma-green)]/20 text-[var(--color-pma-green-light)]">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                            </span>
+                            Monthly Pledge
+                        </h3>
+
+                        <!-- Circular Progress or Bar -->
+                        <div class="mb-8">
+                            <div class="flex justify-between items-end mb-2 text-white">
+                                <span class="text-sm opacity-80">Current Goal</span>
+                                <span class="text-2xl font-bold text-[var(--color-pma-green-light)]">{{ number_format($pledgePercentage, 0) }}%</span>
+                            </div>
+                            <div class="h-4 bg-white/10 rounded-full overflow-hidden relative">
+<div id="pledge-progress-bar" class="absolute inset-0 bg-[var(--color-pma-green)] h-full rounded-full transition-all duration-1000 ease-out" style="width: {{ $pledgePercentage }}%">
+                                    <div class="absolute inset-0 bg-white/30 animate-[shimmer_2s_infinite]"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between mt-2 text-xs text-gray-400 font-medium">
+                                <span>R{{ number_format($currentPledges, 0) }} Raised</span>
+                                <span>Goal: R{{ number_format($pledgeGoal, 0) }}</span>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-300 text-sm mb-8 leading-relaxed">
+                            Your monthly support helps us reach more souls with the message of the Kingdom. Join our family of supporters today.
+                        </p>
+
+                        <a href="{{ route('pledge') }}" class="block w-full py-3 bg-white text-[var(--color-indigo)] font-bold rounded-xl text-center hover:bg-gray-100 transition-colors shadow-lg">
+                            Support the Ministry
                         </a>
-                    @else
-                        <a href="{{ route('login') }}" class="btn btn-ghost text-white hover:bg-white/20 btn-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                            </svg>
-                            Login
-                        </a>
-                    @endauth
-                    <a href="{{ route('studies') }}" class="btn btn-ghost text-white hover:bg-white/20 btn-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                        Browse Studies
-                    </a>
-                    <a href="{{ route('sermons') }}" class="btn btn-ghost text-white hover:bg-white/20 btn-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Watch Sermons
-                    </a>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Scroll Indicator -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 animate-bounce">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
         </div>
     </section>
 
-    <!-- Welcome Section -->
-    <section class="py-20 lg:py-32 relative" style="background: var(--gradient-spiritual);">
-        <!-- Cross Pattern Overlay -->
-        <div class="pma-cross-pattern absolute inset-0"></div>
-
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-                <div class="order-2 lg:order-1 pma-animate-on-scroll">
-                    <div class="pma-accent-line mb-4"></div>
-                    <h2 class="pma-section-title pma-heading mb-6" style="color: var(--color-indigo);">
-                        Welcome to Pioneer Missions Africa
-                    </h2>
-                    <p class="pma-body text-lg mb-6 leading-relaxed" style="color: var(--color-indigo);">
-                        We are a ministry determined in our efforts to proclaim the Everlasting Gospel.
-                        Our mission is to spread the knowledge of the one true God and His Son across Africa,
-                        supporting individuals, groups, and home churches in their spiritual journey.
-                    </p>
-                    <p class="pma-body text-lg mb-8 leading-relaxed" style="color: var(--color-olive);">
-                        Through biblical studies, resources, and fellowship, we seek to help God's people
-                        understand present truth and prepare for the soon return of our Savior.
-                    </p>
-
-                    <!-- Stats -->
-                    <div class="grid grid-cols-3 gap-4 mb-8">
-                        <div class="pma-stat pma-stagger-1">
-                            <div class="pma-stat-number">8+</div>
-                            <div class="pma-stat-label">Years Serving</div>
-                        </div>
-                        <div class="pma-stat pma-stagger-2">
-                            <div class="pma-stat-number">100+</div>
-                            <div class="pma-stat-label">Lives Touched</div>
-                        </div>
-                        <div class="pma-stat pma-stagger-3">
-                            <div class="pma-stat-number">50+</div>
-                            <div class="pma-stat-label">Resources</div>
-                        </div>
-                    </div>
-
-                    <a href="{{ route('about') }}" class="pma-btn pma-btn-primary">Learn More About Us</a>
-                </div>
-                <div class="order-1 lg:order-2 pma-animate-on-scroll">
-                    <!-- Image with fallback -->
-                    <div class="relative rounded-3xl overflow-hidden" style="box-shadow: var(--shadow-xl);">
-                        @if(file_exists(public_path('images/camp_1.jpg')))
-                            <img src="/images/camp_1.jpg" alt="Ministry Team" class="w-full h-full object-cover aspect-[4/3]">
-                        @else
-                            <div class="w-full aspect-[4/3] flex items-center justify-center text-white p-8"
-                                 style="background: var(--gradient-warm);">
-                                <div class="text-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto mb-4 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    <p class="pma-heading text-xl">Spreading the Gospel Across Africa</p>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Prayer Room Intro -->
-    <section class="py-20 relative overflow-hidden" style="background: var(--gradient-hero);">
-        <div class="pma-light-rays"></div>
-        <div class="absolute inset-0 bg-black/40 z-0"></div>
-
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="max-w-5xl mx-auto">
-                <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    <div class="pma-animate-on-scroll">
-                        <span class="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4" style="background: rgba(255, 255, 255, 0.2); color: white;">
-                            NEW PROGRAMME
-                        </span>
-                        <h2 class="text-4xl lg:text-5xl font-bold text-white mb-4">
-                            The Prayer Room
-                        </h2>
-                        <p class="text-xl text-white/90 mb-6">
-                            Join us every last Wednesday of the month at 7:00 PM (SAST) as we come together in prayer for our friends, families, and communities.
-                        </p>
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <a href="{{ route('prayer-room.index') }}" class="pma-btn pma-btn-primary inline-flex items-center justify-center gap-2">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                                <span>Learn More & Submit Requests</span>
-                            </a>
-                            <a href="https://chat.whatsapp.com/EqqJGyKQm02KSaYoi6RhiN?mode=hqrt1" target="_blank" class="pma-btn inline-flex items-center justify-center gap-2" style="background-color: #25D366; color: white; border: none;">
-                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                </svg>
-                                <span>Join WhatsApp Group</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="pma-animate-on-scroll">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                            <div class="text-center text-white">
-                                <div class="text-sm font-semibold uppercase tracking-wider mb-2 opacity-80">Next Session</div>
-                                <div class="text-3xl font-bold mb-4">Wednesday, 27 August 2025</div>
-                                <div class="text-xl mb-6">@ 7:00 PM (SAST)</div>
-
-                                <div class="border-t border-white/20 pt-6">
-                                    <div class="text-sm font-semibold uppercase tracking-wider mb-2 opacity-80">Theme</div>
-                                    <div class="text-2xl font-bold">Praying for Our Friends</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Studies -->
-    <section class="py-20 lg:py-32" style="background: white;">
+    <!-- Bento Grid: Discover Content -->
+    <section class="py-24 bg-[var(--color-cream)]" id="discover">
         <div class="container mx-auto px-6">
-            <div class="pma-section-header pma-animate-on-scroll">
-                <div class="pma-accent-line mx-auto mb-4"></div>
-                <h2 class="pma-section-title pma-heading" style="color: var(--color-indigo);">Featured Studies</h2>
-                <p class="pma-section-subtitle pma-body">
-                    Explore our collection of biblical studies focused on present truth and the pioneering message
-                </p>
+            <div class="text-center mb-16">
+                <span class="text-[var(--color-ochre)] font-semibold uppercase tracking-widest text-sm mb-2 block">Discover Truth</span>
+                <h2 class="text-4xl font-bold text-[var(--color-indigo)] mb-4">Latest from the Ministry</h2>
+                <div class="w-20 h-1 bg-[var(--color-pma-green)] mx-auto rounded-full"></div>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($featuredStudies as $index => $study)
-                <div class="pma-card pma-animate-on-scroll pma-stagger-{{ $index + 1 }}">
-                    <div class="p-6">
-                        <div class="w-full h-48 mb-6 rounded-xl flex items-center justify-center relative overflow-hidden"
-                             style="background: var(--gradient-spiritual);">
-                            <div class="pma-cross-pattern absolute inset-0"></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 relative z-10" fill="var(--color-ochre)" opacity="0.3" viewBox="0 0 24 24">
-                                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"></path>
-                            </svg>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[minmax(200px,auto)]">
+                
+                <!-- Featured Big Item (Latest Study) -->
+                @if($featuredStudies->count() > 0)
+                    @php $firstStudy = $featuredStudies->first(); @endphp
+                    <div class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-10"></div>
+                        <!-- Fallback background if no image -->
+                        <div class="absolute inset-0 bg-[var(--color-indigo)] z-0">
+                             <div class="w-full h-full opacity-40 mix-blend-overlay bg-[url('/images/pattern-bg.png')] bg-cover"></div>
                         </div>
-
-                        <div class="flex gap-2 mb-3">
-                            <span class="px-3 py-1 rounded-full text-xs pma-heading-light"
-                                  style="background: var(--color-pma-green); color: white;">
-                                {{ $study->category->name }}
+                        
+                        <div class="relative z-20 h-full flex flex-col justify-end p-8">
+                            <span class="inline-block px-3 py-1 rounded-full bg-[var(--color-pma-green)] text-white text-xs font-bold mb-3 w-fit">
+                                Featured Study
                             </span>
-                            <span class="px-3 py-1 rounded-full text-xs pma-body"
-                                  style="background: var(--color-cream-dark); color: var(--color-olive);">
-                                {{ $study->read_time }} min read
-                            </span>
+                            <h3 class="text-3xl font-bold text-white mb-2 group-hover:text-[var(--color-ochre-light)] transition-colors">
+                                {{ $firstStudy->title }}
+                            </h3>
+                            <p class="text-gray-300 mb-6 line-clamp-2">{{ $firstStudy->excerpt }}</p>
+                            <a href="{{ route('studies.show', $firstStudy->slug) }}" class="inline-flex items-center text-white font-semibold hover:gap-2 transition-all">
+                                Read Now <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            </a>
                         </div>
+                    </div>
+                @endif
 
-                        <h3 class="pma-heading text-2xl mb-3" style="color: var(--color-indigo);">
-                            {{ $study->title }}
-                        </h3>
-                        <p class="pma-body mb-6" style="color: var(--color-olive);">
-                            {{ $study->excerpt }}
-                        </p>
-
-                        <a href="{{ route('studies.show', $study->slug) }}" class="pma-btn pma-btn-secondary w-full text-center">
-                            Read Study
+                <!-- Secondary Item (Prayer Room) -->
+                <div class="md:col-span-1 md:row-span-2 bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:border-[var(--color-pma-green)] transition-colors group flex flex-col">
+                    <div class="w-12 h-12 rounded-xl bg-[var(--color-pma-green)]/10 text-[var(--color-pma-green)] flex items-center justify-center mb-6 group-hover:bg-[var(--color-pma-green)] group-hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[var(--color-indigo)] mb-2">Prayer Room</h3>
+                    <p class="text-gray-500 text-sm mb-6 flex-grow">Join us monthly to pray for our communities.</p>
+                    <div class="mt-auto">
+                        <div class="text-xs font-bold text-[var(--color-ochre)] uppercase tracking-wide mb-1">Next Session</div>
+                        <div class="font-bold text-[var(--color-indigo)]">Wed, 27 Aug 2025</div>
+                        <a href="{{ route('prayer-room.index') }}" class="mt-4 w-full py-2 rounded-lg border border-[var(--color-pma-green)] text-[var(--color-pma-green)] font-semibold text-sm flex items-center justify-center hover:bg-[var(--color-pma-green)] hover:text-white transition-colors">
+                            Join Us
                         </a>
                     </div>
                 </div>
-                @endforeach
-            </div>
 
-            <div class="text-center mt-12 pma-animate-on-scroll">
-                <a href="{{ route('studies') }}" class="pma-btn pma-btn-primary">View All Studies</a>
+                <!-- Third Item (Sermons) -->
+                <div class="md:col-span-1 md:row-span-1 bg-[var(--color-indigo)] rounded-3xl p-6 shadow-lg relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                    <h3 class="text-white font-bold text-lg mb-2 relative z-10">Latest Sermons</h3>
+                    <p class="text-white/70 text-sm mb-4 relative z-10">Watch recent messages.</p>
+                    <a href="{{ route('sermons') }}" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[var(--color-indigo)] transition-colors relative z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </a>
+                </div>
+
+                <!-- Fourth Item (Resources/Ebooks) -->
+                <div class="md:col-span-1 md:row-span-1 bg-[#f8f5f2] rounded-3xl p-6 shadow-sm border border-[#e8e1d5] hover:border-[var(--color-ochre)] transition-colors flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-[var(--color-indigo)] font-bold text-lg mb-1">Free Resources</h3>
+                        <p class="text-gray-500 text-xs">E-books & Tracts</p>
+                    </div>
+                    <div class="flex justify-end">
+                        <a href="{{ route('resources') }}" class="text-[var(--color-ochre)] hover:text-[var(--color-ochre-dark)] transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Fifth Item (More Studies) -->
+                @if($featuredStudies->count() > 1)
+                    @foreach($featuredStudies->skip(1)->take(2) as $study)
+                    <div class="md:col-span-1 md:row-span-1 bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all group">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-bold text-[var(--color-pma-green)] bg-[var(--color-pma-green)]/10 px-2 py-1 rounded">{{ $study->category->name ?? 'Study' }}</span>
+                            <span class="text-xs text-gray-400">{{ $study->read_time ?? '5' }} min</span>
+                        </div>
+                        <h3 class="font-bold text-[var(--color-indigo)] mb-2 line-clamp-2 group-hover:text-[var(--color-pma-green)] transition-colors">
+                            <a href="{{ route('studies.show', $study->slug) }}">{{ $study->title }}</a>
+                        </h3>
+                        <p class="text-xs text-gray-500 line-clamp-2 mb-0">{{ $study->excerpt }}</p>
+                    </div>
+                    @endforeach
+                @endif
+
             </div>
         </div>
     </section>
 
+    <!-- Original Sections included below -->
     @include('partials.sermons-section')
     @include('partials.resources-section')
-    @include('partials.support-section')
-    @include('partials.newsletter-section')
-
+        @include('partials.support-section')
+        @include('partials.newsletter-section')
+    
+    @endsection
+    
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Progress Bar Animation
-    const heroProgressBar = document.getElementById('hero-progress-bar');
-    if (heroProgressBar) {
-        const targetPercentage = parseFloat(heroProgressBar.dataset.percentage);
-        setTimeout(() => {
-            heroProgressBar.style.width = targetPercentage + '%';
-        }, 500);
-    }
-
     // Scroll Animation Observer
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
+    try {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
 
-    document.querySelectorAll('.pma-animate-on-scroll').forEach(el => {
-        observer.observe(el);
-    });
+        const animatedElements = document.querySelectorAll('.pma-animate-on-scroll');
+        if (animatedElements.length > 0) {
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+        }
+    } catch (e) {
+        console.error('Animation Observer Error:', e);
+        // Fallback: Make everything visible if observer fails
+        document.querySelectorAll('.pma-animate-on-scroll').forEach(el => {
+            el.classList.add('is-visible');
+            el.style.opacity = 1;
+            el.style.transform = 'none';
+        });
+    }
+
+    // Progress Bar Animation
+    try {
+        const bar = document.getElementById('pledge-progress-bar');
+        if (bar) {
+            const targetWidth = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = targetWidth;
+            }, 100);
+        }
+    } catch (e) {
+        console.warn('Progress bar animation error:', e);
+    }
 });
 </script>
 @endpush
-@endsection
+    

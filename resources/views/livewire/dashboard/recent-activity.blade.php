@@ -1,4 +1,4 @@
-<?php
+{{-- <?php
 
 use App\Models\FeedPost;
 use Livewire\Volt\Component;
@@ -62,4 +62,4 @@ new class extends Component {
             </div>
         @endforelse
     </div>
-</div>
+</div> --}}

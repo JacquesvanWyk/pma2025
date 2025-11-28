@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Studies\Schemas;
 
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -27,19 +28,47 @@ class StudyForm
                     ->unique(ignoreRecord: true)
                     ->columnSpanFull(),
 
-                RichEditor::make('content')
-                    ->required()
-                    ->toolbarButtons([
-                        'bold',
-                        'italic',
-                        'underline',
-                        'h2',
-                        'h3',
-                        'bulletList',
-                        'orderedList',
-                        'link',
-                        'blockquote',
-                        'codeBlock',
+                Builder::make('content')
+                    ->blocks([
+                        Builder\Block::make('text')
+                            ->schema([
+                                RichEditor::make('content')
+                                    ->label('Content')
+                                    ->required()
+                                    ->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                        'underline',
+                                        'h2',
+                                        'h3',
+                                        'bulletList',
+                                        'orderedList',
+                                        'link',
+                                        'blockquote',
+                                        'codeBlock',
+                                    ]),
+                            ]),
+                        Builder\Block::make('image')
+                            ->schema([
+                                FileUpload::make('url')
+                                    ->label('Image')
+                                    ->disk('public')
+                                    ->image()
+                                    ->directory('studies/content')
+                                    ->required(),
+                                TextInput::make('alt')
+                                    ->label('Alt Text (for accessibility)')
+                                    ->required(),
+                                TextInput::make('caption'),
+                            ]),
+                        Builder\Block::make('video')
+                            ->schema([
+                                TextInput::make('url')
+                                    ->label('YouTube Video URL')
+                                    ->helperText('Paste the full YouTube URL (e.g., https://www.youtube.com/watch?v=...)')
+                                    ->required()
+                                    ->url(),
+                            ]),
                     ])
                     ->columnSpanFull(),
 
@@ -49,6 +78,7 @@ class StudyForm
 
                 FileUpload::make('featured_image')
                     ->label('Featured Image')
+                    ->disk('public')
                     ->image()
                     ->imageEditor()
                     ->directory('studies/images')

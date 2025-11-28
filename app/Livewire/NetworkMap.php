@@ -62,9 +62,17 @@ class NetworkMap extends Component
                 'id' => $member->id,
                 'name' => $member->name,
                 'type' => $member->type,
+                'image_path' => $member->image_path,
+                'professional_skills' => $member->professional_skills,
+                'ministry_skills' => $member->ministry_skills,
                 'latitude' => $member->latitude,
                 'longitude' => $member->longitude,
                 'bio' => $member->bio,
+                'email' => $member->email,
+                'phone' => $member->phone,
+                'show_email' => $member->show_email,
+                'show_phone' => $member->show_phone,
+                'meeting_times' => $member->meeting_times,
                 'languages' => $member->languages->map(function ($language) {
                     return [
                         'id' => $language->id,

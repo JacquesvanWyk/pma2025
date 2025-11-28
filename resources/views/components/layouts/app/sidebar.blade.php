@@ -15,8 +15,16 @@
 
             <flux:sidebar.nav class="text-white">
                 <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate class="text-white hover:text-white">{{ __('Dashboard') }}</flux:sidebar.item>
-                <flux:sidebar.item icon="user" :href="route('network.register.individual')" :current="request()->routeIs('network.register.individual')" wire:navigate class="text-white hover:text-white">{{ __('Individual') }}</flux:sidebar.item>
-                <flux:sidebar.item icon="user-group" :href="route('network.register.fellowship')" :current="request()->routeIs('network.register.fellowship')" wire:navigate class="text-white hover:text-white">{{ __('Fellowship') }}</flux:sidebar.item>
+                
+                @php
+                    $individualProfile = auth()->user()->individualProfile;
+                    $firstFellowship = auth()->user()->fellowshipProfiles()->first();
+                @endphp
+
+                <flux:sidebar.item icon="user" :href="$individualProfile ? route('network.edit', $individualProfile) : route('network.register.individual')" :current="request()->routeIs('network.register.individual') || (isset($networkMember) && $networkMember->is($individualProfile))" wire:navigate class="text-white hover:text-white">{{ __('Individual') }}</flux:sidebar.item>
+                
+                <flux:sidebar.item icon="user-group" :href="$firstFellowship ? route('network.edit', $firstFellowship) : route('network.register.fellowship')" :current="request()->routeIs('network.register.fellowship') || (isset($networkMember) && $networkMember->is($firstFellowship))" wire:navigate class="text-white hover:text-white">{{ __('Fellowship') }}</flux:sidebar.item>
+                
                 <flux:sidebar.item icon="map" :href="route('network.index')" :current="request()->routeIs('network.index')" wire:navigate class="text-white hover:text-white">{{ __('Network Map') }}</flux:sidebar.item>
             </flux:sidebar.nav>
 

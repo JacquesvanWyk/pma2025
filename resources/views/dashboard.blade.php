@@ -12,112 +12,169 @@
     @endif
 
     @php
-        $networkMember = auth()->user()->networkMember;
+        $networkMembers = auth()->user()->networkMembers;
     @endphp
 
-    @if($networkMember)
-    <!-- User's Network Profile -->
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-8 mb-8">
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h2 class="text-2xl font-bold" style="color: var(--color-indigo);">Your Network Profile</h2>
-                <p class="text-sm mt-1">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                        @if($networkMember->status === 'approved') bg-green-100 text-green-800
-                        @elseif($networkMember->status === 'pending') bg-yellow-100 text-yellow-800
-                        @else bg-red-100 text-red-800 @endif">
-                        {{ ucfirst($networkMember->status) }}
-                    </span>
+    @if($networkMembers->isNotEmpty())
+    <div class="space-y-8 mb-8">
+        @foreach($networkMembers as $profile)
+        <!-- Network Profile Card -->
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center gap-4">
+                    @if($profile->image_path)
+                        <img src="{{ asset('storage/' . $profile->image_path) }}" alt="Profile Picture" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 shadow-sm">
+                    @else
+                        <div class="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 text-2xl font-bold">
+                            {{ mb_substr($profile->name, 0, 1) }}
+                        </div>
+                    @endif
+                    <div>
+                        <h2 class="text-2xl font-bold" style="color: var(--color-indigo);">
+                            {{ $profile->name }}
+                        </h2>
+                        <p class="text-sm mt-1">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                @if($profile->status === 'approved') bg-green-100 text-green-800
+                                @elseif($profile->status === 'pending') bg-yellow-100 text-yellow-800
+                                @else bg-red-100 text-red-800 @endif">
+                                {{ ucfirst($profile->status) }}
+                            </span>
+                            <span class="ml-2 text-gray-500 text-xs uppercase tracking-wider font-semibold">
+                                {{ $profile->type === 'individual' ? 'Individual' : 'Fellowship' }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <a href="{{ route('network.edit', $profile) }}" class="px-4 py-2 rounded-lg font-medium transition" style="background: var(--color-pma-green); color: white;">
+                    Edit Profile
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Basic Information</h3>
+                    <dl class="space-y-2">
+                        <div>
+                            <dt class="text-sm text-gray-600">Name:</dt>
+                            <dd class="font-medium">{{ $profile->name }}</dd>
+                        </div>
+                        @if($profile->show_email)
+                        <div>
+                            <dt class="text-sm text-gray-600">Email:</dt>
+                            <dd class="font-medium">{{ $profile->email }}</dd>
+                        </div>
+                        @endif
+                        @if($profile->phone && $profile->show_phone)
+                        <div>
+                            <dt class="text-sm text-gray-600">Phone:</dt>
+                            <dd class="font-medium">{{ $profile->phone }}</dd>
+                        </div>
+                        @endif
+                    </dl>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Location</h3>
+                    <dl class="space-y-2">
+                        @if($profile->city)
+                        <div>
+                            <dt class="text-sm text-gray-600">City:</dt>
+                            <dd class="font-medium">{{ $profile->city }}</dd>
+                        </div>
+                        @endif
+                        @if($profile->province)
+                        <div>
+                            <dt class="text-sm text-gray-600">Province:</dt>
+                            <dd class="font-medium">{{ $profile->province }}</dd>
+                        </div>
+                        @endif
+                        @if($profile->country)
+                        <div>
+                            <dt class="text-sm text-gray-600">Country:</dt>
+                            <dd class="font-medium">{{ $profile->country }}</dd>
+                        </div>
+                        @endif
+                        @if($profile->type === 'individual' && $profile->total_believers)
+                        <div>
+                            <dt class="text-sm text-gray-600">Total Believers in Household:</dt>
+                            <dd class="font-medium">{{ $profile->total_believers }}</dd>
+                        </div>
+                        @endif
+                        @if($profile->type === 'group' && $profile->meeting_times)
+                        <div>
+                            <dt class="text-sm text-gray-600">Meeting Times:</dt>
+                            <dd class="font-medium">{{ $profile->meeting_times }}</dd>
+                        </div>
+                        @endif
+                    </dl>
+                </div>
+            </div>
+
+            @if($profile->bio)
+            <div class="mt-6">
+                <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Bio</h3>
+                <p class="text-gray-700">{{ $profile->bio }}</p>
+            </div>
+            @endif
+
+            @if($profile->type === 'individual')
+                @if($profile->professional_skills)
+                <div class="mt-6">
+                    <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Professional Skills</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($profile->professional_skills as $skill)
+                            <span class="px-3 py-1 rounded-full text-sm bg-indigo-100 text-indigo-800">{{ $skill }}</span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                @if($profile->ministry_skills)
+                <div class="mt-6">
+                    <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Ministry Gifts</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($profile->ministry_skills as $skill)
+                            <span class="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">{{ $skill }}</span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            @endif
+
+            @if($profile->languages->isNotEmpty())
+            <div class="mt-6">
+                <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Languages</h3>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($profile->languages as $language)
+                        <span class="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">{{ $language->name }}</span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if($profile->status === 'pending')
+            <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p class="text-sm text-yellow-800">
+                    <strong>Pending Approval:</strong> This profile is currently under review by our team. You'll receive an email notification once it's approved.
                 </p>
             </div>
-            <a href="{{ route('network.edit', $networkMember) }}" class="px-4 py-2 rounded-lg font-medium transition" style="background: var(--color-pma-green); color: white;">
-                Edit Profile
-            </a>
+            @endif
         </div>
-
-        <div class="grid md:grid-cols-2 gap-6">
-            <div>
-                <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Basic Information</h3>
-                <dl class="space-y-2">
-                    <div>
-                        <dt class="text-sm text-gray-600">Name:</dt>
-                        <dd class="font-medium">{{ $networkMember->name }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm text-gray-600">Type:</dt>
-                        <dd class="font-medium">{{ $networkMember->type === 'individual' ? 'Individual Believer' : 'Fellowship Group' }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm text-gray-600">Email:</dt>
-                        <dd class="font-medium">{{ $networkMember->email }}</dd>
-                    </div>
-                    @if($networkMember->phone)
-                    <div>
-                        <dt class="text-sm text-gray-600">Phone:</dt>
-                        <dd class="font-medium">{{ $networkMember->phone }}</dd>
-                    </div>
-                    @endif
-                </dl>
-            </div>
-
-            <div>
-                <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Location</h3>
-                <dl class="space-y-2">
-                    @if($networkMember->city)
-                    <div>
-                        <dt class="text-sm text-gray-600">City:</dt>
-                        <dd class="font-medium">{{ $networkMember->city }}</dd>
-                    </div>
-                    @endif
-                    @if($networkMember->province)
-                    <div>
-                        <dt class="text-sm text-gray-600">Province:</dt>
-                        <dd class="font-medium">{{ $networkMember->province }}</dd>
-                    </div>
-                    @endif
-                    @if($networkMember->country)
-                    <div>
-                        <dt class="text-sm text-gray-600">Country:</dt>
-                        <dd class="font-medium">{{ $networkMember->country }}</dd>
-                    </div>
-                    @endif
-                    @if($networkMember->type === 'individual' && $networkMember->total_believers)
-                    <div>
-                        <dt class="text-sm text-gray-600">Total Believers in Household:</dt>
-                        <dd class="font-medium">{{ $networkMember->total_believers }}</dd>
-                    </div>
-                    @endif
-                </dl>
-            </div>
-        </div>
-
-        @if($networkMember->bio)
-        <div class="mt-6">
-            <h3 class="font-semibold mb-2" style="color: var(--color-indigo);">Bio</h3>
-            <p class="text-gray-700">{{ $networkMember->bio }}</p>
-        </div>
-        @endif
-
-        @if($networkMember->status === 'pending')
-        <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p class="text-sm text-yellow-800">
-                <strong>Pending Approval:</strong> Your profile is currently under review by our team. You'll receive an email notification once it's approved.
-            </p>
-        </div>
-        @endif
+        @endforeach
     </div>
     @endif
 
     <!-- Stats Overview -->
-    <div class="mb-8">
+    {{-- <div class="mb-8">
         <h2 class="text-2xl font-bold mb-4" style="color: var(--color-indigo);">Dashboard Overview</h2>
         <livewire:dashboard.stats-overview />
-    </div>
+    </div> --}}
 
     <!-- Main Content Grid -->
     <div class="grid lg:grid-cols-2 gap-8 mb-8">
-        <!-- Recent Activity -->
-        <livewire:dashboard.recent-activity />
+        {{-- <!-- Recent Activity -->
+        <livewire:dashboard.recent-activity /> --}}
 
         <!-- Notifications Widget -->
         <livewire:dashboard.notifications-widget />

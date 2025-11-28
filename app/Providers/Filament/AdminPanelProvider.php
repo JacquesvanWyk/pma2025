@@ -32,6 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/PMALogoDarkText.png'))
             ->darkModeBrandLogo(asset('images/PMALogoWhiteText.png'))
             ->brandLogoHeight('2.5rem')
+            ->favicon(asset('favicon/favicon.ico'))
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
             ->pages([

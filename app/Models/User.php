@@ -124,9 +124,24 @@ class User extends Authenticatable
 
     // Believer Network Relationships
 
+    public function networkMembers(): HasMany
+    {
+        return $this->hasMany(NetworkMember::class);
+    }
+
     public function networkMember()
     {
         return $this->hasOne(NetworkMember::class);
+    }
+
+    public function individualProfile()
+    {
+        return $this->hasOne(NetworkMember::class)->where('type', 'individual');
+    }
+
+    public function fellowshipProfiles(): HasMany
+    {
+        return $this->hasMany(NetworkMember::class)->where('type', 'group');
     }
 
     public function individuals(): HasMany

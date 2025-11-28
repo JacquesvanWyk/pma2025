@@ -25,9 +25,8 @@
                                 class="w-full px-4 py-2 rounded-lg border-2 transition-all"
                                 style="border-color: var(--color-pma-green-light); focus:border-color: var(--color-pma-green); outline: none;">
                             <option value="all">All Languages</option>
-                            <option value="english">🇬🇧 English</option>
-                            <option value="afrikaans">🇿🇦 Afrikaans</option>
-                        </select>
+                            <option value="english">English</option>
+                            <option value="afrikaans">Afrikaans</option>                        </select>
                     </div>
 
                     <!-- Sort -->
@@ -84,7 +83,7 @@
                         @if($language && $language !== 'all')
                             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm pma-body"
                                   style="background: var(--color-pma-green-light); color: white;">
-                                {{ $language === 'english' ? '🇬🇧 English' : '🇿🇦 Afrikaans' }}
+                                {{ $language === 'english' ? 'English' : 'Afrikaans' }}
                             </span>
                         @endif
 
@@ -152,12 +151,12 @@
 
                                 <!-- Metadata -->
                                 <div class="flex items-center gap-4 text-xs pma-body" style="color: var(--color-ochre);">
-                                    <span>{{ $study->language === 'afrikaans' ? '🇿🇦 Afrikaans' : '🇬🇧 English' }}</span>
+                                    <span>{{ $study->language === 'afrikaans' ? 'Afrikaans' : 'English' }}</span>
                                     <span>•</span>
                                     <span>{{ $study->published_at->format('M d, Y') }}</span>
                                     @if($study->content)
                                         <span>•</span>
-                                        <span>{{ ceil(str_word_count(strip_tags($study->content)) / 200) }} min read</span>
+                                        <span>{{ $study->reading_time }} min read</span>
                                     @endif
                                 </div>
                             </a>

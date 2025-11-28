@@ -1,4 +1,4 @@
-<?php
+{{-- <?php
 
 use App\Models\FeedPost;
 use App\Models\PostComment;
@@ -28,7 +28,7 @@ new class extends Component {
     }
 }; ?>
 
-<div>
+{{-- <div>
     @php
         $stats = $this->getStats();
     @endphp

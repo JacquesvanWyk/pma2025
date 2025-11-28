@@ -29,6 +29,7 @@ class Study extends Model
     protected $casts = [
         'published_at' => 'datetime',
         'content_images' => 'array',
+        'content' => 'array',
     ];
 
     protected static function boot()
@@ -73,5 +74,27 @@ class Study extends Model
         return $this->status === 'published'
             && $this->published_at !== null
             && $this->published_at->isPast();
+    }
+
+    public function getPlainTextAttribute(): string
+    {
+        if (is_array($this->content)) {
+            $text = '';
+            foreach ($this->content as $block) {
+                if ($block['type'] === 'text') {
+                    $text .= ' ' . strip_tags($block['data']['content']);
+                } elseif ($block['type'] === 'image') {
+                    $text .= ' ' . ($block['data']['caption'] ?? '') . ' ' . ($block['data']['alt'] ?? '');
+                }
+            }
+            return trim($text);
+        }
+
+        return strip_tags($this->content ?? '');
+    }
+
+    public function getReadingTimeAttribute(): int
+    {
+        return ceil(str_word_count($this->plain_text) / 200);
     }
 }

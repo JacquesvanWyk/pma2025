@@ -12,8 +12,17 @@
             @endif
 
             <!-- Registration Form -->
-            <div class="pma-card-elevated p-8">
-                <form action="{{ isset($networkMember) ? route('network.update', $networkMember) : route('network.store') }}" method="POST" class="space-y-6">
+            <div class="pma-card-elevated p-8" x-data="{ 
+                languages: {{ json_encode(old('languages', isset($networkMember) ? $networkMember->languages->pluck('id')->toArray() : [])) }},
+                imagePreview: '{{ isset($networkMember) && $networkMember->image_path ? asset('storage/' . $networkMember->image_path) : '' }}',
+                handleImage(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.imagePreview = URL.createObjectURL(file);
+                    }
+                }
+            }">
+                <form action="{{ isset($networkMember) ? route('network.update', $networkMember) : route('network.store') }}" method="POST" class="space-y-6" enctype="multipart/form-data">
                     @csrf
                     @if(isset($networkMember))
                         @method('PUT')
@@ -100,6 +109,74 @@
                                 @enderror
                             </div>
 
+                            <!-- Profile Picture -->
+                            <div>
+                                <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
+                                    Profile Picture (Optional)
+                                </label>
+                                
+                                <!-- Image Preview Area -->
+                                <div class="flex items-center gap-4 mb-3" x-show="imagePreview">
+                                    <img :src="imagePreview" alt="Profile Preview" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 shadow-sm">
+                                    <button type="button" @click="imagePreview = ''; $refs.fileInput.value = ''" class="text-xs text-red-600 hover:underline">Remove</button>
+                                </div>
+
+                                <input
+                                    type="file"
+                                    name="image"
+                                    accept="image/*"
+                                    x-ref="fileInput"
+                                    @change="handleImage($event)"
+                                    class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-pma-green)] file:text-white hover:file:bg-[var(--color-pma-green-dark)]"
+                                    style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);">
+                                <p class="pma-body text-xs mt-1" style="color: var(--color-olive);">JPG or PNG, max 2MB.</p>
+                                @error('image')
+                                    <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            @if($type === 'individual')
+                            <!-- Professional Skills -->
+                            <div>
+                                <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
+                                    Professional Trade / Skills (Optional)
+                                </label>
+                                <input
+                                    type="text"
+                                    name="professional_skills"
+                                    value="{{ old('professional_skills', isset($networkMember) && $networkMember->professional_skills ? implode(', ', $networkMember->professional_skills) : '') }}"
+                                    placeholder="e.g. Plumber, Accountant, Web Developer"
+                                    class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
+                                    style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);"
+                                    onfocus="this.style.borderColor='var(--color-pma-green)'; this.style.background='white';"
+                                    onblur="this.style.borderColor='var(--color-cream-dark)'; this.style.background='var(--color-cream)';">
+                                <p class="pma-body text-xs mt-1" style="color: var(--color-olive);">List your profession or trade to help us identify resources within the Body of Christ. Separate with commas.</p>
+                                @error('professional_skills')
+                                    <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Ministry Skills -->
+                            <div>
+                                <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
+                                    Ministry Gifts & Service (Optional)
+                                </label>
+                                <input
+                                    type="text"
+                                    name="ministry_skills"
+                                    value="{{ old('ministry_skills', isset($networkMember) && $networkMember->ministry_skills ? implode(', ', $networkMember->ministry_skills) : '') }}"
+                                    placeholder="e.g. Preaching, Youth Ministry, Music, Hospitality"
+                                    class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
+                                    style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);"
+                                    onfocus="this.style.borderColor='var(--color-pma-green)'; this.style.background='white';"
+                                    onblur="this.style.borderColor='var(--color-cream-dark)'; this.style.background='var(--color-cream)';">
+                                <p class="pma-body text-xs mt-1" style="color: var(--color-olive);">How do you serve the body? Separate with commas.</p>
+                                @error('ministry_skills')
+                                    <p class="pma-body text-sm mt-1" style="color: var(--color-terracotta);">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            @endif
+
                             <!-- Household Members (Individual Only) -->
                             @if($type === 'individual')
                             <div class="pma-card p-6" style="background: rgba(10, 117, 58, 0.05);">
@@ -146,16 +223,19 @@
                                 <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
                                     Languages (Optional)
                                 </label>
-                                <select
-                                    name="languages[]"
-                                    multiple
-                                    class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
-                                    style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);">
+                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                                     @foreach(\App\Models\Language::orderBy('name')->get() as $language)
-                                        <option value="{{ $language->id }}" @selected(isset($networkMember) && $networkMember->languages->contains($language->id))>{{ $language->name }}</option>
+                                        <label class="cursor-pointer group relative">
+                                            <input type="checkbox" name="languages[]" value="{{ $language->id }}" class="peer sr-only" x-model="languages">
+                                            <div class="px-3 py-2 rounded-lg border text-sm text-center transition-all duration-200
+                                                peer-checked:bg-[var(--color-pma-green)] peer-checked:text-white peer-checked:border-[var(--color-pma-green)]
+                                                bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50">
+                                                {{ $language->name }}
+                                            </div>
+                                        </label>
                                     @endforeach
-                                </select>
-                                <p class="pma-body text-xs mt-1" style="color: var(--color-olive);">Hold Ctrl/Cmd to select multiple languages</p>
+                                </div>
+                                <p class="pma-body text-xs mt-2" style="color: var(--color-olive);">Select all that apply.</p>
                             </div>
                         </div>
                     </div>
@@ -249,38 +329,39 @@
 
     @push('scripts')
     <script>
-        let registrationMap;
-        let registrationMarker;
-        let registrationAutocomplete;
-        let registrationMapInitialized = false;
-
-        function initRegistrationMap() {
-            if (registrationMapInitialized) return;
-
+        // Define globally for Google Maps callback
+        window.initRegistrationMap = function() {
             const mapContainer = document.getElementById('registration-map');
             const addressInput = document.getElementById('location-search-input');
 
+            // Safety check
             if (!mapContainer || !addressInput) {
-                console.log('Map container or input not found, retrying...');
-                setTimeout(initRegistrationMap, 100);
+                return;
+            }
+
+            // Prevent double initialization on the same element
+            if (mapContainer.dataset.initialized === 'true') {
                 return;
             }
 
             console.log('Initializing registration map...');
 
             // Get existing coordinates or use default
-            const existingLat = parseFloat(document.getElementById('latitude-input').value);
-            const existingLng = parseFloat(document.getElementById('longitude-input').value);
+            const latInput = document.getElementById('latitude-input');
+            const lngInput = document.getElementById('longitude-input');
+            
+            const existingLat = latInput ? parseFloat(latInput.value) : null;
+            const existingLng = lngInput ? parseFloat(lngInput.value) : null;
 
-            const defaultCenter = { lat: -30.5595, lng: 22.9375 };
+            const defaultCenter = { lat: -29.0, lng: 24.0 }; // Central SA
             const position = (existingLat && existingLng)
                 ? { lat: existingLat, lng: existingLng }
                 : defaultCenter;
 
-            const initialZoom = (existingLat && existingLng) ? 10 : 5;
+            const initialZoom = (existingLat && existingLng) ? 12 : 5;
 
             // Create map
-            registrationMap = new google.maps.Map(mapContainer, {
+            const map = new google.maps.Map(mapContainer, {
                 center: position,
                 zoom: initialZoom,
                 mapTypeId: 'roadmap',
@@ -289,9 +370,9 @@
             });
 
             // Create draggable marker
-            registrationMarker = new google.maps.Marker({
+            const marker = new google.maps.Marker({
                 position: position,
-                map: registrationMap,
+                map: map,
                 draggable: true,
                 animation: google.maps.Animation.DROP,
                 title: 'Drag to adjust location'
@@ -299,27 +380,33 @@
 
             // Show existing location if available
             if (existingLat && existingLng) {
-                const cityVal = document.getElementById('city-input').value;
-                const provinceVal = document.getElementById('province-input').value;
-                const countryVal = document.getElementById('country-input').value;
+                const cityVal = document.getElementById('city-input')?.value;
+                const provinceVal = document.getElementById('province-input')?.value;
+                const countryVal = document.getElementById('country-input')?.value;
 
                 if (cityVal) {
-                    document.getElementById('display-city').textContent = cityVal;
-                    document.getElementById('display-province').textContent = provinceVal || '-';
-                    document.getElementById('display-country').textContent = countryVal;
-                    document.getElementById('selected-location').classList.remove('hidden');
+                    const displayCity = document.getElementById('display-city');
+                    if(displayCity) displayCity.textContent = cityVal;
+                    
+                    const displayProvince = document.getElementById('display-province');
+                    if(displayProvince) displayProvince.textContent = provinceVal || '-';
+                    
+                    const displayCountry = document.getElementById('display-country');
+                    if(displayCountry) displayCountry.textContent = countryVal || '-';
+                    
+                    const locationDisplay = document.getElementById('selected-location');
+                    if(locationDisplay) locationDisplay.classList.remove('hidden');
                 }
             }
 
-            // Initialize autocomplete - allows cities, towns, and localities across Africa
-            registrationAutocomplete = new google.maps.places.Autocomplete(addressInput, {
+            // Initialize autocomplete
+            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
                 fields: ['geometry', 'address_components', 'name']
-                // No restrictions - allows all African countries and all place types
             });
 
             // Handle place selection
-            registrationAutocomplete.addListener('place_changed', function() {
-                const place = registrationAutocomplete.getPlace();
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
 
                 if (!place.geometry || !place.geometry.location) {
                     alert('No location found. Please try again.');
@@ -355,60 +442,82 @@
                 }
 
                 // Update marker and map
-                registrationMarker.setPosition(location);
-                registrationMap.setCenter(location);
-                registrationMap.setZoom(12);
+                marker.setPosition(location);
+                map.setCenter(location);
+                map.setZoom(12);
 
                 // Update form fields
-                document.getElementById('latitude-input').value = location.lat();
-                document.getElementById('longitude-input').value = location.lng();
-                document.getElementById('city-input').value = city;
-                document.getElementById('province-input').value = province;
-                document.getElementById('country-input').value = country;
+                if(latInput) latInput.value = location.lat();
+                if(lngInput) lngInput.value = location.lng();
+                
+                const cityInput = document.getElementById('city-input');
+                if(cityInput) cityInput.value = city;
+                
+                const provinceInput = document.getElementById('province-input');
+                if(provinceInput) provinceInput.value = province;
+                
+                const countryInput = document.getElementById('country-input');
+                if(countryInput) countryInput.value = country;
 
                 // Update display
-                document.getElementById('display-city').textContent = city || '-';
-                document.getElementById('display-province').textContent = province || '-';
-                document.getElementById('display-country').textContent = country || '-';
-                document.getElementById('selected-location').classList.remove('hidden');
-
-                console.log('Location updated:', { city, province, country, lat: location.lat(), lng: location.lng() });
+                const displayCity = document.getElementById('display-city');
+                if(displayCity) displayCity.textContent = city || '-';
+                
+                const displayProvince = document.getElementById('display-province');
+                if(displayProvince) displayProvince.textContent = province || '-';
+                
+                const displayCountry = document.getElementById('display-country');
+                if(displayCountry) displayCountry.textContent = country || '-';
+                
+                const locationDisplay = document.getElementById('selected-location');
+                if(locationDisplay) locationDisplay.classList.remove('hidden');
             });
 
             // Handle marker drag
-            google.maps.event.addListener(registrationMarker, 'dragend', function() {
-                const newPosition = registrationMarker.getPosition();
-                document.getElementById('latitude-input').value = newPosition.lat();
-                document.getElementById('longitude-input').value = newPosition.lng();
-                console.log('Marker dragged to:', newPosition.lat(), newPosition.lng());
+            google.maps.event.addListener(marker, 'dragend', function() {
+                const newPosition = marker.getPosition();
+                if(latInput) latInput.value = newPosition.lat();
+                if(lngInput) lngInput.value = newPosition.lng();
             });
 
             // Handle map click
-            google.maps.event.addListener(registrationMap, 'click', function(event) {
-                registrationMarker.setPosition(event.latLng);
-                document.getElementById('latitude-input').value = event.latLng.lat();
-                document.getElementById('longitude-input').value = event.latLng.lng();
+            google.maps.event.addListener(map, 'click', function(event) {
+                marker.setPosition(event.latLng);
+                if(latInput) latInput.value = event.latLng.lat();
+                if(lngInput) lngInput.value = event.latLng.lng();
             });
 
-            registrationMapInitialized = true;
-            console.log('Registration map initialized successfully');
+            // Mark as initialized
+            mapContainer.dataset.initialized = 'true';
+        };
+
+        // Function to check/load Google Maps
+        function loadGoogleMapsApi() {
+            if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+                // Only load if not already loading/loaded
+                if (!document.getElementById('google-maps-script')) {
+                    console.log('Loading Google Maps API...');
+                    const script = document.createElement('script');
+                    script.id = 'google-maps-script';
+                    script.src = 'https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.api_key') }}&libraries=places&callback=initRegistrationMap';
+                    script.async = true;
+                    script.defer = true;
+                    document.head.appendChild(script);
+                }
+            } else {
+                // Already loaded, init directly
+                // Use a small delay to ensure DOM elements from Livewire transition are ready
+                setTimeout(window.initRegistrationMap, 100);
+                // Retry once more just in case
+                setTimeout(window.initRegistrationMap, 500);
+            }
         }
 
-        // Load Google Maps API if not already loaded
-        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-            console.log('Loading Google Maps API...');
-            const script = document.createElement('script');
-            script.src = 'https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.api_key') }}&libraries=places&callback=initRegistrationMap';
-            script.async = true;
-            script.defer = true;
-            script.onerror = function() {
-                console.error('Failed to load Google Maps API');
-            };
-            document.head.appendChild(script);
-        } else {
-            console.log('Google Maps already loaded, initializing...');
-            setTimeout(initRegistrationMap, 100);
-        }
+        // Run on initial load
+        loadGoogleMapsApi();
+
+        // Run on Livewire navigation (SPA transition)
+        document.addEventListener('livewire:navigated', loadGoogleMapsApi);
     </script>
     @endpush
 </x-layouts.app>

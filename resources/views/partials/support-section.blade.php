@@ -16,7 +16,7 @@
             </p>
 
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
-                <div class="pma-card-elevated backdrop-blur-lg bg-white/10 border-white/20 p-8 pma-animate-on-scroll pma-stagger-1">
+                <div class="rounded-3xl shadow-xl border backdrop-blur-lg bg-white/10 border-white/20 p-8 pma-animate-on-scroll pma-stagger-1">
                     <h3 class="pma-heading text-2xl text-white mb-3">One-Time Gift</h3>
                     <p class="pma-body text-white/80 mb-6">
                         Make a single donation to support our ministry
@@ -26,7 +26,7 @@
                     </a>
                 </div>
 
-                <div class="pma-card-elevated backdrop-blur-lg bg-white/20 border-2 border-white/40 p-8 pma-animate-on-scroll pma-stagger-2 relative">
+                <div class="rounded-3xl shadow-xl border backdrop-blur-lg bg-white/20 border-white/40 p-8 pma-animate-on-scroll pma-stagger-2 relative">
                     <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
                         <span class="px-4 py-1 rounded-full text-xs pma-heading"
                               style="background: var(--gradient-warm); color: white;">
@@ -42,12 +42,12 @@
                     </a>
                 </div>
 
-                <div class="pma-card-elevated backdrop-blur-lg bg-white/10 border-white/20 p-8 pma-animate-on-scroll pma-stagger-3">
+                <div class="rounded-3xl shadow-xl border backdrop-blur-lg bg-white/10 border-white/20 p-8 pma-animate-on-scroll pma-stagger-3">
                     <h3 class="pma-heading text-2xl text-white mb-3">Partner With Us</h3>
                     <p class="pma-body text-white/80 mb-6">
                         Join us as a ministry partner
                     </p>
-                    <a href="{{ route('partner') }}" class="pma-btn pma-btn-secondary w-full text-center bg-transparent border-2 border-white text-white hover:bg-white" style="color: white;">
+                    <a href="{{ route('partner') }}" class="pma-btn pma-btn-secondary w-full text-center bg-transparent border-2 border-white text-white hover:bg-white hover:text-[var(--color-pma-green)] transition-colors">
                         Learn More
                     </a>
                 </div>
