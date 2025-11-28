@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ebook;
 use App\Models\Note;
+use App\Models\PledgeProgress;
 use App\Models\PrayerRoomSession;
 use App\Models\Study;
 use App\Models\Tract;
@@ -15,6 +16,12 @@ class HomeController extends Controller
 
     public function index()
     {
+        // Pledge progress
+        $pledgeProgress = PledgeProgress::current();
+        $currentPledges = $pledgeProgress ? $pledgeProgress->current_amount : 0;
+        $pledgeMonth = $pledgeProgress ? $pledgeProgress->month : now()->format('F');
+        $pledgeGoal = $pledgeProgress ? $pledgeProgress->goal_amount : 35000;
+        $pledgePercentage = $pledgeProgress ? $pledgeProgress->percentage : 0;
         // Random published study
         $featuredStudy = Study::published()
             ->inRandomOrder()
@@ -66,7 +73,11 @@ class HomeController extends Controller
             'latestNotes',
             'latestSermon',
             'resourceCounts',
-            'upcomingPrayerSession'
+            'upcomingPrayerSession',
+            'currentPledges',
+            'pledgeMonth',
+            'pledgeGoal',
+            'pledgePercentage'
         ));
     }
 }

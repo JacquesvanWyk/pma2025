@@ -56,39 +56,64 @@
                     <div class="relative bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-2xl transform transition-transform hover:scale-[1.02] duration-500">
                         <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-[var(--color-ochre)] to-[var(--color-terracotta)] rounded-2xl rotate-12 opacity-80 blur-md -z-10"></div>
 
-                        <h3 class="text-white text-2xl font-bold mb-6 flex items-center gap-3">
+                        <h3 class="text-white text-2xl font-bold mb-4 flex items-center gap-3">
                             <span class="p-2 rounded-lg bg-[var(--color-pma-green)]/20 text-[var(--color-pma-green-light)]">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                             </span>
-                            Support the Ministry
+                            Monthly Pledge Goal
                         </h3>
 
-                        <div class="space-y-4 mb-8">
-                            <div class="flex items-center gap-3 text-gray-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-pma-green-light)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Spread the Gospel across Africa</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-gray-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-pma-green-light)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Create free biblical resources</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-gray-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-pma-green-light)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Support kingdom fellowship</span>
-                            </div>
+                        <!-- Month Badge -->
+                        <div class="text-center mb-4">
+                            <span class="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[var(--color-pma-green)] text-white">
+                                {{ $pledgeMonth }} Progress
+                            </span>
                         </div>
 
-                        <p class="text-gray-300 text-sm mb-8 leading-relaxed">
-                            Your support helps us reach more souls with the message of the Kingdom. Join our family of supporters today.
+                        <!-- Current Amount -->
+                        <div class="text-center mb-4">
+                            <span class="text-4xl font-bold text-[var(--color-ochre-light)]">R{{ number_format($currentPledges, 0) }}</span>
+                            <span class="text-gray-400 text-sm ml-2">of R{{ number_format($pledgeGoal, 0) }}</span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="relative h-3 bg-white/10 rounded-full overflow-hidden mb-2">
+                            <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-[var(--color-pma-green)] to-[var(--color-pma-green-light)] rounded-full transition-all duration-1000 pledge-progress-bar"
+                                 style="width: 0%"
+                                 data-target="{{ min($pledgePercentage, 100) }}"></div>
+                            <!-- Shimmer effect -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer"></div>
+                        </div>
+
+                        <!-- Percentage -->
+                        <p class="text-center text-[var(--color-pma-green-light)] font-semibold mb-6">
+                            {{ number_format($pledgePercentage, 1) }}% Complete
                         </p>
+
+                        <div class="border-t border-white/10 pt-6 mb-6">
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3 text-gray-300 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green-light)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Spread the Gospel across Africa</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-gray-300 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green-light)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Create free biblical resources</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-gray-300 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green-light)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Support kingdom fellowship</span>
+                                </div>
+                            </div>
+                        </div>
 
                         <a href="{{ route('donate') }}" class="block w-full py-3 bg-white text-[var(--color-indigo)] font-bold rounded-xl text-center hover:bg-gray-100 transition-colors shadow-lg">
                             Give Today
@@ -253,9 +278,33 @@
     
     @endsection
     
+@push('styles')
+<style>
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    .animate-shimmer {
+        animation: shimmer 2s infinite;
+    }
+    .pledge-progress-bar {
+        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Animate pledge progress bar
+    setTimeout(function() {
+        const progressBar = document.querySelector('.pledge-progress-bar');
+        if (progressBar) {
+            const target = progressBar.dataset.target;
+            progressBar.style.width = target + '%';
+        }
+    }, 300);
+
     // Scroll Animation Observer
     const observerOptions = {
         threshold: 0.1,
