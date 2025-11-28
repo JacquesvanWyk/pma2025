@@ -192,6 +192,10 @@
                         <div class="card-body">
                             <div class="space-y-3">
                                 <div class="flex justify-between py-2 border-b border-gray-300">
+                                    <span class="font-semibold">Account Name:</span>
+                                    <span class="font-mono">Pioneer Missions Africa</span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-300">
                                     <span class="font-semibold">Bank:</span>
                                     <span class="font-mono">Standard Bank</span>
                                 </div>

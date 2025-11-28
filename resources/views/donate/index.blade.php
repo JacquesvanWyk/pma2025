@@ -173,6 +173,10 @@
 
                     <div class="space-y-4 max-w-md mx-auto">
                         <div class="flex justify-between py-3 border-b-2" style="border-color: var(--color-cream-dark);">
+                            <span class="pma-heading-light" style="color: var(--color-indigo);">Account Name:</span>
+                            <span class="pma-body font-mono" style="color: var(--color-olive);">Pioneer Missions Africa</span>
+                        </div>
+                        <div class="flex justify-between py-3 border-b-2" style="border-color: var(--color-cream-dark);">
                             <span class="pma-heading-light" style="color: var(--color-indigo);">Bank:</span>
                             <span class="pma-body font-mono" style="color: var(--color-olive);">Standard Bank</span>
                         </div>
