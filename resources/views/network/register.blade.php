@@ -210,7 +210,7 @@
                                 <textarea
                                     name="meeting_times"
                                     rows="2"
-                                    placeholder="e.g., Sundays 10:00 AM"
+                                    placeholder="e.g., Sabbaths 10:00 AM"
                                     class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
                                     style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);"
                                     onfocus="this.style.borderColor='var(--color-pma-green)'; this.style.background='white';"

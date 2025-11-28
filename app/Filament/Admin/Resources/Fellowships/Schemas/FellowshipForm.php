@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Fellowships\Schemas;
 
+use App\Filament\Forms\Components\GoogleMapLocationPicker;
 use Filament\Forms;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -21,133 +22,135 @@ class FellowshipForm
                             ->label('User Account')
                             ->relationship('user', 'name')
                             ->searchable()
-                            ->required(),
+                            ->preload(),
 
                         Forms\Components\TextInput::make('name')
+                            ->label('Group Name')
                             ->required()
                             ->maxLength(255),
-
-                        Forms\Components\FileUpload::make('logo')
-                            ->image()
-                            ->directory('fellowships/logos')
-                            ->imageEditor()
-                            ->columnSpanFull(),
-
-                        Forms\Components\Textarea::make('description')
-                            ->rows(3)
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Contact Information')
-                    ->icon('heroicon-o-phone')
-                    ->columns(2)
-                    ->schema([
-                        Forms\Components\TextInput::make('phone')
-                            ->tel()
-                            ->maxLength(255),
-
-                        Forms\Components\Toggle::make('show_phone')
-                            ->label('Show phone publicly')
-                            ->default(false),
 
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->maxLength(255),
 
-                        Forms\Components\Toggle::make('show_email')
-                            ->label('Show email publicly')
-                            ->default(false),
-
-                        Forms\Components\TextInput::make('website')
-                            ->url()
-                            ->prefix('https://')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Location')
-                    ->icon('heroicon-o-map-pin')
-                    ->columns(2)
-                    ->schema([
-                        Forms\Components\Textarea::make('address')
-                            ->rows(2)
-                            ->columnSpanFull(),
-
-                        Forms\Components\TextInput::make('country')
+                        Forms\Components\TextInput::make('phone')
+                            ->tel()
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('city')
-                            ->maxLength(255),
+                        Forms\Components\FileUpload::make('image_path')
+                            ->label('Logo / Photo')
+                            ->image()
+                            ->directory('network-members/photos')
+                            ->imageEditor()
+                            ->columnSpanFull(),
 
-                        Forms\Components\TextInput::make('latitude')
-                            ->numeric()
-                            ->step(0.00000001),
-
-                        Forms\Components\TextInput::make('longitude')
-                            ->numeric()
-                            ->step(0.00000001),
+                        Forms\Components\Textarea::make('bio')
+                            ->label('About Your Fellowship')
+                            ->rows(3)
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('Fellowship Details')
                     ->icon('heroicon-o-sparkles')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\TextInput::make('member_count')
+                        Forms\Components\TextInput::make('total_believers')
                             ->numeric()
-                            ->label('Member Count'),
+                            ->label('Member Count')
+                            ->helperText('Total number of believers in your fellowship'),
 
-                        Forms\Components\TextInput::make('meeting_time')
-                            ->label('Meeting Time')
-                            ->placeholder('e.g., Sundays at 10:00 AM')
+                        Forms\Components\TextInput::make('meeting_times')
+                            ->label('Meeting Times')
+                            ->placeholder('e.g., Sabbaths at 10:00 AM')
                             ->maxLength(255),
-
-                        Forms\Components\TagsInput::make('focus_areas')
-                            ->placeholder('e.g., Evangelism, Teaching')
-                            ->suggestions(['Evangelism', 'Teaching', 'Medical', 'Agriculture', 'Children', 'Youth', 'Bible Translation'])
-                            ->columnSpanFull(),
-
-                        Forms\Components\TagsInput::make('languages')
-                            ->placeholder('e.g., English, Afrikaans, Zulu')
-                            ->columnSpanFull(),
-
-                        Forms\Components\TagsInput::make('resources')
-                            ->placeholder('e.g., Building, Sound System')
-                            ->columnSpanFull(),
-
-                        Forms\Components\TagsInput::make('tags')
-                            ->placeholder('Additional tags')
-                            ->columnSpanFull(),
                     ]),
 
-                Section::make('Privacy & Status')
+                Section::make('Languages')
+                    ->icon('heroicon-o-language')
+                    ->schema([
+                        Forms\Components\CheckboxList::make('languages')
+                            ->relationship('languages', 'name')
+                            ->columns(4)
+                            ->searchable(),
+                    ]),
+
+                Section::make('Location')
+                    ->icon('heroicon-o-map-pin')
+                    ->schema([
+                        GoogleMapLocationPicker::make('location_picker')
+                            ->label('Select Location')
+                            ->latitudeField('latitude')
+                            ->longitudeField('longitude')
+                            ->cityField('city')
+                            ->provinceField('province')
+                            ->countryField('country')
+                            ->columnSpanFull(),
+
+                        Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('city')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('province')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('country')
+                                    ->maxLength(255),
+                            ]),
+
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('latitude')
+                                    ->numeric()
+                                    ->step(0.00000001),
+
+                                Forms\Components\TextInput::make('longitude')
+                                    ->numeric()
+                                    ->step(0.00000001),
+                            ]),
+                    ]),
+
+                Section::make('Privacy Settings')
+                    ->icon('heroicon-o-eye')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Toggle::make('show_email')
+                            ->label('Show email publicly')
+                            ->default(true),
+
+                        Forms\Components\Toggle::make('show_phone')
+                            ->label('Show phone publicly')
+                            ->default(false),
+                    ]),
+
+                Section::make('Status & Approval')
                     ->icon('heroicon-o-shield-check')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\Select::make('privacy_level')
+                        Forms\Components\Select::make('status')
                             ->options([
-                                'public' => 'Public',
-                                'network_only' => 'Network Only',
+                                'pending' => 'Pending',
+                                'approved' => 'Approved',
+                                'rejected' => 'Rejected',
                             ])
-                            ->default('network_only')
+                            ->default('pending')
                             ->required(),
-
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true),
-
-                        Forms\Components\Toggle::make('is_approved')
-                            ->label('Approved')
-                            ->default(false),
 
                         Forms\Components\DateTimePicker::make('approved_at')
                             ->disabled(),
 
                         Forms\Components\Select::make('approved_by')
-                            ->relationship('approvedBy', 'name')
+                            ->relationship('approver', 'name')
                             ->disabled()
-                            ->searchable()
-                            ->columnSpanFull(),
+                            ->searchable(),
+
+                        Forms\Components\Textarea::make('rejection_reason')
+                            ->rows(2)
+                            ->visible(fn ($get) => $get('status') === 'rejected'),
                     ]),
+
+                Forms\Components\Hidden::make('type')
+                    ->default('group'),
             ]);
     }
 }

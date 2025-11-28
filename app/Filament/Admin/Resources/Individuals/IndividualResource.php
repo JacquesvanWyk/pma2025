@@ -7,7 +7,7 @@ use App\Filament\Admin\Resources\Individuals\Pages\EditIndividual;
 use App\Filament\Admin\Resources\Individuals\Pages\ListIndividuals;
 use App\Filament\Admin\Resources\Individuals\Schemas\IndividualForm;
 use App\Filament\Admin\Resources\Individuals\Tables\IndividualsTable;
-use App\Models\Individual;
+use App\Models\NetworkMember;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,7 +18,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class IndividualResource extends Resource
 {
-    protected static ?string $model = Individual::class;
+    protected static ?string $model = NetworkMember::class;
+
+    protected static ?string $modelLabel = 'Individual';
+
+    protected static ?string $pluralModelLabel = 'Individuals';
+
+    protected static ?string $slug = 'individuals';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUser;
 
@@ -48,9 +54,10 @@ class IndividualResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
+        return parent::getEloquentQuery()
+            ->where('type', 'individual')
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

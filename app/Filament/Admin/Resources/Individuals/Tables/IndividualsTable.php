@@ -7,11 +7,9 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -21,7 +19,8 @@ class IndividualsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('profile_photo')
+                ImageColumn::make('image_path')
+                    ->label('Photo')
                     ->circular()
                     ->defaultImageUrl(url('/images/default-avatar.png')),
 
@@ -29,8 +28,16 @@ class IndividualsTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('user.name')
-                    ->label('User Account')
+                TextColumn::make('email')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('phone')
+                    ->searchable()
+                    ->toggleable(),
+
+                TextColumn::make('city')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
@@ -40,40 +47,27 @@ class IndividualsTable
                     ->sortable()
                     ->toggleable(),
 
-                TextColumn::make('city')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
-
-                TextColumn::make('focus_areas')
-                    ->badge()
-                    ->separator(',')
-                    ->toggleable(),
-
-                TextColumn::make('privacy_level')
+                TextColumn::make('status')
                     ->badge()
                     ->colors([
-                        'success' => 'public',
-                        'warning' => 'network_only',
+                        'success' => 'approved',
+                        'warning' => 'pending',
+                        'danger' => 'rejected',
                     ])
                     ->sortable(),
 
-                IconColumn::make('is_approved')
-                    ->boolean()
+                TextColumn::make('user.name')
+                    ->label('User Account')
+                    ->searchable()
                     ->sortable()
-                    ->label('Approved'),
-
-                IconColumn::make('is_active')
-                    ->boolean()
-                    ->sortable()
-                    ->label('Active'),
+                    ->toggleable(),
 
                 TextColumn::make('approved_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('approvedBy.name')
+                TextColumn::make('approver.name')
                     ->label('Approved By')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -82,31 +76,15 @@ class IndividualsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 TrashedFilter::make(),
 
-                TernaryFilter::make('is_approved')
-                    ->label('Approval Status')
-                    ->placeholder('All')
-                    ->trueLabel('Approved')
-                    ->falseLabel('Pending'),
-
-                TernaryFilter::make('is_active')
-                    ->label('Active Status')
-                    ->placeholder('All')
-                    ->trueLabel('Active')
-                    ->falseLabel('Inactive'),
-
-                SelectFilter::make('privacy_level')
+                SelectFilter::make('status')
                     ->options([
-                        'public' => 'Public',
-                        'network_only' => 'Network Only',
+                        'approved' => 'Approved',
+                        'pending' => 'Pending',
+                        'rejected' => 'Rejected',
                     ]),
 
                 SelectFilter::make('country')
