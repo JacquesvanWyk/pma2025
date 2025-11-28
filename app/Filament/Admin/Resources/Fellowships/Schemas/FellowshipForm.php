@@ -40,6 +40,7 @@ class FellowshipForm
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Logo / Photo')
                             ->image()
+                            ->disk('public')
                             ->directory('network-members/photos')
                             ->imageEditor()
                             ->columnSpanFull(),

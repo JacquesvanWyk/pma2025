@@ -40,6 +40,7 @@ class IndividualForm
                         Forms\Components\FileUpload::make('image_path')
                             ->label('Profile Photo')
                             ->image()
+                            ->disk('public')
                             ->directory('network-members/photos')
                             ->imageEditor()
                             ->columnSpanFull(),
