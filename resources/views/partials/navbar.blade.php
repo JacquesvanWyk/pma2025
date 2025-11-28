@@ -37,10 +37,6 @@
                     </div>
                 </div>
 
-                <a href="{{ route('studies') }}" class="text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide">Studies</a>
-                
-                <a href="{{ route('sermons') }}" class="text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide">Sermons</a>
-
                 <a href="{{ route('prayer-room.index') }}" class="relative px-3 py-1.5 rounded-lg bg-gradient-to-r from-[var(--color-pma-green)] to-[var(--color-pma-green-light)] text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
@@ -65,6 +61,12 @@
                         </svg>
                     </button>
                     <div class="absolute top-full left-1/2 -translate-x-1/2 w-56 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-gray-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top translate-y-2 group-hover:translate-y-0">
+                        <a href="{{ route('studies') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
+                            <div class="font-semibold">Studies</div>
+                        </a>
+                        <a href="{{ route('sermons') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
+                            <div class="font-semibold">Sermons</div>
+                        </a>
                         <a href="{{ route('resources.tracts') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
                             <div class="font-semibold">Tracts</div>
                         </a>
@@ -74,21 +76,31 @@
                     </div>
                 </div>
 
+                <a href="{{ route('kingdom-kids') }}" class="flex items-center gap-2 text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide">
+                    <img src="{{ url('images/kingdomKids.png') }}" alt="Kingdom Kids" class="h-6 w-auto object-contain">
+                </a>
+
                 <a href="{{ route('contact') }}" class="text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide">Contact</a>
             </div>
 
             <!-- Right Actions -->
-            <div class="hidden lg:flex items-center gap-4">
-                @auth
-                    <a href="{{ route('dashboard') }}" class="text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors">Log In</a>
-                @endauth
-                
-                <a href="{{ route('donate') }}" class="relative overflow-hidden group bg-[var(--color-pma-green)] text-white px-6 py-2.5 rounded-full font-semibold shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5">
+            <div class="hidden lg:flex items-center gap-3">
+                <a href="{{ route('donate') }}" class="relative overflow-hidden group bg-[var(--color-pma-green)] text-white px-5 py-2 rounded-full font-semibold shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 text-sm">
                     <span class="relative z-10">Support Us</span>
                     <div class="absolute inset-0 h-full w-full scale-0 rounded-full transition-all duration-300 group-hover:scale-100 group-hover:bg-[var(--color-pma-green-light)]"></div>
                 </a>
+
+                @auth
+                    <a href="{{ route('dashboard') }}" class="p-2 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors" title="Dashboard">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="px-4 py-2 rounded-full border border-[var(--color-indigo)] text-[var(--color-indigo)] font-medium text-sm hover:bg-[var(--color-indigo)] hover:text-white transition-all">
+                        Log In
+                    </a>
+                @endauth
             </div>
 
             <!-- Mobile Menu Button -->
@@ -128,24 +140,9 @@
                     </div>
                 </div>
 
-                <a href="{{ route('studies') }}" class="text-lg font-medium text-[var(--color-indigo)]">Studies</a>
-                <a href="{{ route('sermons') }}" class="text-lg font-medium text-[var(--color-indigo)]">Sermons</a>
-
-                <a href="{{ route('prayer-room.index') }}" class="text-lg font-bold text-[var(--color-pma-green)] flex items-center gap-2">
-                    Prayer Room
-                    <span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">NEW</span>
-                </a>
-
-                <a href="{{ route('network.index') }}" class="text-lg font-bold text-[var(--color-indigo)] flex items-center gap-2">
-                    Network
-                </a>
-
-                <div x-data="{ open: false }" class="border-b border-dashed border-gray-200 pb-2">
-                    <button @click="open = !open" class="flex items-center justify-between w-full text-lg font-medium text-[var(--color-indigo)]">
-                        Resources
-                        <svg :class="{'rotate-180': open}" class="w-5 h-5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                    </button>
                     <div x-show="open" class="pl-4 mt-2 flex flex-col gap-3">
+                        <a href="{{ route('studies') }}" class="text-gray-600">Studies</a>
+                        <a href="{{ route('sermons') }}" class="text-gray-600">Sermons</a>
                         <a href="{{ route('resources.tracts') }}" class="text-gray-600">Tracts</a>
                         <a href="{{ route('resources.ebooks') }}" class="text-gray-600">E-Books</a>
                     </div>

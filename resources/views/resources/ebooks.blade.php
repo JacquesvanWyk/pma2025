@@ -125,8 +125,13 @@
                     <p class="pma-body text-sm mb-2" style="color: var(--color-olive);">by {{ $ebook->author }}</p>
                     @endif
                     @if($ebook->description)
-                    <p class="pma-body text-sm mb-4" style="color: var(--color-olive);">
+                    <p class="pma-body text-sm mb-3" style="color: var(--color-olive);">
                         {{ Str::limit($ebook->description, 80) }}
+                    </p>
+                    @endif
+                    @if($ebook->download_count > 0)
+                    <p class="pma-body text-xs mb-3" style="color: var(--color-olive);">
+                        {{ number_format($ebook->download_count) }} downloads
                     </p>
                     @endif
                     <a href="{{ asset('storage/ebooks/' . $ebook->pdf_file) }}"
@@ -180,8 +185,13 @@
                     <p class="pma-body text-sm mb-2" style="color: var(--color-olive);">deur {{ $ebook->author }}</p>
                     @endif
                     @if($ebook->description)
-                    <p class="pma-body text-sm mb-4" style="color: var(--color-olive);">
+                    <p class="pma-body text-sm mb-3" style="color: var(--color-olive);">
                         {{ Str::limit($ebook->description, 80) }}
+                    </p>
+                    @endif
+                    @if($ebook->download_count > 0)
+                    <p class="pma-body text-xs mb-3" style="color: var(--color-olive);">
+                        {{ number_format($ebook->download_count) }} downloads
                     </p>
                     @endif
                     <a href="{{ asset('storage/ebooks/' . $ebook->pdf_file) }}"

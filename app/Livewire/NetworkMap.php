@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\NetworkMember;
 use Livewire\Attributes\Url;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class NetworkMap extends Component
 {
@@ -44,11 +43,11 @@ class NetworkMap extends Component
         }
 
         // Location search (basic implementation)
-        if (!empty($this->searchLocation)) {
+        if (! empty($this->searchLocation)) {
             // This is a simple search - in production you might want to use geocoding
-            $query->where('name', 'like', '%' . $this->searchLocation . '%')
-                  ->orWhere('address', 'like', '%' . $this->searchLocation . '%')
-                  ->orWhere('bio', 'like', '%' . $this->searchLocation . '%');
+            $query->where('name', 'like', '%'.$this->searchLocation.'%')
+                ->orWhere('address', 'like', '%'.$this->searchLocation.'%')
+                ->orWhere('bio', 'like', '%'.$this->searchLocation.'%');
         }
 
         return $query->get();
@@ -62,6 +61,7 @@ class NetworkMap extends Component
                 'id' => $member->id,
                 'name' => $member->name,
                 'type' => $member->type,
+                'total_believers' => $member->total_believers,
                 'image_path' => $member->image_path,
                 'professional_skills' => $member->professional_skills,
                 'ministry_skills' => $member->ministry_skills,
@@ -77,9 +77,9 @@ class NetworkMap extends Component
                     return [
                         'id' => $language->id,
                         'name' => $language->name,
-                        'code' => $language->code
+                        'code' => $language->code,
                     ];
-                })
+                }),
             ];
         })->toArray();
     }

@@ -93,12 +93,17 @@
                 </h3>
                 <div class="space-y-3">
                     <div class="flex justify-between items-center p-2 bg-gray-50/80 rounded-lg">
-                        <span class="text-xs font-medium text-gray-500 uppercase">Individuals</span>
+                        <span class="text-xs font-medium text-gray-500 uppercase">Individual Profiles</span>
                         <span class="font-bold text-[var(--color-indigo)]">{{ $networkMembers->where('type', 'individual')->count() }}</span>
                     </div>
                     <div class="flex justify-between items-center p-2 bg-gray-50/80 rounded-lg">
-                        <span class="text-xs font-medium text-gray-500 uppercase">Groups</span>
+                        <span class="text-xs font-medium text-gray-500 uppercase">Fellowship Groups</span>
                         <span class="font-bold text-[var(--color-indigo)]">{{ $networkMembers->where('type', 'group')->count() }}</span>
+                    </div>
+                    <div class="border-t border-gray-200/50 my-1"></div>
+                    <div class="flex justify-between items-center p-2 bg-indigo-50/50 rounded-lg border border-indigo-100/50">
+                        <span class="text-xs font-bold text-indigo-900 uppercase">Total Believers</span>
+                        <span class="font-bold text-[var(--color-pma-green)]">{{ number_format($networkMembers->sum('total_believers')) }}</span>
                     </div>
                 </div>
             </div>
@@ -229,11 +234,11 @@
             // Modern Custom Icon logic
             let iconContent;
             if (member.image_path) {
-                iconContent = `<img src="/storage/${member.image_path}" class="w-full h-full rounded-full object-cover border-2 border-white shadow-md" alt="${member.name}">`;
+                iconContent = `<img src="/storage/${member.image_path}" class="w-full h-full rounded-full object-cover shadow-md box-border" style="border: 3px solid ${color};" alt="${member.name}">`;
             } else {
                 iconContent = `
-                    <div class="absolute inset-0 rounded-full shadow-lg" style="background: ${color}; border: 3px solid white;"></div>
-                    <div class="absolute inset-0 flex items-center justify-center text-white text-lg">
+                    <div class="absolute inset-0 rounded-full shadow-lg" style="background: white; border: 3px solid ${color};"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-gray-800 text-lg">
                         ${isIndividual ? '👤' : '⛪'}
                     </div>
                 `;
@@ -266,6 +271,11 @@
                                           style="background-color: ${color}">
                                         ${isIndividual ? 'Individual' : 'Group'}
                                     </span>
+                                    ${member.total_believers > 0 ? `
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1">
+                                        <span class="text-xs">👥</span> ${member.total_believers}
+                                    </span>
+                                    ` : ''}
                                 </div>
                                 <h4 class="text-lg font-bold text-gray-900 leading-tight">${member.name}</h4>
                             </div>
@@ -313,9 +323,17 @@
                             </div>
                         ` : ''}
                         
-                        <p class="text-sm text-gray-600 line-clamp-3 mb-3">
-                            ${member.bio ? member.bio.substring(0, 80) + (member.bio.length > 80 ? '...' : '') : 'No bio available.'}
-                        </p>
+                        ${member.bio ? `
+                            <div x-data="{ expanded: false, hasLongBio: ${member.bio.length > 100} }" class="mb-3">
+                                <p x-show="!expanded" class="text-sm text-gray-600 line-clamp-3">${member.bio}</p>
+                                <p x-show="expanded" class="text-sm text-gray-600 whitespace-pre-wrap">${member.bio}</p>
+                                <button x-show="hasLongBio" 
+                                        @click="expanded = !expanded" 
+                                        class="text-xs font-semibold text-[var(--color-pma-green)] hover:underline mt-1 focus:outline-none">
+                                    <span x-text="expanded ? 'Show Less' : 'Read All'"></span>
+                                </button>
+                            </div>
+                        ` : '<p class="text-sm text-gray-600 mb-3">No bio available.</p>'}
 
                         ${(member.show_email || member.show_phone) ? `
                             <div class="mt-2 pt-2 border-t border-gray-100">
@@ -375,7 +393,15 @@
     }
 
     // Initialize map when page loads
-    document.addEventListener('DOMContentLoaded', initNetworkMap);
+    document.addEventListener('DOMContentLoaded', () => {
+        initNetworkMap();
+        networkMap.on('popupopen', function (e) {
+            let popupDiv = e.popup.getElement().querySelector('.leaflet-popup-content');
+            if (popupDiv && typeof Alpine !== 'undefined') {
+                Alpine.initTree(popupDiv);
+            }
+        });
+    });
 
     // Update markers when Livewire component updates
     document.addEventListener('livewire:init', () => {

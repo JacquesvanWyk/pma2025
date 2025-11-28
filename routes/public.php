@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonateController;
+use App\Http\Controllers\EbookController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\ResourcesController;
 use App\Http\Controllers\SermonController;
@@ -33,6 +34,10 @@ Route::get('/network/{networkMember}', [NetworkController::class, 'show'])->name
 Route::get('/tracts', [TractController::class, 'index'])->name('tracts');
 Route::get('/tracts/{slug}', [TractController::class, 'show'])->name('tracts.show');
 Route::get('/tracts/{slug}/download/{format?}', [TractController::class, 'download'])->name('tracts.download');
+
+// Ebook routes
+Route::get('/ebooks/{slug}', [EbookController::class, 'show'])->name('ebooks.show');
+Route::get('/ebooks/{slug}/download', [EbookController::class, 'download'])->name('ebooks.download');
 
 // Resources routes
 Route::get('/resources', [ResourcesController::class, 'index'])->name('resources');

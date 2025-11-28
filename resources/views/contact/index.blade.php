@@ -171,16 +171,6 @@
                                 <span>10:00 AM - 2:00 PM</span>
                             </div>
                         </div>
-                        <div class="mt-6 p-4 rounded-lg" style="background: var(--color-cream);">
-                            <div class="flex items-start gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5" style="color: var(--color-pma-green);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="pma-body text-sm" style="color: var(--color-olive);">
-                                    We respond to messages within 24 hours during business days
-                                </span>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -209,22 +199,16 @@
                         </div>
                         <h3 class="pma-heading text-xl mb-4" style="color: var(--color-indigo);">Connect With Us</h3>
                         <div class="flex gap-4">
-                            <a href="#" class="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all hover:scale-110"
+                            <a href="https://www.facebook.com/pioneermissionsafrica" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all hover:scale-110"
                                style="border-color: var(--color-pma-green); color: var(--color-pma-green);">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
                                 </svg>
                             </a>
-                            <a href="#" class="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all hover:scale-110"
+                            <a href="https://www.youtube.com/@pioneermissionsafrica3344" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all hover:scale-110"
                                style="border-color: var(--color-pma-green); color: var(--color-pma-green);">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-                                </svg>
-                            </a>
-                            <a href="#" class="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all hover:scale-110"
-                               style="border-color: var(--color-pma-green); color: var(--color-pma-green);">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
                                 </svg>
                             </a>
                         </div>
@@ -235,36 +219,8 @@
     </div>
 </section>
 
-<!-- Map Section -->
-<section class="py-20" style="background: white;">
-    <div class="container mx-auto px-6">
-        <div class="max-w-5xl mx-auto pma-animate-on-scroll">
-            <div class="text-center mb-12">
-                <div class="pma-accent-line mx-auto mb-4"></div>
-                <h2 class="pma-section-title pma-heading mb-4" style="color: var(--color-indigo);">Find Us</h2>
-                <p class="pma-body text-lg" style="color: var(--color-olive);">
-                    Serving communities throughout South Africa and across the African continent
-                </p>
-            </div>
-
-            <div class="pma-card-elevated overflow-hidden">
-                <div class="aspect-video bg-gray-200">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3583019.823722799!2d25.0841524!3d-28.4792625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e950e8e0deae0a5%3A0x3d8e4e39e58b8c4!2sSouth%20Africa!5e0!3m2!1sen!2sza!4v1234567890123!5m2!1sen!2sza"
-                        width="100%"
-                        height="100%"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Call to Action -->
+<section class="py-20 relative overflow-hidden" style="background: var(--gradient-hero);">
 <section class="py-20 relative overflow-hidden" style="background: var(--gradient-hero);">
     <div class="pma-light-rays"></div>
     <div class="absolute inset-0 bg-black/40 z-0"></div>

@@ -78,9 +78,13 @@
                         </span>
                     </div>
 
-                    <h3 class="pma-heading text-xl mb-3" style="color: var(--color-indigo);">
+                    <h3 class="pma-heading text-xl mb-2" style="color: var(--color-indigo);">
                         {{ $tract->title }}
                     </h3>
+
+                    <p class="pma-body text-xs mb-3" style="color: var(--color-olive);">
+                        {{ number_format($tract->download_count) }} downloads
+                    </p>
 
                     @if($tract->description)
                     <p class="pma-body text-sm mb-4" style="color: var(--color-olive);">
@@ -131,9 +135,13 @@
                         </span>
                     </div>
 
-                    <h3 class="pma-heading text-xl mb-3" style="color: var(--color-indigo);">
+                    <h3 class="pma-heading text-xl mb-2" style="color: var(--color-indigo);">
                         {{ $tract->title }}
                     </h3>
+
+                    <p class="pma-body text-xs mb-3" style="color: var(--color-olive);">
+                        {{ number_format($tract->download_count) }} downloads
+                    </p>
 
                     @if($tract->description)
                     <p class="pma-body text-sm mb-4" style="color: var(--color-olive);">
@@ -182,9 +190,13 @@
                         </span>
                     </div>
 
-                    <h3 class="pma-heading text-xl mb-3" style="color: var(--color-indigo);">
+                    <h3 class="pma-heading text-xl mb-2" style="color: var(--color-indigo);">
                         {{ $tract->title }}
                     </h3>
+
+                    <p class="pma-body text-xs mb-3" style="color: var(--color-olive);">
+                        {{ number_format($tract->download_count) }} downloads
+                    </p>
 
                     @if($tract->description)
                     <p class="pma-body text-sm mb-4" style="color: var(--color-olive);">
@@ -233,9 +245,13 @@
                         </span>
                     </div>
 
-                    <h3 class="pma-heading text-xl mb-3" style="color: var(--color-indigo);">
+                    <h3 class="pma-heading text-xl mb-2" style="color: var(--color-indigo);">
                         {{ $tract->title }}
                     </h3>
+
+                    <p class="pma-body text-xs mb-3" style="color: var(--color-olive);">
+                        {{ number_format($tract->download_count) }} downloads
+                    </p>
 
                     @if($tract->description)
                     <p class="pma-body text-sm mb-4" style="color: var(--color-olive);">

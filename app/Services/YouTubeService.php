@@ -57,6 +57,51 @@ class YouTubeService
         });
     }
 
+    public function getPlaylistVideos(string $playlistId, int $maxResults = 50): array
+    {
+        $cacheKey = "youtube_playlist_{$playlistId}_{$maxResults}";
+
+        return Cache::remember($cacheKey, now()->addHours(1), function () use ($playlistId, $maxResults) {
+            try {
+                $response = Http::get("{$this->baseUrl}/playlistItems", [
+                    'key' => $this->apiKey,
+                    'playlistId' => $playlistId,
+                    'part' => 'snippet',
+                    'maxResults' => $maxResults,
+                ]);
+
+                if ($response->failed()) {
+                    Log::error('YouTube API playlist request failed', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+
+                    return [];
+                }
+
+                $items = $response->json('items', []);
+
+                return collect($items)->map(function ($item) {
+                    return [
+                        'id' => $item['snippet']['resourceId']['videoId'] ?? null,
+                        'title' => html_entity_decode($item['snippet']['title'] ?? 'Untitled', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                        'description' => html_entity_decode($item['snippet']['description'] ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                        'thumbnail' => $item['snippet']['thumbnails']['high']['url'] ?? $item['snippet']['thumbnails']['default']['url'] ?? '',
+                        'published_at' => $item['snippet']['publishedAt'] ?? null,
+                        'channel_title' => html_entity_decode($item['snippet']['channelTitle'] ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                    ];
+                })->filter(fn ($video) => ! empty($video['id']))->toArray();
+
+            } catch (\Exception $e) {
+                Log::error('YouTube API playlist exception', [
+                    'message' => $e->getMessage(),
+                ]);
+
+                return [];
+            }
+        });
+    }
+
     public function getVideoDetails(string $videoId): ?array
     {
         $cacheKey = "youtube_video_{$videoId}";

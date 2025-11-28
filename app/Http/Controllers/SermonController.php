@@ -10,7 +10,7 @@ class SermonController extends Controller
 
     public function index()
     {
-        $videos = $this->youtubeService->getChannelVideos(20);
+        $videos = $this->youtubeService->getChannelVideos(50);
 
         $featuredVideo = ! empty($videos) ? array_shift($videos) : null;
         $archiveVideos = $videos;

@@ -30,4 +30,28 @@ class Ebook extends Model
             'download_count' => 'integer',
         ];
     }
+
+    public function scopePublished($query)
+    {
+        return $query->whereNotNull('created_at');
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function getThumbnailUrlAttribute()
+    {
+        if (! $this->thumbnail) {
+            return null;
+        }
+
+        return asset('storage/ebooks/thumbnails/'.$this->thumbnail);
+    }
+
+    public function getPdfUrlAttribute()
+    {
+        return asset('storage/ebooks/'.$this->pdf_file);
+    }
 }

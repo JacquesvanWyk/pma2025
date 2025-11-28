@@ -137,7 +137,7 @@ class NetworkController extends Controller
             'country' => $validated['country'] ?? null,
             'address' => $validated['address'] ?? null,
             'meeting_times' => $validated['meeting_times'] ?? null,
-            'show_email' => $validated['show_email'] ?? true,
+            'show_email' => $validated['show_email'] ?? false,
             'show_phone' => $validated['show_phone'] ?? false,
             'status' => 'pending',
         ];
@@ -233,7 +233,7 @@ class NetworkController extends Controller
             'country' => $validated['country'] ?? null,
             'address' => $validated['address'] ?? null,
             'meeting_times' => $validated['meeting_times'] ?? null,
-            'show_email' => $validated['show_email'] ?? true,
+            'show_email' => $validated['show_email'] ?? false,
             'show_phone' => $validated['show_phone'] ?? false,
         ];
 

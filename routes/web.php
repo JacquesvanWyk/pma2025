@@ -31,5 +31,8 @@ Route::get('users/{user}', [\App\Http\Controllers\UserProfileController::class, 
 Route::get('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'index'])->name('prayer-room.index');
 Route::post('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'store'])->name('prayer-room.store');
 
+// Kingdom Kids
+Route::get('kingdom-kids', [\App\Http\Controllers\KingdomKidsController::class, 'index'])->name('kingdom-kids');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/public.php';

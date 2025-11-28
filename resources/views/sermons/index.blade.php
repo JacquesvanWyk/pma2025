@@ -204,28 +204,6 @@
     </div>
 </section>
 
-<!-- Audio Downloads -->
-<section class="py-20" style="background: white;">
-    <div class="container mx-auto px-6">
-        <div class="max-w-4xl mx-auto text-center pma-animate-on-scroll">
-            <div class="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
-                 style="background: var(--color-cream-dark);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" style="color: var(--color-pma-green);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-            </div>
-            <h2 class="pma-section-title pma-heading mb-6" style="color: var(--color-indigo);">Audio Downloads Available</h2>
-            <p class="pma-body text-lg mb-10" style="color: var(--color-olive);">
-                Prefer to listen on the go? Download MP3 audio versions of our sermons for offline listening.
-                Perfect for commuting, exercise, or anywhere you want to study God's Word.
-            </p>
-            <a href="{{ route('resources.notes') }}" class="pma-btn pma-btn-primary">
-                Browse Audio Downloads
-            </a>
-        </div>
-    </div>
-</section>
-
 <!-- Support CTA -->
 <section class="py-20 relative overflow-hidden" style="background: var(--gradient-hero);">
     <div class="pma-light-rays"></div>
