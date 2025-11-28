@@ -73,6 +73,9 @@
                         <a href="{{ route('resources.ebooks') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
                             <div class="font-semibold">E-Books</div>
                         </a>
+                        <a href="{{ route('resources.notes') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
+                            <div class="font-semibold">Study Notes</div>
+                        </a>
                     </div>
                 </div>
 
@@ -140,11 +143,17 @@
                     </div>
                 </div>
 
+                <div x-data="{ open: false }" class="border-b border-dashed border-gray-200 pb-2">
+                    <button @click="open = !open" class="flex items-center justify-between w-full text-lg font-medium text-[var(--color-indigo)]">
+                        Resources
+                        <svg :class="{'rotate-180': open}" class="w-5 h-5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </button>
                     <div x-show="open" class="pl-4 mt-2 flex flex-col gap-3">
                         <a href="{{ route('studies') }}" class="text-gray-600">Studies</a>
                         <a href="{{ route('sermons') }}" class="text-gray-600">Sermons</a>
                         <a href="{{ route('resources.tracts') }}" class="text-gray-600">Tracts</a>
                         <a href="{{ route('resources.ebooks') }}" class="text-gray-600">E-Books</a>
+                        <a href="{{ route('resources.notes') }}" class="text-gray-600">Study Notes</a>
                     </div>
                 </div>
 
