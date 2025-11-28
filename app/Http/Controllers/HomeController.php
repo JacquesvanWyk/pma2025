@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ebook;
 use App\Models\Note;
+use App\Models\PrayerRoomSession;
 use App\Models\Study;
 use App\Models\Tract;
 use App\Services\YouTubeService;
@@ -52,6 +53,11 @@ class HomeController extends Controller
             'notes' => Note::where('status', 'published')->count(),
         ];
 
+        // Upcoming prayer room session
+        $upcomingPrayerSession = PrayerRoomSession::upcoming()
+            ->orderBy('session_date')
+            ->first();
+
         return view('home', compact(
             'featuredStudy',
             'englishEbook',
@@ -59,7 +65,8 @@ class HomeController extends Controller
             'latestTracts',
             'latestNotes',
             'latestSermon',
-            'resourceCounts'
+            'resourceCounts',
+            'upcomingPrayerSession'
         ));
     }
 }

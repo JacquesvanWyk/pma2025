@@ -193,7 +193,12 @@
                 <div class="md:col-span-1 md:row-span-1 bg-[#f8f5f2] rounded-3xl p-6 shadow-sm border border-[#e8e1d5] hover:border-[var(--color-ochre)] transition-colors flex flex-col justify-between">
                     <div>
                         <h3 class="text-[var(--color-indigo)] font-bold text-lg mb-1">Prayer Room</h3>
-                        <p class="text-gray-500 text-xs">Join us in prayer</p>
+                        @if($upcomingPrayerSession)
+                            <p class="text-[var(--color-ochre)] text-xs font-semibold">{{ $upcomingPrayerSession->title }}</p>
+                            <p class="text-gray-500 text-xs">{{ $upcomingPrayerSession->session_date->format('D, j M @ g:i A') }}</p>
+                        @else
+                            <p class="text-gray-500 text-xs">Join us in prayer</p>
+                        @endif
                     </div>
                     <div class="flex justify-end">
                         <a href="{{ route('prayer-room.index') }}" class="text-[var(--color-ochre)] hover:text-[var(--color-ochre-dark)] transition-colors">

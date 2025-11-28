@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            <!-- Testimonial -->
+            {{-- Testimonial - commented out for now
             <div class="max-w-4xl mx-auto pma-animate-on-scroll">
                 <div class="pma-quote" style="background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2);">
                     <p class="pma-quote-text text-white/95">
@@ -65,6 +65,7 @@
                     </cite>
                 </div>
             </div>
+            --}}
         </div>
     </div>
 </section>
