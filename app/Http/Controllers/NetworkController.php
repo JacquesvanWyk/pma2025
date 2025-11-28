@@ -7,7 +7,9 @@ use App\Models\Fellowship;
 use App\Models\Individual;
 use App\Models\Ministry;
 use App\Models\NetworkMember;
+use App\Notifications\NewNetworkMemberRegistered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class NetworkController extends Controller
@@ -166,6 +168,10 @@ class NetworkController extends Controller
         if (! empty($validated['languages'])) {
             $networkMember->languages()->attach($validated['languages']);
         }
+
+        // Notify admin about new registration
+        Notification::route('mail', 'jvw679@gmail.com')
+            ->notify(new NewNetworkMemberRegistered($networkMember));
 
         return redirect()->route('dashboard')
             ->with('success', 'Your network submission has been received! It will be reviewed by our team and you\'ll receive an email notification once approved.');

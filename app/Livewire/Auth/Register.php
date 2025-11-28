@@ -3,9 +3,11 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use App\Notifications\NewUserRegistered;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -21,9 +23,6 @@ class Register extends Component
 
     public string $password_confirmation = '';
 
-    /**
-     * Handle an incoming registration request.
-     */
     public function register(): void
     {
         $validated = $this->validate([
@@ -35,6 +34,9 @@ class Register extends Component
         $validated['password'] = Hash::make($validated['password']);
 
         event(new Registered(($user = User::create($validated))));
+
+        Notification::route('mail', 'jvw679@gmail.com')
+            ->notify(new NewUserRegistered($user));
 
         Auth::login($user);
 

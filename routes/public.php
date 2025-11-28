@@ -49,6 +49,7 @@ Route::get('/resources/notes', [NoteController::class, 'index'])->name('resource
 // Other routes
 Route::get('/sermons', [SermonController::class, 'index'])->name('sermons');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Donation routes
 Route::get('/donate', [DonateController::class, 'index'])->name('donate');

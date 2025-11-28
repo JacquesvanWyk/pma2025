@@ -44,7 +44,23 @@
                     </div>
                     <h2 class="pma-heading text-3xl mb-8" style="color: var(--color-indigo);">Send Us a Message</h2>
 
-                    <form action="#" method="POST" class="space-y-6">
+                    @if(session('success'))
+                    <div class="p-4 mb-4 rounded-lg" style="background: var(--color-pma-green-light); color: var(--color-pma-green);">
+                        {{ session('success') }}
+                    </div>
+                    @endif
+
+                    @if($errors->any())
+                    <div class="p-4 mb-4 rounded-lg bg-red-100 text-red-700">
+                        <ul class="list-disc list-inside">
+                            @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">
                         @csrf
 
                         <div>
