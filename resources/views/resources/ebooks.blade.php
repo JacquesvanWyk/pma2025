@@ -94,7 +94,7 @@
 
 <!-- English E-Books -->
 @if(isset($ebooksByLanguage['English']) && $ebooksByLanguage['English']->count() > 0)
-<section class="py-20 lg:py-32" style="background: white;">
+<section id="english" class="py-20 lg:py-32" style="background: white;">
     <div class="container mx-auto px-6">
         <div class="text-center mb-12 pma-animate-on-scroll">
             <div class="pma-accent-line mx-auto mb-4"></div>
@@ -152,7 +152,7 @@
 
 <!-- Afrikaans E-Books -->
 @if(isset($ebooksByLanguage['Afrikaans']) && $ebooksByLanguage['Afrikaans']->count() > 0)
-<section class="py-20 lg:py-32" style="background: var(--gradient-spiritual);">
+<section id="afrikaans" class="py-20 lg:py-32" style="background: var(--gradient-spiritual);">
     <div class="pma-cross-pattern absolute inset-0"></div>
 
     <div class="container mx-auto px-6 relative z-10">

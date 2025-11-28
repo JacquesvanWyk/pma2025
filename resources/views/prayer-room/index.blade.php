@@ -54,17 +54,41 @@
     <div class="container mx-auto px-6 relative z-10">
         <div class="max-w-4xl mx-auto">
             <div class="pma-card-elevated p-8 lg:p-12 mb-12">
+                @if($upcomingSession)
                 <div class="text-center mb-8">
                     <span class="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4" style="background: var(--color-pma-green); color: white;">
                         NEXT SESSION
                     </span>
+                    @if($upcomingSession->image)
+                    <div class="mb-6">
+                        <img src="{{ asset('storage/' . $upcomingSession->image) }}" alt="{{ $upcomingSession->title }}" class="w-full max-w-md mx-auto rounded-lg shadow-lg">
+                    </div>
+                    @endif
                     <h2 class="text-3xl lg:text-4xl font-bold mb-2" style="color: var(--color-indigo);">
-                        Theme: Praying for Our Friends
+                        {{ $upcomingSession->title }}
                     </h2>
                     <p class="text-xl" style="color: var(--color-olive);">
-                        Wednesday, 27 August 2025 @ 7:00 PM (SAST)
+                        {{ $upcomingSession->session_date->format('l, j F Y @ g:i A') }} (SAST)
+                    </p>
+                    @if($upcomingSession->description)
+                    <p class="mt-4 text-base" style="color: var(--color-olive);">
+                        {{ $upcomingSession->description }}
+                    </p>
+                    @endif
+                </div>
+                @else
+                <div class="text-center mb-8">
+                    <span class="inline-block px-4 py-2 rounded-full text-sm font-bold mb-4" style="background: var(--color-ochre); color: white;">
+                        COMING SOON
+                    </span>
+                    <h2 class="text-3xl lg:text-4xl font-bold mb-2" style="color: var(--color-indigo);">
+                        Next Session To Be Announced
+                    </h2>
+                    <p class="text-xl" style="color: var(--color-olive);">
+                        Check back soon for details on our next Prayer Room session
                     </p>
                 </div>
+                @endif
 
                 <!-- Join Links -->
                 <div class="grid md:grid-cols-2 gap-6 mb-8">
@@ -115,6 +139,36 @@
         </div>
     </div>
 </section>
+
+<!-- Previous Session -->
+@if($previousSession)
+<section class="py-16" style="background: var(--color-cream);">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-8">
+                <div class="pma-accent-line mx-auto mb-4"></div>
+                <h2 class="pma-section-title pma-heading mb-4" style="color: var(--color-indigo);">Previous Session</h2>
+            </div>
+
+            <div class="pma-card-elevated p-6 lg:p-8">
+                @if($previousSession->image)
+                <div class="mb-6">
+                    <img src="{{ asset('storage/' . $previousSession->image) }}" alt="{{ $previousSession->title }}" class="w-full max-w-2xl mx-auto rounded-lg shadow-lg">
+                </div>
+                @endif
+                <div class="text-center">
+                    <span class="inline-block px-4 py-2 rounded-full text-sm font-semibold mb-3" style="background: var(--color-olive); color: white;">
+                        {{ $previousSession->session_date->format('l, j F Y') }}
+                    </span>
+                    <h3 class="text-2xl lg:text-3xl font-bold" style="color: var(--color-indigo);">
+                        {{ $previousSession->title }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endif
 
 <!-- Prayer Request Form -->
 <section class="py-20" style="background: white;">

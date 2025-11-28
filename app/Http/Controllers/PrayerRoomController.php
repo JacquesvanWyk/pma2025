@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PrayerRequest;
+use App\Models\PrayerRoomSession;
 use App\Notifications\NewPrayerRequestNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -11,7 +12,15 @@ class PrayerRoomController extends Controller
 {
     public function index()
     {
-        return view('prayer-room.index');
+        $upcomingSession = PrayerRoomSession::upcoming()
+            ->orderBy('session_date')
+            ->first();
+
+        $previousSession = PrayerRoomSession::past()
+            ->orderBy('session_date', 'desc')
+            ->first();
+
+        return view('prayer-room.index', compact('upcomingSession', 'previousSession'));
     }
 
     public function store(Request $request)

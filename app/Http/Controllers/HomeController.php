@@ -2,10 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ebook;
+use App\Models\Note;
+use App\Models\Study;
+use App\Models\Tract;
+use App\Services\YouTubeService;
+
 class HomeController extends Controller
 {
+    public function __construct(protected YouTubeService $youtubeService) {}
+
     public function index()
     {
-        return view('home');
+        // Random published study
+        $featuredStudy = Study::published()
+            ->inRandomOrder()
+            ->first();
+
+        // Random English ebook
+        $englishEbook = Ebook::where('language', 'English')
+            ->inRandomOrder()
+            ->first();
+
+        // Random Afrikaans ebook
+        $afrikaansEbook = Ebook::where('language', 'Afrikaans')
+            ->inRandomOrder()
+            ->first();
+
+        // Latest tracts
+        $latestTracts = Tract::published()
+            ->latest()
+            ->take(4)
+            ->get();
+
+        // Latest notes
+        $latestNotes = Note::published()
+            ->latest()
+            ->take(4)
+            ->get();
+
+        // Latest sermon from YouTube
+        $videos = $this->youtubeService->getChannelVideos(1);
+        $latestSermon = ! empty($videos) ? $videos[0] : null;
+
+        // Resource counts
+        $resourceCounts = [
+            'ebooks' => Ebook::count(),
+            'tracts' => Tract::whereNull('deleted_at')->count(),
+            'notes' => Note::where('status', 'published')->count(),
+        ];
+
+        return view('home', compact(
+            'featuredStudy',
+            'englishEbook',
+            'afrikaansEbook',
+            'latestTracts',
+            'latestNotes',
+            'latestSermon',
+            'resourceCounts'
+        ));
     }
 }
