@@ -1,4 +1,4 @@
-<x-layouts.app :title="$type === 'individual' ? 'Register as Individual Believer' : 'Register Fellowship Group'">
+<x-layouts.app :title="$type === 'individual' ? 'Register Individual or Family' : 'Register Fellowship Group'">
     <div class="max-w-4xl mx-auto p-6">
             @if(session('success'))
             <div class="pma-card p-6 mb-8" style="background: var(--color-pma-green); color: white;">
@@ -32,14 +32,14 @@
                     <!-- Basic Information -->
                     <div>
                         <h2 class="pma-heading text-2xl mb-6" style="color: var(--color-indigo);">
-                            {{ $type === 'individual' ? 'Your Information' : 'Group Information' }}
+                            {{ $type === 'individual' ? 'Individual/Family Information' : 'Group Information' }}
                         </h2>
 
                         <div class="space-y-5">
                             <!-- Name -->
                             <div>
                                 <label class="block pma-body text-sm font-medium mb-2" style="color: var(--color-indigo);">
-                                    {{ $type === 'individual' ? 'Full Name' : 'Group Name' }} *
+                                    {{ $type === 'individual' ? 'Family Name' : 'Group Name' }} *
                                 </label>
                                 <input
                                     type="text"
