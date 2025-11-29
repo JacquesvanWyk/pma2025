@@ -21,7 +21,7 @@
                     $firstFellowship = auth()->user()->fellowshipProfiles()->first();
                 @endphp
 
-                <flux:sidebar.item icon="user" :href="$individualProfile ? route('network.edit', $individualProfile) : route('network.register.individual')" :current="request()->routeIs('network.register.individual') || (isset($networkMember) && $networkMember->is($individualProfile))" wire:navigate class="text-white hover:text-white">{{ __('Individual') }}</flux:sidebar.item>
+                <flux:sidebar.item icon="user" :href="$individualProfile ? route('network.edit', $individualProfile) : route('network.register.individual')" :current="request()->routeIs('network.register.individual') || (isset($networkMember) && $networkMember->is($individualProfile))" wire:navigate class="text-white hover:text-white">{{ __('Individual/Family') }}</flux:sidebar.item>
                 
                 <flux:sidebar.item icon="user-group" :href="$firstFellowship ? route('network.edit', $firstFellowship) : route('network.register.fellowship')" :current="request()->routeIs('network.register.fellowship') || (isset($networkMember) && $networkMember->is($firstFellowship))" wire:navigate class="text-white hover:text-white">{{ __('Fellowship') }}</flux:sidebar.item>
                 
