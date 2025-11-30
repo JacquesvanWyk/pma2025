@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\PictureStudies\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -48,10 +47,7 @@ class PictureStudyForm
                                 'draft' => 'Draft',
                                 'published' => 'Published',
                             ])
-                            ->default('draft'),
-
-                        DateTimePicker::make('published_at')
-                            ->label('Publish Date & Time'),
+                            ->default('published'),
                     ]),
 
                 Section::make('Image')

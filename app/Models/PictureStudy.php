@@ -48,6 +48,10 @@ class PictureStudy extends Model
 
                 $pictureStudy->slug = $slug;
             }
+
+            if (empty($pictureStudy->published_at)) {
+                $pictureStudy->published_at = now();
+            }
         });
     }
 
