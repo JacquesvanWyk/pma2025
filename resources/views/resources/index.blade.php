@@ -60,7 +60,7 @@
             <p class="pma-body text-lg" style="color: var(--color-olive);">Choose a category to explore our free ministry materials</p>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <!-- Tracts -->
             <a href="{{ route('resources.tracts') }}" class="pma-card pma-animate-on-scroll pma-stagger-1 block group">
                 <div class="p-8 text-center">
@@ -73,7 +73,7 @@
                     <h3 class="pma-heading text-2xl mb-3" style="color: var(--color-indigo);">Gospel Tracts</h3>
                     <p class="pma-body mb-4" style="color: var(--color-olive);">Short, shareable gospel literature perfect for evangelism and outreach</p>
                     <span class="inline-block px-4 py-1 rounded-full text-xs pma-heading-light mb-4"
-                          style="background: var(--color-pma-green); color: white;">11 Available</span>
+                          style="background: var(--color-pma-green); color: white;">{{ \App\Models\Tract::whereNull('deleted_at')->count() }} Available</span>
                     <div>
                         <span class="pma-btn pma-btn-primary text-sm">Browse Tracts</span>
                     </div>
@@ -92,9 +92,28 @@
                     <h3 class="pma-heading text-2xl mb-3" style="color: var(--color-indigo);">E-Books</h3>
                     <p class="pma-body mb-4" style="color: var(--color-olive);">Comprehensive digital books on biblical truth and present-day messages</p>
                     <span class="inline-block px-4 py-1 rounded-full text-xs pma-heading-light mb-4"
-                          style="background: var(--color-pma-green); color: white;">16 Available</span>
+                          style="background: var(--color-pma-green); color: white;">{{ \App\Models\Ebook::count() }} Available</span>
                     <div>
                         <span class="pma-btn pma-btn-primary text-sm">Browse E-Books</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Picture Studies -->
+            <a href="{{ route('resources.picture-studies') }}" class="pma-card pma-animate-on-scroll pma-stagger-3 block group">
+                <div class="p-8 text-center">
+                    <div class="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-all group-hover:scale-110"
+                         style="background: linear-gradient(135deg, var(--color-ochre-light), var(--color-ochre));">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="pma-heading text-2xl mb-3" style="color: var(--color-indigo);">Picture Studies</h3>
+                    <p class="pma-body mb-4" style="color: var(--color-olive);">Visual infographic studies for evangelism and Bible study</p>
+                    <span class="inline-block px-4 py-1 rounded-full text-xs pma-heading-light mb-4"
+                          style="background: var(--color-pma-green); color: white;">{{ \App\Models\PictureStudy::where('status', 'published')->count() }} Available</span>
+                    <div>
+                        <span class="pma-btn pma-btn-primary text-sm whitespace-nowrap">View All</span>
                     </div>
                 </div>
             </a>

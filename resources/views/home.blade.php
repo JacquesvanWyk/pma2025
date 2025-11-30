@@ -185,6 +185,10 @@
                             <span class="text-sm text-gray-600">Study Notes</span>
                             <span class="font-bold text-[var(--color-indigo)]">{{ $resourceCounts['notes'] }}</span>
                         </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Picture Studies</span>
+                            <span class="font-bold text-[var(--color-indigo)]">{{ $resourceCounts['pictureStudies'] }}</span>
+                        </div>
                     </div>
                     <a href="{{ route('resources') }}" class="mt-auto w-full py-2 rounded-lg border border-[var(--color-pma-green)] text-[var(--color-pma-green)] font-semibold text-sm flex items-center justify-center hover:bg-[var(--color-pma-green)] hover:text-white transition-colors">
                         Browse All

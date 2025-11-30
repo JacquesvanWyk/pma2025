@@ -60,6 +60,7 @@ class HomeController extends Controller
             'ebooks' => Ebook::count(),
             'tracts' => Tract::whereNull('deleted_at')->count(),
             'notes' => Note::where('status', 'published')->count(),
+            'pictureStudies' => PictureStudy::where('status', 'published')->count(),
         ];
 
         // Upcoming prayer room session
