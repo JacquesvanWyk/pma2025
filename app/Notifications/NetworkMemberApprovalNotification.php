@@ -47,7 +47,7 @@ class NetworkMemberApprovalNotification extends Notification implements ShouldQu
             ->line('---')
             ->line('**Stay Connected With Us**')
             ->line('Join our WhatsApp group to stay updated and connect with fellow believers:')
-            ->line('[Join WhatsApp Group](https://chat.whatsapp.com/YOUR_GROUP_LINK)')
+            ->line('[Join WhatsApp Group](https://chat.whatsapp.com/FtjaXDiw5xtJZKuxYdfnYS)')
             ->line('')
             ->line('**Monthly Prayer Room**')
             ->line('We gather online for prayer every **last Wednesday of the month**. Join us as we lift up the work of the Gospel across Africa!')
