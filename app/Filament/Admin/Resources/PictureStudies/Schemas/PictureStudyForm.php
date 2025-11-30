@@ -6,6 +6,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -78,6 +79,17 @@ class PictureStudyForm
                             ])
                             ->columnSpanFull(),
                     ]),
+
+                Section::make('Social Sharing')
+                    ->description('Share this picture study on social media')
+                    ->schema([
+                        Toggle::make('publish_to_facebook')
+                            ->label('Publish to Facebook Page')
+                            ->helperText('Automatically post this image to the PMA Facebook Page')
+                            ->default(false)
+                            ->dehydrated(false),
+                    ])
+                    ->collapsible(),
             ]);
     }
 }
