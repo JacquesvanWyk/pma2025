@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Log;
 
 class FacebookService
 {
-    protected string $pageId;
+    protected ?string $pageId;
 
-    protected string $accessToken;
+    protected ?string $accessToken;
 
     protected string $graphUrl = 'https://graph.facebook.com/v18.0';
 
