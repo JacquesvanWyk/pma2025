@@ -21,10 +21,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Sermons & Messages
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90">
-                Watch powerful messages proclaiming the Everlasting Gospel and present truth.
-                These sermons are designed to strengthen your faith and deepen your understanding of God's Word.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "So then faith cometh by hearing, and hearing by the word of God."
             </p>
+            <p class="text-white/70 text-sm">— Romans 10:17</p>
         </div>
     </div>
 </section>

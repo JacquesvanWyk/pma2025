@@ -20,9 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Kingdom Kids
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90">
-                Stories, songs, and lessons for our little pioneers!
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "Suffer little children, and forbid them not, to come unto me: for of such is the kingdom of heaven."
             </p>
+            <p class="text-white/70 text-sm">— Matthew 19:14</p>
         </div>
     </div>
 </section>
