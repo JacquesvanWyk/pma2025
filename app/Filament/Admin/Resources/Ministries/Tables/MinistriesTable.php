@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Ministries\Tables;
 
+use App\Notifications\MinistryApprovedNotification;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -17,6 +18,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class MinistriesTable
 {
@@ -135,6 +137,13 @@ class MinistriesTable
                             'approved_by' => Auth::id(),
                             'is_active' => true,
                         ]);
+
+                        // Send approval notification to the ministry owner or email
+                        $notifyEmail = $record->user?->email ?? $record->email;
+                        if ($notifyEmail) {
+                            Notification::route('mail', $notifyEmail)
+                                ->notify(new MinistryApprovedNotification($record));
+                        }
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Approve Ministry')

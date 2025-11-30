@@ -8,6 +8,7 @@ use App\Models\Individual;
 use App\Models\Ministry;
 use App\Models\NetworkMember;
 use App\Notifications\NetworkMemberApprovalNotification;
+use App\Notifications\NewMinistryRegistered;
 use App\Notifications\NewNetworkMemberRegistered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -393,7 +394,12 @@ class NetworkController extends Controller
             $data['tags'] = array_map('trim', explode(',', $request->tags));
         }
 
-        Ministry::create($data);
+        $ministry = Ministry::create($data);
+
+        // Notify admins about new ministry registration
+        $adminEmail = config('mail.admin_email', 'info@pioneermissionsafrica.co.za');
+        Notification::route('mail', $adminEmail)
+            ->notify(new NewMinistryRegistered($ministry));
 
         return redirect()->route('dashboard')
             ->with('success', 'Your ministry has been submitted for approval. You\'ll receive an email notification once it\'s approved.');
