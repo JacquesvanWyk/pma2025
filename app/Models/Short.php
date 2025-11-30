@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\ShortObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+#[ObservedBy(ShortObserver::class)]
 class Short extends Model
 {
     use HasFactory;

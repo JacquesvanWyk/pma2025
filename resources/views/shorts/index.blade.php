@@ -36,7 +36,7 @@
             <div class="pma-card pma-animate-on-scroll pma-stagger-{{ ($index % 8) + 1 }} group cursor-pointer"
                  onclick="openShortModal({{ $short->id }})">
                 <!-- Thumbnail -->
-                <div class="aspect-[9/16] w-full overflow-hidden rounded-t-lg bg-gray-200 relative">
+                <div class="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-200 relative">
                     @if($short->thumbnail_url)
                         <img src="{{ $short->thumbnail_url }}"
                              alt="{{ $short->title }}"
@@ -118,8 +118,8 @@
             </svg>
         </button>
 
-        <!-- Video Container (9:16 aspect ratio for shorts) -->
-        <div class="aspect-[9/16] w-full bg-black rounded-lg overflow-hidden">
+        <!-- Video Container (16:9 aspect ratio) -->
+        <div class="aspect-video w-full bg-black rounded-lg overflow-hidden">
             <div id="modalVideoContainer" class="w-full h-full"></div>
         </div>
 
