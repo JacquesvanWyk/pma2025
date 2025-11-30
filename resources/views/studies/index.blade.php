@@ -20,9 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Bible Studies
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90 mb-8">
-                Deepen your understanding of God's truth through our comprehensive study materials covering various aspects of biblical knowledge and pioneer teachings.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "Study to shew thyself approved unto God, a workman that needeth not to be ashamed, rightly dividing the word of truth."
             </p>
+            <p class="text-white/70 text-sm mb-8">— 2 Timothy 2:15</p>
             <button onclick="document.getElementById('filters').scrollIntoView({behavior: 'smooth'})"
                     class="pma-btn pma-btn-primary">
                 Browse Studies

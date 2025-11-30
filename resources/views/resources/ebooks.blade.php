@@ -20,10 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 E-Books Library
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90">
-                Comprehensive digital books on biblical truth, prophecy, and present-day messages.
-                Free downloads in PDF format for deeper study.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "Search the scriptures; for in them ye think ye have eternal life: and they are they which testify of me."
             </p>
+            <p class="text-white/70 text-sm">— John 5:39</p>
         </div>
     </div>
 </section>

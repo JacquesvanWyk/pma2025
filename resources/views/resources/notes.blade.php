@@ -20,9 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Study Notes
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90">
-                Feel free to download and share our studies. Sermon notes, presentations, and Bible study materials.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "Take fast hold of instruction; let her not go: keep her; for she is thy life."
             </p>
+            <p class="text-white/70 text-sm">— Proverbs 4:13</p>
         </div>
     </div>
 </section>

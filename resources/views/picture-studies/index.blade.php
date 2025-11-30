@@ -20,10 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Picture Studies
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90">
-                Visual aids and infographics for Bible study and evangelism.
-                Download and share to help spread the everlasting gospel.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "Write the vision, and make it plain upon tables, that he may run that readeth it."
             </p>
+            <p class="text-white/70 text-sm">— Habakkuk 2:2</p>
         </div>
     </div>
 </section>

@@ -20,10 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Ministry Resources
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90 mb-8">
-                Free downloadable resources to support your spiritual journey and ministry work.
-                All materials are available in English and selected resources in Afrikaans.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "Ho, every one that thirsteth, come ye to the waters, and he that hath no money; come ye, buy, and eat; yea, come, buy wine and milk without money and without price."
             </p>
+            <p class="text-white/70 text-sm mb-8">— Isaiah 55:1</p>
             <div class="flex flex-wrap justify-center gap-4">
                 <span class="inline-block px-6 py-2 rounded-full pma-body text-sm"
                       style="background: rgba(255, 255, 255, 0.2); color: white;">

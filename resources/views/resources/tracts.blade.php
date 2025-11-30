@@ -20,10 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Gospel Tracts
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90">
-                Short, shareable gospel literature perfect for evangelism and outreach.
-                All tracts are free to download, print, and distribute.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "Go ye into all the world, and preach the gospel to every creature."
             </p>
+            <p class="text-white/70 text-sm">— Mark 16:15</p>
         </div>
     </div>
 </section>
