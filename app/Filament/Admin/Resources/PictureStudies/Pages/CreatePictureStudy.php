@@ -35,7 +35,8 @@ class CreatePictureStudy extends CreateRecord
             $caption = SocialShareHelper::generateCaption(
                 $record->title,
                 $record->description,
-                route('picture-study.download', $record)
+                route('resources.picture-studies'),
+                '📖 See all picture studies at'
             );
 
             PostToFacebookJob::dispatch($record, $imageUrl, $caption);

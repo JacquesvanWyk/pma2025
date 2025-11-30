@@ -26,7 +26,7 @@ class SocialShareHelper
         return 'https://twitter.com/intent/tweet?'.http_build_query($params);
     }
 
-    public static function generateCaption(string $title, ?string $description = null, ?string $url = null): string
+    public static function generateCaption(string $title, ?string $description = null, ?string $url = null, ?string $urlLabel = null): string
     {
         $caption = $title;
 
@@ -35,7 +35,8 @@ class SocialShareHelper
         }
 
         if ($url) {
-            $caption .= "\n\n🔗 {$url}";
+            $label = $urlLabel ?? '🔗';
+            $caption .= "\n\n{$label} {$url}";
         }
 
         return $caption;
