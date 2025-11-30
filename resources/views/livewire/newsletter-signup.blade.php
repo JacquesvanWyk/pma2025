@@ -15,7 +15,7 @@
                     <input type="email"
                            wire:model="email"
                            placeholder="Enter your email address"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-pma-green)] focus:ring-1 focus:ring-[var(--color-pma-green)] transition-all pr-28">
+                           class="w-full bg-white/5 border border-white/10 rounded-l px-4 py-3.5 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-pma-green)] focus:ring-1 focus:ring-[var(--color-pma-green)] transition-all pr-28">
                     <button wire:click="subscribe"
                             wire:loading.attr="disabled"
                             class="absolute right-1.5 top-1.5 bg-[var(--color-pma-green)] hover:bg-[var(--color-pma-green-light)] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
