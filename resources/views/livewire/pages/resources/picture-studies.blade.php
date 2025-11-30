@@ -145,7 +145,7 @@ new class extends Component {
                 </div>
             @else
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    @foreach($pictureStudies as $index => $study)
+                    @foreach($pictureStudies as $study)
                     <div wire:key="study-{{ $study->id }}" class="pma-card overflow-hidden group">
                         <div class="aspect-video overflow-hidden bg-gray-100 cursor-pointer"
                              onclick="openLightbox('{{ asset('storage/' . $study->image_path) }}', '{{ addslashes($study->title) }}')">

@@ -10,7 +10,7 @@
     <div class="absolute inset-0 bg-black/40 z-0"></div>
 
     <div class="container mx-auto px-6 relative z-10">
-        <div class="max-w-4xl mx-auto text-center pma-animate-on-scroll">
+        <div class="max-w-4xl mx-auto text-center">
             <div class="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
                  style="background: rgba(255, 255, 255, 0.2);">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,7 +43,7 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($galleries as $index => $gallery)
                 <a href="{{ route('gallery.show', $gallery->slug) }}"
-                   class="pma-card group pma-animate-on-scroll pma-stagger-{{ ($index % 6) + 1 }} overflow-hidden">
+                   class="pma-card group overflow-hidden">
                     <div class="aspect-[4/3] overflow-hidden">
                         @if($gallery->cover_image)
                             <img src="{{ asset('storage/' . $gallery->cover_image) }}"
@@ -138,27 +138,4 @@
     </div>
 </section>
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.pma-animate-on-scroll').forEach(el => {
-        observer.observe(el);
-    });
-});
-</script>
-@endpush
 @endsection
