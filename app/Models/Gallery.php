@@ -49,6 +49,10 @@ class Gallery extends Model
 
                 $gallery->slug = $slug;
             }
+
+            if (empty($gallery->published_at)) {
+                $gallery->published_at = now();
+            }
         });
     }
 

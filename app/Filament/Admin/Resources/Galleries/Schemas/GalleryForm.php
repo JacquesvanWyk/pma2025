@@ -40,10 +40,7 @@ class GalleryForm
                                 'draft' => 'Draft',
                                 'published' => 'Published',
                             ])
-                            ->default('draft'),
-
-                        DateTimePicker::make('published_at')
-                            ->label('Publish Date & Time'),
+                            ->default('published'),
                     ]),
 
                 Section::make('Event Link')
