@@ -186,7 +186,7 @@
 
         <!-- Join Network Button (Floating) -->
         <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-[500]">
-            <a href="{{ route('network.register.individual') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-indigo)] hover:bg-[var(--color-indigo-light)] text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <a href="{{ route('network.join') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--color-indigo)] hover:bg-[var(--color-indigo-light)] text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>

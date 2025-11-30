@@ -70,21 +70,23 @@ class NetworkController extends Controller
 
     public function join()
     {
-        // Redirect to login if not authenticated
+        // Redirect to register if not authenticated
         if (! auth()->check()) {
-            return redirect()->route('login')->with('message', 'Please login or register to join the believer network.');
+            return redirect()->route('register')->with('message', 'Create an account to join the believer network.');
         }
 
-        // If authenticated, redirect to dashboard
-        return redirect()->route('dashboard');
+        // If authenticated, redirect to individual registration
+        return redirect()->route('network.register.individual');
     }
 
     public function registerIndividual()
     {
-        $individualProfile = auth()->user()->individualProfile;
+        if (auth()->check()) {
+            $individualProfile = auth()->user()->individualProfile;
 
-        if ($individualProfile) {
-            return redirect()->route('network.edit', $individualProfile);
+            if ($individualProfile) {
+                return redirect()->route('network.edit', $individualProfile);
+            }
         }
 
         return view('network.register', [

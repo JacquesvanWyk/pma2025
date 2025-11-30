@@ -63,7 +63,7 @@
                                 <input
                                     type="email"
                                     name="email"
-                                    value="{{ old('email', $networkMember->email ?? auth()->user()->email) }}"
+                                    value="{{ old('email', $networkMember->email ?? auth()->user()?->email) }}"
                                     required
                                     class="w-full px-4 py-3 rounded-lg border-2 transition-all pma-body"
                                     style="border-color: var(--color-cream-dark); background: var(--color-cream); color: var(--color-indigo);"
