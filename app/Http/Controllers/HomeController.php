@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ebook;
+use App\Models\Gallery;
 use App\Models\Note;
+use App\Models\PictureStudy;
 use App\Models\PledgeProgress;
 use App\Models\PrayerRoomSession;
 use App\Models\Study;
@@ -65,6 +67,16 @@ class HomeController extends Controller
             ->orderBy('session_date')
             ->first();
 
+        // Random gallery
+        $randomGallery = Gallery::where('status', 'published')
+            ->inRandomOrder()
+            ->first();
+
+        // Random picture study
+        $randomPictureStudy = PictureStudy::where('status', 'published')
+            ->inRandomOrder()
+            ->first();
+
         return view('home', compact(
             'featuredStudy',
             'englishEbook',
@@ -77,7 +89,9 @@ class HomeController extends Controller
             'currentPledges',
             'pledgeMonth',
             'pledgeGoal',
-            'pledgePercentage'
+            'pledgePercentage',
+            'randomGallery',
+            'randomPictureStudy'
         ));
     }
 }

@@ -262,6 +262,52 @@
                 </div>
                 @endif
 
+                <!-- Random Gallery -->
+                @if($randomGallery)
+                <div class="md:col-span-1 md:row-span-1 rounded-3xl shadow-lg relative overflow-hidden group">
+                    @if($randomGallery->cover_image)
+                        <img src="{{ asset('storage/' . $randomGallery->cover_image) }}" alt="{{ $randomGallery->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    @else
+                        <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-pma-green)] to-[var(--color-pma-green-dark)]"></div>
+                    @endif
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    <div class="relative z-10 p-6 h-full flex flex-col justify-between min-h-[200px]">
+                        <span class="inline-block px-2 py-1 rounded bg-white/20 text-white text-xs font-bold w-fit backdrop-blur-sm">
+                            Gallery
+                        </span>
+                        <div>
+                            <h3 class="text-white font-bold text-lg mb-1 line-clamp-2">{{ $randomGallery->title }}</h3>
+                            <a href="{{ route('gallery.show', $randomGallery->slug) }}" class="text-xs font-semibold text-white/80 hover:text-white">
+                                View Gallery →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Random Picture Study -->
+                @if($randomPictureStudy)
+                <div class="md:col-span-1 md:row-span-1 rounded-3xl shadow-lg relative overflow-hidden group">
+                    @if($randomPictureStudy->thumbnail_path ?? $randomPictureStudy->image_path)
+                        <img src="{{ asset('storage/' . ($randomPictureStudy->thumbnail_path ?? $randomPictureStudy->image_path)) }}" alt="{{ $randomPictureStudy->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    @else
+                        <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-ochre)] to-[var(--color-terracotta)]"></div>
+                    @endif
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    <div class="relative z-10 p-6 h-full flex flex-col justify-between min-h-[200px]">
+                        <span class="inline-block px-2 py-1 rounded bg-white/20 text-white text-xs font-bold w-fit backdrop-blur-sm">
+                            Picture Study
+                        </span>
+                        <div>
+                            <h3 class="text-white font-bold text-lg mb-1 line-clamp-2">{{ $randomPictureStudy->title }}</h3>
+                            <a href="{{ route('resources.picture-studies') }}" class="text-xs font-semibold text-white/80 hover:text-white">
+                                View All Picture Studies →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
             </div>
         </div>
     </section>
