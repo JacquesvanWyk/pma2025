@@ -20,7 +20,11 @@ class MinistryResource extends Resource
 {
     protected static ?string $model = Ministry::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
+
+    protected static \UnitEnum|string|null $navigationGroup = 'Network';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

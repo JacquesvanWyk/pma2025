@@ -37,4 +37,14 @@ class Tag extends Model
     {
         return $this->morphedByMany(Tract::class, 'taggable');
     }
+
+    public function galleries(): MorphToMany
+    {
+        return $this->morphedByMany(Gallery::class, 'taggable');
+    }
+
+    public function pictureStudies(): MorphToMany
+    {
+        return $this->morphedByMany(PictureStudy::class, 'taggable');
+    }
 }

@@ -28,6 +28,10 @@ class IndividualResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUser;
 
+    protected static \UnitEnum|string|null $navigationGroup = 'Network';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return IndividualForm::configure($schema);

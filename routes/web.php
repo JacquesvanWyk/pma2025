@@ -42,5 +42,9 @@ Route::post('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, '
 // Kingdom Kids
 Route::get('kingdom-kids', [\App\Http\Controllers\KingdomKidsController::class, 'index'])->name('kingdom-kids');
 
+// Download Routes
+Route::get('gallery/{gallery}/images/{image}/download', [\App\Http\Controllers\DownloadController::class, 'galleryImage'])->name('gallery.image.download');
+Route::get('picture-studies/{pictureStudy}/download', [\App\Http\Controllers\DownloadController::class, 'pictureStudy'])->name('picture-study.download');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/public.php';

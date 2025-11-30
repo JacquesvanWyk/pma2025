@@ -20,9 +20,11 @@ class PrayerRequestResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 
+    protected static \UnitEnum|string|null $navigationGroup = 'Community';
+
     protected static ?string $navigationLabel = 'Prayer Requests';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

@@ -22,6 +22,10 @@ class MessageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;
 
+    protected static \UnitEnum|string|null $navigationGroup = 'Communications';
+
+    protected static ?int $navigationSort = 3;
+
     public static function form(Schema $schema): Schema
     {
         return MessageForm::configure($schema);

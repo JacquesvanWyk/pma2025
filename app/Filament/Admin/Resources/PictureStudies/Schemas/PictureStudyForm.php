@@ -1,0 +1,87 @@
+<?php
+
+namespace App\Filament\Admin\Resources\PictureStudies\Schemas;
+
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class PictureStudyForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Details')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('title')
+                            ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state)))
+                            ->columnSpanFull(),
+
+                        TextInput::make('slug')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->columnSpanFull(),
+
+                        Textarea::make('description')
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                        Select::make('language')
+                            ->required()
+                            ->options([
+                                'en' => 'English',
+                                'af' => 'Afrikaans',
+                            ])
+                            ->default('en'),
+
+                        Select::make('status')
+                            ->required()
+                            ->options([
+                                'draft' => 'Draft',
+                                'published' => 'Published',
+                            ])
+                            ->default('draft'),
+
+                        DateTimePicker::make('published_at')
+                            ->label('Publish Date & Time'),
+                    ]),
+
+                Section::make('Image')
+                    ->schema([
+                        FileUpload::make('image_path')
+                            ->label('Picture Study Image')
+                            ->disk('public')
+                            ->image()
+                            ->imageEditor()
+                            ->directory('picture-studies')
+                            ->visibility('public')
+                            ->maxSize(10240)
+                            ->required()
+                            ->helperText('Upload the infographic image (max 10MB)')
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Tags')
+                    ->schema([
+                        Select::make('tags')
+                            ->relationship('tags', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->required(),
+                                Textarea::make('description'),
+                            ])
+                            ->columnSpanFull(),
+                    ]),
+            ]);
+    }
+}

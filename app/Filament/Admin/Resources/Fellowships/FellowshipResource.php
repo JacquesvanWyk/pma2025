@@ -28,6 +28,10 @@ class FellowshipResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
+    protected static \UnitEnum|string|null $navigationGroup = 'Network';
+
+    protected static ?int $navigationSort = 2;
+
     public static function form(Schema $schema): Schema
     {
         return FellowshipForm::configure($schema);

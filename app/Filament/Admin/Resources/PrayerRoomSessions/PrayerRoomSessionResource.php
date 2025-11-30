@@ -21,7 +21,7 @@ class PrayerRoomSessionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Ministry';
+    protected static string|UnitEnum|null $navigationGroup = 'Prayer';
 
     protected static ?string $navigationLabel = 'Prayer Room Sessions';
 

@@ -4,8 +4,10 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonateController;
 use App\Http\Controllers\EbookController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\PictureStudyController;
 use App\Http\Controllers\ResourcesController;
 use App\Http\Controllers\SermonController;
 use App\Http\Controllers\StudiesController;
@@ -45,6 +47,11 @@ Route::get('/resources', [ResourcesController::class, 'index'])->name('resources
 Route::get('/resources/tracts', [ResourcesController::class, 'tracts'])->name('resources.tracts');
 Route::get('/resources/ebooks', [ResourcesController::class, 'ebooks'])->name('resources.ebooks');
 Route::get('/resources/notes', [NoteController::class, 'index'])->name('resources.notes');
+Route::get('/resources/picture-studies', [PictureStudyController::class, 'index'])->name('resources.picture-studies');
+
+// Gallery routes
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
+Route::get('/gallery/{slug}', [GalleryController::class, 'show'])->name('gallery.show');
 
 // Other routes
 Route::get('/sermons', [SermonController::class, 'index'])->name('sermons');

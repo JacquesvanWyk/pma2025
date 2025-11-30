@@ -20,7 +20,11 @@ class PledgeProgressResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
 
+    protected static \UnitEnum|string|null $navigationGroup = 'Finance';
+
     protected static ?string $navigationLabel = 'Monthly Pledges';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $modelLabel = 'Pledge Progress';
 

@@ -76,6 +76,9 @@
                         <a href="{{ route('studies') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
                             <div class="font-semibold">Studies</div>
                         </a>
+                        <a href="{{ route('resources.picture-studies') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
+                            <div class="font-semibold">Picture Studies</div>
+                        </a>
                         <a href="{{ route('sermons') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
                             <div class="font-semibold">Sermons</div>
                         </a>
@@ -94,6 +97,13 @@
                 <a href="{{ route('kingdom-kids') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
                     <img src="{{ url('images/kingdomKids.png') }}" alt="Kingdom Kids" class="h-4 w-auto brightness-0 invert shrink-0">
                     Kingdom Kids
+                </a>
+
+                <a href="{{ route('gallery') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Gallery
                 </a>
 
                 <a href="{{ route('contact') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
@@ -148,6 +158,7 @@
                     </button>
                     <div x-show="open" class="pl-4 mt-2 flex flex-col gap-3">
                         <a href="{{ route('studies') }}" class="text-gray-600">Studies</a>
+                        <a href="{{ route('resources.picture-studies') }}" class="text-gray-600">Picture Studies</a>
                         <a href="{{ route('sermons') }}" class="text-gray-600">Sermons</a>
                         <a href="{{ route('resources.tracts') }}" class="text-gray-600">Tracts</a>
                         <a href="{{ route('resources.ebooks') }}" class="text-gray-600">E-Books</a>
@@ -160,6 +171,8 @@
                 <a href="{{ route('network.index') }}" class="text-lg font-medium text-[var(--color-pma-green)]">Network</a>
 
                 <a href="{{ route('kingdom-kids') }}" class="text-lg font-medium text-[var(--color-indigo)]">Kingdom Kids</a>
+
+                <a href="{{ route('gallery') }}" class="text-lg font-medium text-[var(--color-indigo)]">Gallery</a>
 
                 <a href="{{ route('contact') }}" class="text-lg font-medium text-[var(--color-indigo)]">Contact</a>
 

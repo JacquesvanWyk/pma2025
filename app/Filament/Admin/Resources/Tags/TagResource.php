@@ -23,7 +23,9 @@ class TagResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Content';
+    protected static \UnitEnum|string|null $navigationGroup = 'Settings';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -65,6 +67,14 @@ class TagResource extends Resource
                 TextColumn::make('tracts_count')
                     ->counts('tracts')
                     ->label('Tracts'),
+
+                TextColumn::make('galleries_count')
+                    ->counts('galleries')
+                    ->label('Galleries'),
+
+                TextColumn::make('picture_studies_count')
+                    ->counts('pictureStudies')
+                    ->label('Picture Studies'),
 
                 TextColumn::make('created_at')
                     ->dateTime()
