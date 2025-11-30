@@ -51,7 +51,7 @@ class NetworkMemberApprovalNotification extends Notification implements ShouldQu
             ->line('')
             ->line('**Monthly Prayer Room**')
             ->line('We gather online for prayer every **last Wednesday of the month**. Join us as we lift up the work of the Gospel across Africa!')
-            ->line('[Visit Prayer Room]('.route('prayer-room.index').')')
+            ->line('[Join Prayer Room WhatsApp](https://chat.whatsapp.com/EqqJGyKQm02KSaYoi6RhiN)')
             ->line('')
             ->line('**Follow Us on Social Media**')
             ->line('• [Facebook](https://www.facebook.com/pioneermissionsafrica) - Updates, testimonies & encouragement')
