@@ -47,7 +47,7 @@
                     <p class="pma-body text-white/80 mb-6">
                         Join us as a ministry partner
                     </p>
-                    <a href="{{ route('partner') }}" class="pma-btn pma-btn-secondary w-full text-center whitespace-nowrap bg-transparent border-2 border-white text-white hover:bg-white hover:text-[var(--color-pma-green)] transition-colors">
+                    <a href="{{ route('partner') }}" class="pma-btn pma-btn-primary w-full text-center whitespace-nowrap">
                         Learn More
                     </a>
                 </div>
