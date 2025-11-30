@@ -10,6 +10,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PictureStudyController;
 use App\Http\Controllers\ResourcesController;
 use App\Http\Controllers\SermonController;
+use App\Http\Controllers\ShortController;
 use App\Http\Controllers\StudiesController;
 use App\Http\Controllers\TractController;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,7 @@ Route::get('/gallery/{slug}', [GalleryController::class, 'show'])->name('gallery
 
 // Other routes
 Route::get('/sermons', [SermonController::class, 'index'])->name('sermons');
+Route::get('/shorts', [ShortController::class, 'index'])->name('shorts');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
 // Donation routes

@@ -82,6 +82,9 @@
                         <a href="{{ route('sermons') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
                             <div class="font-semibold">Sermons</div>
                         </a>
+                        <a href="{{ route('shorts') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
+                            <div class="font-semibold">Shorts</div>
+                        </a>
                         <a href="{{ route('resources.tracts') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
                             <div class="font-semibold">Tracts</div>
                         </a>
@@ -160,6 +163,7 @@
                         <a href="{{ route('studies') }}" class="text-gray-600">Studies</a>
                         <a href="{{ route('resources.picture-studies') }}" class="text-gray-600">Picture Studies</a>
                         <a href="{{ route('sermons') }}" class="text-gray-600">Sermons</a>
+                        <a href="{{ route('shorts') }}" class="text-gray-600">Shorts</a>
                         <a href="{{ route('resources.tracts') }}" class="text-gray-600">Tracts</a>
                         <a href="{{ route('resources.ebooks') }}" class="text-gray-600">E-Books</a>
                         <a href="{{ route('resources.notes') }}" class="text-gray-600">Study Notes</a>
