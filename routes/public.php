@@ -65,7 +65,7 @@ Route::get('/pledge', [DonateController::class, 'pledge'])->name('pledge');
 
 // Legal routes
 Route::view('/privacy', 'legal.privacy')->name('privacy');
-Route::view('/terms', 'home')->name('terms');
+Route::view('/terms', 'legal.terms')->name('terms');
 Route::view('/partner', 'home')->name('partner');
 
 Route::post('/newsletter/subscribe', function () {
