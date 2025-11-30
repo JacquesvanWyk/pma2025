@@ -86,25 +86,100 @@
 
         <!-- Map Info Panel (Floating Statistics) -->
         <div class="absolute top-24 right-4 z-[500] hidden md:block">
-            <div class="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/50 w-64 transition-opacity hover:opacity-100">
+            <div class="bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/50 w-72 transition-opacity hover:opacity-100 max-h-[70vh] overflow-y-auto">
                 <h3 class="font-bold text-[var(--color-indigo)] mb-3 flex items-center gap-2 text-sm uppercase tracking-wide">
                     <span class="w-2 h-2 rounded-full bg-[var(--color-pma-green)] animate-pulse"></span>
                     Network Stats
                 </h3>
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center p-2 bg-gray-50/80 rounded-lg">
-                        <span class="text-xs font-medium text-gray-500 uppercase">Individual Profiles</span>
-                        <span class="font-bold text-[var(--color-indigo)]">{{ $networkMembers->where('type', 'individual')->count() }}</span>
+                    <!-- Individuals/Families Section -->
+                    <div class="p-2 bg-indigo-50/50 rounded border border-indigo-100/50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-medium text-gray-500 uppercase">Individual/Family</span>
+                            <span class="font-bold text-[var(--color-indigo)]">{{ $networkMembers->where('type', 'individual')->count() }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-gray-400">Believers</span>
+                            <span class="text-sm font-bold text-[var(--color-pma-green)]">{{ number_format($networkMembers->where('type', 'individual')->sum('total_believers')) }}</span>
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center p-2 bg-gray-50/80 rounded-lg">
-                        <span class="text-xs font-medium text-gray-500 uppercase">Fellowship Groups</span>
-                        <span class="font-bold text-[var(--color-indigo)]">{{ $networkMembers->where('type', 'group')->count() }}</span>
+                    <!-- Fellowship/Groups Section -->
+                    <div class="p-2 bg-green-50/50 rounded border border-green-100/50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-medium text-gray-500 uppercase">Fellowship/Group</span>
+                            <span class="font-bold text-[var(--color-indigo)]">{{ $networkMembers->where('type', 'group')->count() }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] text-gray-400">Believers</span>
+                            <span class="text-sm font-bold text-[var(--color-pma-green)]">{{ number_format($networkMembers->where('type', 'group')->sum('total_believers')) }}</span>
+                        </div>
                     </div>
-                    <div class="border-t border-gray-200/50 my-1"></div>
-                    <div class="flex justify-between items-center p-2 bg-indigo-50/50 rounded-lg border border-indigo-100/50">
-                        <span class="text-xs font-bold text-indigo-900 uppercase">Total Believers</span>
-                        <span class="font-bold text-[var(--color-pma-green)]">{{ number_format($networkMembers->sum('total_believers')) }}</span>
+
+                    <!-- Top Professional Skills -->
+                    @if($topProfessionalSkills->count() > 0)
+                    <div class="p-2 bg-gray-50/50 rounded border border-gray-100/50">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Top Skills</div>
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($topProfessionalSkills as $skill)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">{{ $skill }}</span>
+                            @endforeach
+                        </div>
                     </div>
+                    @endif
+
+                    <!-- Top Ministry Gifts -->
+                    @if($topMinistrySkills->count() > 0)
+                    <div class="p-2 bg-gray-50/50 rounded border border-gray-100/50">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Top Ministry Gifts</div>
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($topMinistrySkills as $gift)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-100">{{ $gift }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Top Languages -->
+                    @if($topLanguages->count() > 0)
+                    <div class="p-2 bg-gray-50/50 rounded border border-gray-100/50">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Top Languages</div>
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($topLanguages as $language)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-700 border border-gray-200">{{ $language }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Geographic Spread -->
+                    @if($geographicSpread->count() > 0)
+                    <div class="p-2 bg-gray-50/50 rounded border border-gray-100/50">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Locations</div>
+                        @foreach($geographicSpread as $country => $provinces)
+                        <div class="mb-2 last:mb-0">
+                            <div class="flex items-center gap-1 text-xs font-medium text-gray-700 mb-1">
+                                <span>📍</span>
+                                <span>{{ $country }}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1 pl-4">
+                                @foreach($provinces as $province => $believerCount)
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-100">{{ $province }}: <span class="font-bold">{{ $believerCount }}</span></span>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
+
+                    <!-- New This Month -->
+                    @if($newThisMonth > 0)
+                    <div class="p-2 bg-gray-50/50 rounded border border-gray-100/50">
+                        <div class="flex items-center gap-2 text-xs text-gray-600">
+                            <span>🆕</span>
+                            <span>{{ $newThisMonth }} new this month</span>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -327,13 +402,61 @@
                             <div x-data="{ expanded: false, hasLongBio: ${member.bio.length > 100} }" class="mb-3">
                                 <p x-show="!expanded" class="text-sm text-gray-600 line-clamp-3">${member.bio}</p>
                                 <p x-show="expanded" class="text-sm text-gray-600 whitespace-pre-wrap">${member.bio}</p>
-                                <button x-show="hasLongBio" 
-                                        @click="expanded = !expanded" 
+                                <button x-show="hasLongBio"
+                                        @click="expanded = !expanded"
                                         class="text-xs font-semibold text-[var(--color-pma-green)] hover:underline mt-1 focus:outline-none">
                                     <span x-text="expanded ? 'Show Less' : 'Read All'"></span>
                                 </button>
                             </div>
                         ` : '<p class="text-sm text-gray-600 mb-3">No bio available.</p>'}
+
+                        ${(member.website_url || member.facebook_url || member.twitter_url || member.youtube_url) ? `
+                            <div class="mb-3">
+                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Online Presence</div>
+                                <div class="flex flex-wrap gap-2">
+                                    ${member.website_url ? `
+                                        <a href="${member.website_url}" target="_blank" rel="noopener noreferrer"
+                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-[var(--color-pma-green)] hover:!text-white transition-colors text-xs font-medium"
+                                           title="Website">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                            </svg>
+                                            Website
+                                        </a>
+                                    ` : ''}
+                                    ${member.facebook_url ? `
+                                        <a href="${member.facebook_url}" target="_blank" rel="noopener noreferrer"
+                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:!text-white transition-colors text-xs font-medium"
+                                           title="Facebook">
+                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                            </svg>
+                                            Facebook
+                                        </a>
+                                    ` : ''}
+                                    ${member.twitter_url ? `
+                                        <a href="${member.twitter_url}" target="_blank" rel="noopener noreferrer"
+                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:!text-white transition-colors text-xs font-medium"
+                                           title="X (Twitter)">
+                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                            </svg>
+                                            X
+                                        </a>
+                                    ` : ''}
+                                    ${member.youtube_url ? `
+                                        <a href="${member.youtube_url}" target="_blank" rel="noopener noreferrer"
+                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:!text-white transition-colors text-xs font-medium"
+                                           title="YouTube">
+                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                            </svg>
+                                            YouTube
+                                        </a>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
 
                         ${(member.show_email || member.show_phone) ? `
                             <div class="mt-2 pt-2 border-t border-gray-100">

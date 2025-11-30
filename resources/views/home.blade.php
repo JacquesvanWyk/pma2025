@@ -20,13 +20,8 @@
             <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
                 <!-- Left Column: Mission Statement -->
                 <div class="lg:col-span-7 text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-medium mb-8 animate-fade-in-up">
-                        <span class="w-2 h-2 rounded-full bg-[var(--color-pma-green)] animate-pulse"></span>
-                        Proclaiming the Everlasting Gospel
-                    </div>
-                    
                     <h1 class="text-5xl lg:text-7xl font-bold text-white leading-tight mb-6 tracking-tight">
-                        Connecting Africa to the <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-pma-green-light)] to-[var(--color-ochre-light)]">Knowledge of God</span>
+                        Proclaiming the <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-pma-green-light)] to-[var(--color-ochre-light)]">Everlasting Gospel</span> in Africa and Beyond
                     </h1>
                     
                     <p class="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">

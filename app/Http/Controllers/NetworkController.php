@@ -86,12 +86,18 @@ class NetworkController extends Controller
             return redirect()->route('network.edit', $individualProfile);
         }
 
-        return view('network.register', ['type' => 'individual']);
+        return view('network.register', [
+            'type' => 'individual',
+            'onboarding' => request()->has('onboarding'),
+        ]);
     }
 
     public function registerFellowship()
     {
-        return view('network.register', ['type' => 'group']);
+        return view('network.register', [
+            'type' => 'group',
+            'onboarding' => request()->has('onboarding'),
+        ]);
     }
 
     public function store(Request $request)
@@ -115,11 +121,16 @@ class NetworkController extends Controller
             'province' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:500',
+            'website_url' => 'nullable|url|max:255',
+            'facebook_url' => 'nullable|url|max:255',
+            'twitter_url' => 'nullable|url|max:255',
+            'youtube_url' => 'nullable|url|max:255',
             'meeting_times' => 'nullable|string|max:255',
             'languages' => 'array',
             'languages.*' => 'exists:languages,id',
             'show_email' => 'boolean',
             'show_phone' => 'boolean',
+            'onboarding' => 'nullable|boolean',
         ]);
 
         $data = [
@@ -138,6 +149,10 @@ class NetworkController extends Controller
             'province' => $validated['province'] ?? null,
             'country' => $validated['country'] ?? null,
             'address' => $validated['address'] ?? null,
+            'website_url' => $validated['website_url'] ?? null,
+            'facebook_url' => $validated['facebook_url'] ?? null,
+            'twitter_url' => $validated['twitter_url'] ?? null,
+            'youtube_url' => $validated['youtube_url'] ?? null,
             'meeting_times' => $validated['meeting_times'] ?? null,
             'show_email' => $validated['show_email'] ?? false,
             'show_phone' => $validated['show_phone'] ?? false,
@@ -172,6 +187,17 @@ class NetworkController extends Controller
         // Notify admin about new registration
         Notification::route('mail', 'jvw679@gmail.com')
             ->notify(new NewNetworkMemberRegistered($networkMember));
+
+        // Handle onboarding redirect
+        if ($request->has('onboarding') && $request->onboarding) {
+            if ($validated['type'] === 'individual') {
+                return redirect()->route('onboarding', ['step' => 'fellowship'])
+                    ->with('success', 'Individual profile created! Do you also want to register a fellowship?');
+            }
+
+            return redirect()->route('dashboard')
+                ->with('success', 'Onboarding complete! Welcome to the dashboard.');
+        }
 
         return redirect()->route('dashboard')
             ->with('success', 'Your network submission has been received! It will be reviewed by our team and you\'ll receive an email notification once approved.');
@@ -216,6 +242,10 @@ class NetworkController extends Controller
             'province' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:500',
+            'website_url' => 'nullable|url|max:255',
+            'facebook_url' => 'nullable|url|max:255',
+            'twitter_url' => 'nullable|url|max:255',
+            'youtube_url' => 'nullable|url|max:255',
             'meeting_times' => 'nullable|string|max:255',
             'languages' => 'array',
             'languages.*' => 'exists:languages,id',
@@ -238,6 +268,10 @@ class NetworkController extends Controller
             'province' => $validated['province'] ?? null,
             'country' => $validated['country'] ?? null,
             'address' => $validated['address'] ?? null,
+            'website_url' => $validated['website_url'] ?? null,
+            'facebook_url' => $validated['facebook_url'] ?? null,
+            'twitter_url' => $validated['twitter_url'] ?? null,
+            'youtube_url' => $validated['youtube_url'] ?? null,
             'meeting_times' => $validated['meeting_times'] ?? null,
             'show_email' => $validated['show_email'] ?? false,
             'show_phone' => $validated['show_phone'] ?? false,

@@ -9,9 +9,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
             <!-- Brand Column -->
             <div class="lg:col-span-4">
-                <a href="{{ route('home') }}" class="inline-block mb-6">
-                    <img src="{{ url('images/PMALogoWhiteText.png') }}" alt="Pioneer Missions Africa" class="h-12 brightness-0 invert opacity-90">
-                </a>
+                <div class="relative inline-block mb-6 group">
+                    <a href="{{ route('home') }}">
+                        <img src="{{ url('images/PMALogoWhiteText.png') }}" alt="Pioneer Missions Africa" class="h-12 brightness-0 invert opacity-90">
+                    </a>
+                    <a href="{{ route('filament.admin.auth.login') }}" class="absolute -bottom-5 left-0 text-[10px] text-white/0 group-hover:text-white/30 transition-all duration-300">
+                        Admin
+                    </a>
+                </div>
                 <p class="text-lg leading-relaxed mb-8 max-w-sm text-gray-400">
                     Proclaiming the Everlasting Gospel and spreading the knowledge of the one true God across Africa.
                 </p>

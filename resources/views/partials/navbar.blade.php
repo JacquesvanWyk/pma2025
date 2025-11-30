@@ -1,5 +1,6 @@
-<div class="fixed top-0 left-0 right-0 z-50 p-4 pointer-events-none">
-    <nav class="pointer-events-auto mx-auto max-w-7xl rounded-2xl bg-white/90 backdrop-blur-xl shadow-lg border border-white/20 transition-all duration-300" x-data="{ mobileMenuOpen: false, scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+<div class="fixed top-0 left-0 right-0 z-50 px-4 pt-8 pb-4 pointer-events-none" x-data="{ mobileMenuOpen: false }">
+    <div class="pointer-events-auto mx-auto max-w-7xl relative">
+    <nav class="w-full rounded-2xl bg-white/90 backdrop-blur-xl shadow-lg border border-white/20 transition-all duration-300">
         <div class="px-6 h-20 flex items-center justify-between">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
@@ -7,14 +8,22 @@
             </a>
 
             <!-- Desktop Navigation -->
-            <div class="hidden lg:flex items-center gap-8">
-                <a href="{{ route('home') }}" class="text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide">Home</a>
+            <div class="hidden lg:flex items-center gap-6">
+                <a href="{{ route('home') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Home
+                </a>
                 
                 <!-- About Dropdown -->
                 <div class="relative group h-20 flex items-center">
-                    <button class="flex items-center gap-1 text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide focus:outline-none">
+                    <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all focus:outline-none whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                         About
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
@@ -37,15 +46,15 @@
                     </div>
                 </div>
 
-                <a href="{{ route('prayer-room.index') }}" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-[var(--color-pma-green)] to-[var(--color-pma-green-light)] text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <a href="{{ route('prayer-room.index') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                     </svg>
                     Prayer Room
                 </a>
 
-                <a href="{{ route('network.index') }}" class="relative px-3 py-1.5 rounded-lg bg-gradient-to-r from-[var(--color-pma-green)] to-[var(--color-indigo)] text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <a href="{{ route('network.index') }}" class="relative px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     Network
@@ -54,9 +63,12 @@
 
                 <!-- Resources Dropdown -->
                 <div class="relative group h-20 flex items-center">
-                    <button class="flex items-center gap-1 text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide focus:outline-none">
+                    <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all focus:outline-none whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
                         Resources
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
@@ -79,31 +91,17 @@
                     </div>
                 </div>
 
-                <a href="{{ route('kingdom-kids') }}" class="flex items-center gap-2 text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide">
-                    <img src="{{ url('images/kingdomKids.png') }}" alt="Kingdom Kids" class="h-6 w-auto object-contain">
+                <a href="{{ route('kingdom-kids') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <img src="{{ url('images/kingdomKids.png') }}" alt="Kingdom Kids" class="h-4 w-auto brightness-0 invert shrink-0">
+                    Kingdom Kids
                 </a>
 
-                <a href="{{ route('contact') }}" class="text-[var(--color-indigo)] font-medium hover:text-[var(--color-pma-green)] transition-colors text-sm uppercase tracking-wide">Contact</a>
-            </div>
-
-            <!-- Right Actions -->
-            <div class="hidden lg:flex items-center gap-3">
-                <a href="{{ route('donate') }}" class="relative overflow-hidden group bg-[var(--color-pma-green)] text-white px-5 py-2 rounded-full font-semibold shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 text-sm">
-                    <span class="relative z-10">Support Us</span>
-                    <div class="absolute inset-0 h-full w-full scale-0 rounded-full transition-all duration-300 group-hover:scale-100 group-hover:bg-[var(--color-pma-green-light)]"></div>
+                <a href="{{ route('contact') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Contact
                 </a>
-
-                @auth
-                    <a href="{{ route('dashboard') }}" class="p-2 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors" title="Dashboard">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                @else
-                    <a href="{{ route('login') }}" class="px-4 py-2 rounded-full border border-[var(--color-indigo)] text-[var(--color-indigo)] font-medium text-sm hover:bg-[var(--color-indigo)] hover:text-white transition-all">
-                        Log In
-                    </a>
-                @endauth
             </div>
 
             <!-- Mobile Menu Button -->
@@ -157,8 +155,14 @@
                     </div>
                 </div>
 
+                <a href="{{ route('prayer-room.index') }}" class="text-lg font-medium text-[var(--color-pma-green)]">Prayer Room</a>
+
+                <a href="{{ route('network.index') }}" class="text-lg font-medium text-[var(--color-pma-green)]">Network</a>
+
+                <a href="{{ route('kingdom-kids') }}" class="text-lg font-medium text-[var(--color-indigo)]">Kingdom Kids</a>
+
                 <a href="{{ route('contact') }}" class="text-lg font-medium text-[var(--color-indigo)]">Contact</a>
-                
+
                 <hr class="my-2 border-gray-200">
 
                 @auth
@@ -172,4 +176,30 @@
             </div>
         </div>
     </nav>
+
+        <!-- Secondary Action Box (Desktop Only) -->
+        <div class="hidden lg:flex items-center gap-2 px-2 py-1 rounded-t bg-white/90 backdrop-blur-xl shadow-md border border-b-0 border-white/20 absolute bottom-full right-6">
+            <a href="{{ route('donate') }}" class="px-2 py-1 rounded bg-amber-500 text-white font-medium text-xs shadow-sm hover:bg-amber-600 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                Support Us
+            </a>
+            @auth
+                <a href="{{ route('dashboard') }}" class="px-2 py-1 rounded bg-[var(--color-indigo)] text-white font-medium text-xs shadow-sm hover:opacity-90 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    Dashboard
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="px-2 py-1 rounded bg-[var(--color-indigo)] text-white font-medium text-xs shadow-sm hover:opacity-90 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    Login
+                </a>
+            @endauth
+        </div>
+    </div>
 </div>
