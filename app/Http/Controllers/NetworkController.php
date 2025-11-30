@@ -7,6 +7,7 @@ use App\Models\Fellowship;
 use App\Models\Individual;
 use App\Models\Ministry;
 use App\Models\NetworkMember;
+use App\Notifications\NetworkMemberApprovalNotification;
 use App\Notifications\NewNetworkMemberRegistered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
@@ -316,5 +317,37 @@ class NetworkController extends Controller
 
         return redirect()->route('dashboard')
             ->with('success', 'Your network profile has been updated successfully!');
+    }
+
+    public function quickApprove(NetworkMember $networkMember)
+    {
+        // Check if already approved
+        if ($networkMember->status === 'approved') {
+            return view('network.quick-approve-result', [
+                'success' => false,
+                'message' => 'This member has already been approved.',
+                'networkMember' => $networkMember,
+            ]);
+        }
+
+        // Approve the member
+        $networkMember->update([
+            'status' => 'approved',
+            'approved_at' => now(),
+        ]);
+
+        // Send approval notification to the member
+        if ($networkMember->user) {
+            $networkMember->user->notify(new NetworkMemberApprovalNotification($networkMember));
+        } else {
+            Notification::route('mail', $networkMember->email)
+                ->notify(new NetworkMemberApprovalNotification($networkMember));
+        }
+
+        return view('network.quick-approve-result', [
+            'success' => true,
+            'message' => 'Member approved successfully! They have been notified via email.',
+            'networkMember' => $networkMember,
+        ]);
     }
 }

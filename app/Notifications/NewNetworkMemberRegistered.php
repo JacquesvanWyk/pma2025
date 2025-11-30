@@ -6,6 +6,7 @@ use App\Models\NetworkMember;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 
 class NewNetworkMemberRegistered extends Notification
 {
@@ -24,6 +25,11 @@ class NewNetworkMemberRegistered extends Notification
     {
         $type = $this->networkMember->type === 'individual' ? 'Individual' : 'Fellowship';
 
+        // Generate signed URL for quick approval (valid for 7 days)
+        $approveUrl = URL::signedRoute('network.quick-approve', [
+            'networkMember' => $this->networkMember->id,
+        ], now()->addDays(7));
+
         return (new MailMessage)
             ->subject("New {$type} Registration Needs Approval - Pioneer Missions Africa")
             ->greeting("New {$type} Registration!")
@@ -36,8 +42,9 @@ class NewNetworkMemberRegistered extends Notification
                 $this->networkMember->country,
             ])->filter()->implode(', '))
             ->line('**Registered at:** '.$this->networkMember->created_at->format('d M Y, H:i'))
-            ->action('Review in Admin Panel', url('/admin/network-members'))
-            ->line('Please review and approve this registration.');
+            ->action('Approve Now', $approveUrl)
+            ->line('[View in Admin Panel]('.url('/admin/network-members').')')
+            ->line('This approval link expires in 7 days.');
     }
 
     public function toArray(object $notifiable): array

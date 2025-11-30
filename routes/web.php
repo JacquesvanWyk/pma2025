@@ -30,6 +30,11 @@ Route::middleware(['auth'])->group(function () {
 // User Profile Route (public)
 Route::get('users/{user}', [\App\Http\Controllers\UserProfileController::class, 'show'])->name('users.show');
 
+// Admin quick approval via signed URL
+Route::get('network/approve/{networkMember}', [\App\Http\Controllers\NetworkController::class, 'quickApprove'])
+    ->name('network.quick-approve')
+    ->middleware('signed');
+
 // Prayer Room Routes
 Route::get('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'index'])->name('prayer-room.index');
 Route::post('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'store'])->name('prayer-room.store');

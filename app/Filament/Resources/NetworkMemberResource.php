@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class NetworkMemberResource extends Resource
 {
@@ -251,7 +252,12 @@ class NetworkMemberResource extends Resource
                         ]);
 
                         // Send approval notification email
-                        $record->user->notify(new NetworkMemberApprovalNotification($record));
+                        if ($record->user) {
+                            $record->user->notify(new NetworkMemberApprovalNotification($record));
+                        } else {
+                            Notification::route('mail', $record->email)
+                                ->notify(new NetworkMemberApprovalNotification($record));
+                        }
                     })
                     ->requiresConfirmation()
                     ->modalHeading('Approve Network Member')
