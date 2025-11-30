@@ -328,6 +328,8 @@ class NetworkController extends Controller
 
     public function storeMinistry(Request $request)
     {
+        $request->merge($this->normalizeUrls($request->only(['website', 'facebook', 'twitter', 'instagram', 'youtube'])));
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -413,6 +415,8 @@ class NetworkController extends Controller
         if ($ministry->user_id !== auth()->id()) {
             abort(403);
         }
+
+        $request->merge($this->normalizeUrls($request->only(['website', 'facebook', 'twitter', 'instagram', 'youtube'])));
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -519,5 +523,24 @@ class NetworkController extends Controller
             'message' => 'Member approved successfully! They have been notified via email.',
             'networkMember' => $networkMember,
         ]);
+    }
+
+    private function normalizeUrls(array $urls): array
+    {
+        return collect($urls)
+            ->map(function ($url) {
+                if (empty($url)) {
+                    return null;
+                }
+
+                $url = trim($url);
+
+                if (! preg_match('#^https?://#i', $url)) {
+                    $url = 'https://'.$url;
+                }
+
+                return $url;
+            })
+            ->toArray();
     }
 }
