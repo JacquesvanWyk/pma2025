@@ -321,6 +321,174 @@ class NetworkController extends Controller
             ->with('success', 'Your network profile has been updated successfully!');
     }
 
+    public function createMinistry()
+    {
+        return view('network.register-ministry');
+    }
+
+    public function storeMinistry(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:5000',
+            'logo' => 'nullable|image|max:2048',
+            'focus_areas' => 'nullable|string|max:1000',
+            'languages' => 'nullable|string|max:1000',
+            'tags' => 'nullable|string|max:1000',
+            'website' => 'nullable|url|max:255',
+            'facebook' => 'nullable|url|max:255',
+            'twitter' => 'nullable|url|max:255',
+            'instagram' => 'nullable|url|max:255',
+            'youtube' => 'nullable|url|max:255',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'city' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'show_email' => 'boolean',
+            'show_phone' => 'boolean',
+        ]);
+
+        $data = [
+            'user_id' => auth()->id(),
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'website' => $validated['website'] ?? null,
+            'facebook' => $validated['facebook'] ?? null,
+            'twitter' => $validated['twitter'] ?? null,
+            'instagram' => $validated['instagram'] ?? null,
+            'youtube' => $validated['youtube'] ?? null,
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'city' => $validated['city'] ?? null,
+            'province' => $validated['province'] ?? null,
+            'country' => $validated['country'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'show_email' => $validated['show_email'] ?? true,
+            'show_phone' => $validated['show_phone'] ?? false,
+            'status' => 'pending',
+            'is_active' => true,
+        ];
+
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store('ministries', 'public');
+        }
+
+        if ($request->filled('focus_areas')) {
+            $data['focus_areas'] = array_map('trim', explode(',', $request->focus_areas));
+        }
+
+        if ($request->filled('languages')) {
+            $data['languages'] = array_map('trim', explode(',', $request->languages));
+        }
+
+        if ($request->filled('tags')) {
+            $data['tags'] = array_map('trim', explode(',', $request->tags));
+        }
+
+        Ministry::create($data);
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Your ministry has been submitted for approval. You\'ll receive an email notification once it\'s approved.');
+    }
+
+    public function editMinistry(Ministry $ministry)
+    {
+        if ($ministry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('network.register-ministry', [
+            'ministry' => $ministry,
+        ]);
+    }
+
+    public function updateMinistry(Request $request, Ministry $ministry)
+    {
+        if ($ministry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:5000',
+            'logo' => 'nullable|image|max:2048',
+            'focus_areas' => 'nullable|string|max:1000',
+            'languages' => 'nullable|string|max:1000',
+            'tags' => 'nullable|string|max:1000',
+            'website' => 'nullable|url|max:255',
+            'facebook' => 'nullable|url|max:255',
+            'twitter' => 'nullable|url|max:255',
+            'instagram' => 'nullable|url|max:255',
+            'youtube' => 'nullable|url|max:255',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'city' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'show_email' => 'boolean',
+            'show_phone' => 'boolean',
+        ]);
+
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'website' => $validated['website'] ?? null,
+            'facebook' => $validated['facebook'] ?? null,
+            'twitter' => $validated['twitter'] ?? null,
+            'instagram' => $validated['instagram'] ?? null,
+            'youtube' => $validated['youtube'] ?? null,
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'city' => $validated['city'] ?? null,
+            'province' => $validated['province'] ?? null,
+            'country' => $validated['country'] ?? null,
+            'address' => $validated['address'] ?? null,
+            'show_email' => $validated['show_email'] ?? true,
+            'show_phone' => $validated['show_phone'] ?? false,
+        ];
+
+        if ($request->hasFile('logo')) {
+            if ($ministry->logo) {
+                Storage::disk('public')->delete($ministry->logo);
+            }
+            $data['logo'] = $request->file('logo')->store('ministries', 'public');
+        }
+
+        if ($request->filled('focus_areas')) {
+            $data['focus_areas'] = array_map('trim', explode(',', $request->focus_areas));
+        } else {
+            $data['focus_areas'] = null;
+        }
+
+        if ($request->filled('languages')) {
+            $data['languages'] = array_map('trim', explode(',', $request->languages));
+        } else {
+            $data['languages'] = null;
+        }
+
+        if ($request->filled('tags')) {
+            $data['tags'] = array_map('trim', explode(',', $request->tags));
+        } else {
+            $data['tags'] = null;
+        }
+
+        $ministry->update($data);
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Your ministry has been updated successfully!');
+    }
+
     public function quickApprove(NetworkMember $networkMember)
     {
         // Check if already approved

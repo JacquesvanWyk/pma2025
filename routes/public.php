@@ -33,6 +33,12 @@ Route::get('/network/{networkMember}/edit', [NetworkController::class, 'edit'])-
 Route::put('/network/{networkMember}', [NetworkController::class, 'update'])->name('network.update')->middleware('auth');
 Route::get('/network/{networkMember}', [NetworkController::class, 'show'])->name('network.show');
 
+// Ministry routes
+Route::get('/network/register/ministry', [NetworkController::class, 'createMinistry'])->name('network.register.ministry')->middleware('auth');
+Route::post('/network/register/ministry', [NetworkController::class, 'storeMinistry'])->name('network.store.ministry')->middleware('auth');
+Route::get('/network/ministry/{ministry}/edit', [NetworkController::class, 'editMinistry'])->name('network.ministry.edit')->middleware('auth');
+Route::put('/network/ministry/{ministry}', [NetworkController::class, 'updateMinistry'])->name('network.ministry.update')->middleware('auth');
+
 // Tract routes
 Route::get('/tracts', [TractController::class, 'index'])->name('tracts');
 Route::get('/tracts/{slug}', [TractController::class, 'show'])->name('tracts.show');

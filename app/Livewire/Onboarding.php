@@ -13,7 +13,9 @@ class Onboarding extends Component
     public function mount(): void
     {
         // Redirect to dashboard if user already has a profile
-        if (auth()->user()->individualProfile || auth()->user()->fellowshipProfiles()->exists()) {
+        if (auth()->user()->individualProfile ||
+            auth()->user()->fellowshipProfiles()->exists() ||
+            auth()->user()->ministries()->exists()) {
             $this->redirect(route('dashboard'), navigate: true);
         }
     }

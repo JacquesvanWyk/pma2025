@@ -19,6 +19,7 @@
                 @php
                     $individualProfile = auth()->user()->individualProfile;
                     $firstFellowship = auth()->user()->fellowshipProfiles()->first();
+                    $firstMinistry = auth()->user()->ministries()->first();
                     $isNetworkRoute = request()->routeIs('network.*') || request()->routeIs('network.register.*');
                 @endphp
 
@@ -28,6 +29,8 @@
                     <flux:sidebar.item icon="user" :href="$individualProfile ? route('network.edit', $individualProfile) : route('network.register.individual')" :current="request()->routeIs('network.register.individual') || (isset($networkMember) && $networkMember->is($individualProfile))" wire:navigate class="text-white hover:text-white">{{ __('My Individual/Family') }}</flux:sidebar.item>
 
                     <flux:sidebar.item icon="user-group" :href="$firstFellowship ? route('network.edit', $firstFellowship) : route('network.register.fellowship')" :current="request()->routeIs('network.register.fellowship') || (isset($networkMember) && $networkMember->is($firstFellowship))" wire:navigate class="text-white hover:text-white">{{ __('My Fellowship') }}</flux:sidebar.item>
+
+                    <flux:sidebar.item icon="building-office" :href="$firstMinistry ? route('network.ministry.edit', $firstMinistry) : route('network.register.ministry')" :current="request()->routeIs('network.register.ministry') || request()->routeIs('network.ministry.edit')" wire:navigate class="text-white hover:text-white">{{ __('My Ministry') }}</flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

@@ -1,9 +1,12 @@
 @php
     $networkMembers = \App\Models\NetworkMember::query()->approved()->get();
+    $ministries = \App\Models\Ministry::query()->approved()->get();
     $individualCount = $networkMembers->where('type', 'individual')->count();
     $groupCount = $networkMembers->where('type', 'group')->count();
+    $ministryCount = $ministries->count();
     $totalBelievers = $networkMembers->sum('total_believers');
-    $networkMembersJson = json_encode($networkMembers->map(function ($member) {
+
+    $membersData = $networkMembers->map(function ($member) {
         return [
             'id' => $member->id,
             'name' => $member->name,
@@ -11,7 +14,19 @@
             'latitude' => $member->latitude,
             'longitude' => $member->longitude,
         ];
-    })->toArray());
+    })->toArray();
+
+    $ministriesData = $ministries->map(function ($ministry) {
+        return [
+            'id' => 'ministry-' . $ministry->id,
+            'name' => $ministry->name,
+            'type' => 'ministry',
+            'latitude' => $ministry->latitude,
+            'longitude' => $ministry->longitude,
+        ];
+    })->toArray();
+
+    $networkMembersJson = json_encode(array_merge($membersData, $ministriesData));
 @endphp
 
 <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -88,6 +103,10 @@
                                         <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Fellowships</div>
                                     </div>
                                     <div class="text-center">
+                                        <div class="text-2xl font-bold text-purple-600">{{ number_format($ministryCount) }}</div>
+                                        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Ministries</div>
+                                    </div>
+                                    <div class="text-center">
                                         <div class="text-2xl font-bold text-gray-900">{{ number_format($totalBelievers) }}</div>
                                         <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Believers</div>
                                     </div>
@@ -142,35 +161,51 @@
                 <p class="text-lg text-gray-600">Choose how you would like to appear on the network map.</p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
                 <!-- Individual/Family Option -->
-                <a href="{{ route('network.register.individual') }}" class="group relative block h-full bg-white border-2 border-gray-200 rounded-xl p-8 hover:border-[var(--color-indigo)] hover:shadow-lg transition-all duration-300">
+                <a href="{{ route('network.register.individual') }}" class="group relative block h-full bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-[var(--color-indigo)] hover:shadow-lg transition-all duration-300">
                     <div class="flex flex-col items-center text-center h-full">
-                        <div class="h-16 w-16 bg-indigo-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-indigo-100 transition-colors">
-                            <svg class="w-8 h-8 text-[var(--color-indigo)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="h-14 w-14 bg-indigo-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition-colors">
+                            <svg class="w-7 h-7 text-[var(--color-indigo)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-[var(--color-indigo)] transition-colors">Individual / Family</h2>
-                        <p class="text-gray-600 mb-6 flex-grow">Add yourself or your family to the map. Connect with other believers in your area.</p>
-                        <span class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 group-hover:bg-indigo-200 transition-colors w-full">
-                            Register Individual/Family
+                        <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-[var(--color-indigo)] transition-colors">Individual / Family</h2>
+                        <p class="text-gray-600 mb-4 flex-grow text-sm">Add yourself or your family to the map. Connect with other believers in your area.</p>
+                        <span class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 group-hover:bg-indigo-200 transition-colors w-full">
+                            Register
                         </span>
                     </div>
                 </a>
 
                 <!-- Fellowship/Group Option -->
-                <a href="{{ route('network.register.fellowship') }}" class="group relative block h-full bg-white border-2 border-gray-200 rounded-xl p-8 hover:border-[var(--color-pma-green)] hover:shadow-lg transition-all duration-300">
+                <a href="{{ route('network.register.fellowship') }}" class="group relative block h-full bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-[var(--color-pma-green)] hover:shadow-lg transition-all duration-300">
                     <div class="flex flex-col items-center text-center h-full">
-                        <div class="h-16 w-16 bg-green-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-green-100 transition-colors">
-                            <svg class="w-8 h-8 text-[var(--color-pma-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="h-14 w-14 bg-green-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+                            <svg class="w-7 h-7 text-[var(--color-pma-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-[var(--color-pma-green)] transition-colors">Fellowship / Group</h2>
-                        <p class="text-gray-600 mb-6 flex-grow">Register your home church, bible study group, or ministry fellowship on the map.</p>
-                        <span class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-green-700 bg-green-100 group-hover:bg-green-200 transition-colors w-full">
-                            Register Fellowship
+                        <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-[var(--color-pma-green)] transition-colors">Fellowship / Group</h2>
+                        <p class="text-gray-600 mb-4 flex-grow text-sm">Register your home church, bible study group, or fellowship on the map.</p>
+                        <span class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 group-hover:bg-green-200 transition-colors w-full">
+                            Register
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Ministry Option -->
+                <a href="{{ route('network.register.ministry') }}" class="group relative block h-full bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-purple-500 hover:shadow-lg transition-all duration-300">
+                    <div class="flex flex-col items-center text-center h-full">
+                        <div class="h-14 w-14 bg-purple-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-100 transition-colors">
+                            <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">Ministry</h2>
+                        <p class="text-gray-600 mb-4 flex-grow text-sm">Register your ministry organization, mission, or outreach to the network.</p>
+                        <span class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 group-hover:bg-purple-200 transition-colors w-full">
+                            Register
                         </span>
                     </div>
                 </a>
@@ -250,9 +285,11 @@
             var markers = [];
             members.forEach(function(member) {
                 var isIndividual = member.type === 'individual';
-                var color = isIndividual ? '#1E2749' : '#0A753A';
+                var isMinistry = member.type === 'ministry';
+                var color = isMinistry ? '#7C3AED' : (isIndividual ? '#1E2749' : '#0A753A');
+                var emoji = isMinistry ? '🏛️' : (isIndividual ? '👤' : '⛪');
                 var icon = L.divIcon({
-                    html: '<div style="width:32px;height:32px;background:white;border-radius:50%;border:3px solid ' + color + ';display:flex;align-items:center;justify-content:center;">' + (isIndividual ? '👤' : '⛪') + '</div>',
+                    html: '<div style="width:32px;height:32px;background:white;border-radius:50%;border:3px solid ' + color + ';display:flex;align-items:center;justify-content:center;">' + emoji + '</div>',
                     className: '',
                     iconSize: [32, 32],
                     iconAnchor: [16, 32]

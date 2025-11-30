@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Ministry;
 use App\Models\NetworkMember;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -26,25 +27,25 @@ class NetworkMap extends Component
 
     public function getNetworkMembersProperty()
     {
+        if ($this->typeFilter === 'ministry') {
+            return collect();
+        }
+
         $query = NetworkMember::query()
             ->approved()
             ->with('languages');
 
-        // Filter by type
         if ($this->typeFilter !== 'all') {
             $query->where('type', $this->typeFilter);
         }
 
-        // Filter by language
         if ($this->languageFilter !== 'all') {
             $query->whereHas('languages', function ($q) {
                 $q->where('code', $this->languageFilter);
             });
         }
 
-        // Location search (basic implementation)
         if (! empty($this->searchLocation)) {
-            // This is a simple search - in production you might want to use geocoding
             $query->where('name', 'like', '%'.$this->searchLocation.'%')
                 ->orWhere('address', 'like', '%'.$this->searchLocation.'%')
                 ->orWhere('bio', 'like', '%'.$this->searchLocation.'%');
@@ -53,7 +54,25 @@ class NetworkMap extends Component
         return $query->get();
     }
 
-    // Method to get filtered data for JavaScript
+    public function getMinistriesProperty()
+    {
+        if ($this->typeFilter !== 'all' && $this->typeFilter !== 'ministry') {
+            return collect();
+        }
+
+        $query = Ministry::query()->approved();
+
+        if (! empty($this->searchLocation)) {
+            $query->where(function ($q) {
+                $q->where('name', 'like', '%'.$this->searchLocation.'%')
+                    ->orWhere('description', 'like', '%'.$this->searchLocation.'%')
+                    ->orWhere('city', 'like', '%'.$this->searchLocation.'%');
+            });
+        }
+
+        return $query->get();
+    }
+
     public function getFilteredNetworkMembers()
     {
         return $this->networkMembers->map(function ($member) {
@@ -88,16 +107,57 @@ class NetworkMap extends Component
         })->toArray();
     }
 
-    // Method to get filtered data for JavaScript
+    public function getFilteredMinistries()
+    {
+        return $this->ministries->map(function ($ministry) {
+            return [
+                'id' => $ministry->id,
+                'name' => $ministry->name,
+                'type' => 'ministry',
+                'logo' => $ministry->logo,
+                'description' => $ministry->description,
+                'focus_areas' => $ministry->focus_areas,
+                'languages' => $ministry->languages,
+                'tags' => $ministry->tags,
+                'latitude' => $ministry->latitude,
+                'longitude' => $ministry->longitude,
+                'city' => $ministry->city,
+                'province' => $ministry->province,
+                'country' => $ministry->country,
+                'email' => $ministry->email,
+                'phone' => $ministry->phone,
+                'show_email' => $ministry->show_email,
+                'show_phone' => $ministry->show_phone,
+                'website' => $ministry->website,
+                'facebook' => $ministry->facebook,
+                'twitter' => $ministry->twitter,
+                'instagram' => $ministry->instagram,
+                'youtube' => $ministry->youtube,
+            ];
+        })->toArray();
+    }
+
     public function getNetworkMembers()
     {
         return $this->getFilteredNetworkMembers();
     }
 
-    // Force reactivity - this will trigger re-rendering when filters change
+    public function getAllMarkersJsonProperty()
+    {
+        $members = $this->getFilteredNetworkMembers();
+        $ministries = $this->getFilteredMinistries();
+
+        return json_encode(array_merge($members, $ministries));
+    }
+
     public function getNetworkMembersJsonProperty()
     {
         return json_encode($this->getFilteredNetworkMembers());
+    }
+
+    public function getMinistriesJsonProperty()
+    {
+        return json_encode($this->getFilteredMinistries());
     }
 
     public function updatedSearchLocation()

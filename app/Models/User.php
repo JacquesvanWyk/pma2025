@@ -157,6 +157,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Fellowship::class);
     }
 
+    public function ministries(): HasMany
+    {
+        return $this->hasMany(Ministry::class);
+    }
+
     public function sentMessages(): HasMany
     {
         return $this->hasMany(Message::class, 'from_user_id');

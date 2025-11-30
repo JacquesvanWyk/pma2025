@@ -33,6 +33,7 @@
 
     @php
         $networkMembers = auth()->user()->networkMembers;
+        $ministries = auth()->user()->ministries;
     @endphp
 
     @if($networkMembers->isNotEmpty())
@@ -185,6 +186,133 @@
     </div>
     @endif
 
+    @if($ministries->isNotEmpty())
+    <div class="space-y-8 mb-8">
+        @foreach($ministries as $ministry)
+        <!-- Ministry Card -->
+        <div class="bg-white rounded-lg shadow border border-purple-200 p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center gap-4">
+                    @if($ministry->logo)
+                        <img src="{{ asset('storage/' . $ministry->logo) }}" alt="Ministry Logo" class="w-16 h-16 rounded-lg object-contain border-2 border-purple-200 shadow-sm bg-white p-1">
+                    @else
+                        <div class="w-16 h-16 rounded-lg flex items-center justify-center bg-purple-100 text-purple-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                    @endif
+                    <div>
+                        <h2 class="text-2xl font-bold text-purple-700">
+                            {{ $ministry->name }}
+                        </h2>
+                        <p class="text-sm mt-1">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                @if($ministry->status === 'approved') bg-green-100 text-green-800
+                                @elseif($ministry->status === 'pending') bg-yellow-100 text-yellow-800
+                                @else bg-red-100 text-red-800 @endif">
+                                {{ ucfirst($ministry->status) }}
+                            </span>
+                            <span class="ml-2 text-purple-500 text-xs uppercase tracking-wider font-semibold">
+                                Ministry
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <a href="{{ route('network.ministry.edit', $ministry) }}" class="px-4 py-2 rounded-lg font-medium transition text-white" style="background: #7C3AED;">
+                    Edit Ministry
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-2 text-purple-700">Basic Information</h3>
+                    <dl class="space-y-2">
+                        <div>
+                            <dt class="text-sm text-gray-600">Name:</dt>
+                            <dd class="font-medium">{{ $ministry->name }}</dd>
+                        </div>
+                        @if($ministry->show_email && $ministry->email)
+                        <div>
+                            <dt class="text-sm text-gray-600">Email:</dt>
+                            <dd class="font-medium">{{ $ministry->email }}</dd>
+                        </div>
+                        @endif
+                        @if($ministry->phone && $ministry->show_phone)
+                        <div>
+                            <dt class="text-sm text-gray-600">Phone:</dt>
+                            <dd class="font-medium">{{ $ministry->phone }}</dd>
+                        </div>
+                        @endif
+                    </dl>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-2 text-purple-700">Location</h3>
+                    <dl class="space-y-2">
+                        @if($ministry->city)
+                        <div>
+                            <dt class="text-sm text-gray-600">City:</dt>
+                            <dd class="font-medium">{{ $ministry->city }}</dd>
+                        </div>
+                        @endif
+                        @if($ministry->province)
+                        <div>
+                            <dt class="text-sm text-gray-600">Province:</dt>
+                            <dd class="font-medium">{{ $ministry->province }}</dd>
+                        </div>
+                        @endif
+                        @if($ministry->country)
+                        <div>
+                            <dt class="text-sm text-gray-600">Country:</dt>
+                            <dd class="font-medium">{{ $ministry->country }}</dd>
+                        </div>
+                        @endif
+                    </dl>
+                </div>
+            </div>
+
+            @if($ministry->description)
+            <div class="mt-6">
+                <h3 class="font-semibold mb-2 text-purple-700">Description</h3>
+                <p class="text-gray-700">{{ $ministry->description }}</p>
+            </div>
+            @endif
+
+            @if($ministry->focus_areas && count($ministry->focus_areas) > 0)
+            <div class="mt-6">
+                <h3 class="font-semibold mb-2 text-purple-700">Focus Areas</h3>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($ministry->focus_areas as $area)
+                        <span class="px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800">{{ $area }}</span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if($ministry->languages && count($ministry->languages) > 0)
+            <div class="mt-6">
+                <h3 class="font-semibold mb-2 text-purple-700">Languages</h3>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($ministry->languages as $language)
+                        <span class="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">{{ $language }}</span>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if($ministry->status === 'pending')
+            <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p class="text-sm text-yellow-800">
+                    <strong>Pending Approval:</strong> This ministry is currently under review by our team. You'll receive an email notification once it's approved.
+                </p>
+            </div>
+            @endif
+        </div>
+        @endforeach
+    </div>
+    @endif
+
     <!-- Stats Overview -->
     {{-- <div class="mb-8">
         <h2 class="text-2xl font-bold mb-4" style="color: var(--color-indigo);">Dashboard Overview</h2>
@@ -205,7 +333,7 @@
         <h3 class="text-xl font-bold mb-6" style="color: var(--color-indigo);">Quick Actions</h3>
 
         <div class="grid md:grid-cols-4 gap-4">
-            <!-- View Network Feed -->
+            {{-- Network Feed - coming later
             <a href="{{ route('network.index') }}" class="block group">
                 <div class="bg-white rounded-lg border-2 border-gray-200 text-center hover:border-gray-400 hover:shadow-md transition-all cursor-pointer p-6">
                     <svg class="h-12 w-12 mx-auto mb-3" style="color: var(--color-pma-green);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,6 +342,7 @@
                     <p class="font-semibold text-sm" style="color: var(--color-indigo);">Network Feed</p>
                 </div>
             </a>
+            --}}
 
             <!-- View Network Map -->
             <a href="{{ route('network.index') }}#network-map" class="block group">
@@ -231,7 +360,7 @@
                     <svg class="h-12 w-12 mx-auto mb-3" style="color: var(--color-pma-green);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    <p class="font-semibold text-sm" style="color: var(--color-indigo);">Join as Individual/Family</p>
+                    <p class="font-semibold text-sm" style="color: var(--color-indigo);">Individual/Family</p>
                 </div>
             </a>
 
@@ -241,7 +370,17 @@
                     <svg class="h-12 w-12 mx-auto mb-3" style="color: var(--color-pma-green);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    <p class="font-semibold text-sm" style="color: var(--color-indigo);">Join as Fellowship/Group</p>
+                    <p class="font-semibold text-sm" style="color: var(--color-indigo);">Fellowship/Group</p>
+                </div>
+            </a>
+
+            <!-- Register Ministry -->
+            <a href="{{ route('network.register.ministry') }}" class="block group">
+                <div class="bg-white rounded-lg border-2 border-gray-200 text-center hover:border-purple-400 hover:shadow-md transition-all cursor-pointer p-6">
+                    <svg class="h-12 w-12 mx-auto mb-3 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <p class="font-semibold text-sm" style="color: var(--color-indigo);">Register Ministry</p>
                 </div>
             </a>
         </div>

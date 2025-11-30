@@ -34,6 +34,7 @@
                             <option value="all">All Types</option>
                             <option value="individual">Individuals</option>
                             <option value="group">Fellowship Groups</option>
+                            <option value="ministry">Ministries</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                             <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,7 +69,7 @@
                 <!-- Results Count Badge (Visual only) -->
                 <div class="md:col-span-1 flex justify-center pb-2">
                     <div class="flex flex-col items-center">
-                        <span class="text-2xl font-bold text-[var(--color-pma-green)]">{{ $networkMembers->count() }}</span>
+                        <span class="text-2xl font-bold text-[var(--color-pma-green)]">{{ $networkMembers->count() + $this->ministries->count() }}</span>
                         <span class="text-[10px] font-bold text-gray-400 uppercase">Found</span>
                     </div>
                 </div>
@@ -79,7 +80,7 @@
     <!-- Map Section -->
     <section class="relative h-[80vh] w-full overflow-hidden rounded-3xl shadow-inner border border-gray-200/50">
         <!-- Hidden data element for JavaScript -->
-        <div id="network-members-data" style="display: none;">{!! $this->getNetworkMembersJsonProperty() !!}</div>
+        <div id="network-members-data" style="display: none;">{!! $this->getAllMarkersJsonProperty() !!}</div>
 
         <!-- Leaflet Map Container -->
         <div id="network-map" class="w-full h-full z-0"></div>
@@ -114,6 +115,15 @@
                             <span class="text-sm font-bold text-[var(--color-pma-green)]">{{ number_format($networkMembers->where('type', 'group')->sum('total_believers')) }}</span>
                         </div>
                     </div>
+                    <!-- Ministries Section -->
+                    @if($this->ministries->count() > 0)
+                    <div class="p-2 bg-purple-50/50 rounded border border-purple-100/50">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-medium text-gray-500 uppercase">Ministries</span>
+                            <span class="font-bold text-purple-700">{{ $this->ministries->count() }}</span>
+                        </div>
+                    </div>
+                    @endif
 
                     <!-- Top Professional Skills -->
                     @if($topProfessionalSkills->count() > 0)
@@ -288,6 +298,342 @@
         return phone.substring(0, 3) + '****' + phone.substring(phone.length - 3);
     }
 
+    function generateMemberPopup(member, color, isIndividual) {
+        return `
+            <div class="font-sans p-1 min-w-[220px]">
+                <div class="flex items-start gap-3 mb-3">
+                    ${member.image_path ?
+                        `<img src="/storage/${member.image_path}" class="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm flex-shrink-0">`
+                        : ''}
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide text-white"
+                                  style="background-color: ${color}">
+                                ${isIndividual ? 'Individual' : 'Group'}
+                            </span>
+                            ${member.total_believers > 0 ? `
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1">
+                                <span class="text-xs">👥</span> ${member.total_believers}
+                            </span>
+                            ` : ''}
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 leading-tight">${member.name}</h4>
+                    </div>
+                </div>
+
+                ${member.meeting_times ? `
+                    <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-100">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Meeting Times</div>
+                        <p class="text-xs text-gray-700">${member.meeting_times}</p>
+                    </div>
+                ` : ''}
+
+                ${member.professional_skills && member.professional_skills.length > 0 ? `
+                    <div class="mb-2">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Trade & Skills</div>
+                        <div class="flex flex-wrap gap-1">
+                            ${member.professional_skills.map(skill =>
+                                `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">${skill}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${member.ministry_skills && member.ministry_skills.length > 0 ? `
+                    <div class="mb-2">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Ministry Gifts</div>
+                        <div class="flex flex-wrap gap-1">
+                            ${member.ministry_skills.map(skill =>
+                                `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-50 text-green-700 border border-green-100">${skill}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${member.languages && member.languages.length > 0 ? `
+                    <div class="mb-2">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Languages</div>
+                        <div class="flex flex-wrap gap-1">
+                            ${member.languages.map(lang =>
+                                `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                                    ${lang.name}
+                                </span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${member.bio ? `
+                    <div x-data="{ expanded: false, hasLongBio: ${member.bio.length > 100} }" class="mb-3">
+                        <p x-show="!expanded" class="text-sm text-gray-600 line-clamp-3">${member.bio}</p>
+                        <p x-show="expanded" class="text-sm text-gray-600 whitespace-pre-wrap">${member.bio}</p>
+                        <button x-show="hasLongBio"
+                                @click="expanded = !expanded"
+                                class="text-xs font-semibold text-[var(--color-pma-green)] hover:underline mt-1 focus:outline-none">
+                            <span x-text="expanded ? 'Show Less' : 'Read All'"></span>
+                        </button>
+                    </div>
+                ` : '<p class="text-sm text-gray-600 mb-3">No bio available.</p>'}
+
+                ${(member.website_url || member.facebook_url || member.twitter_url || member.youtube_url) ? `
+                    <div class="mb-3">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Online Presence</div>
+                        <div class="flex flex-wrap gap-2">
+                            ${member.website_url ? `
+                                <a href="${member.website_url}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-[var(--color-pma-green)] hover:!text-white transition-colors text-xs font-medium"
+                                   title="Website">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                    </svg>
+                                    Website
+                                </a>
+                            ` : ''}
+                            ${member.facebook_url ? `
+                                <a href="${member.facebook_url}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:!text-white transition-colors text-xs font-medium"
+                                   title="Facebook">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                    Facebook
+                                </a>
+                            ` : ''}
+                            ${member.twitter_url ? `
+                                <a href="${member.twitter_url}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:!text-white transition-colors text-xs font-medium"
+                                   title="X (Twitter)">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                    X
+                                </a>
+                            ` : ''}
+                            ${member.youtube_url ? `
+                                <a href="${member.youtube_url}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:!text-white transition-colors text-xs font-medium"
+                                   title="YouTube">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
+                                    YouTube
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${(member.show_email || member.show_phone) ? `
+                    <div class="mt-2 pt-2 border-t border-gray-100">
+                        <div id="contact-masked-${member.id}"
+                             class="mb-2 cursor-pointer p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                             onclick="document.getElementById('contact-full-${member.id}').classList.remove('hidden'); this.classList.add('hidden');">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Contact Details</span>
+                                <span class="text-[10px] text-[var(--color-pma-green)] font-medium">Show</span>
+                            </div>
+                            ${member.show_email && member.email ? `
+                                <div class="text-xs text-gray-500 mt-1 truncate">${maskEmail(member.email)}</div>
+                            ` : ''}
+                            ${member.show_phone && member.phone ? `
+                                <div class="text-xs text-gray-500 mt-0.5">${maskPhone(member.phone)}</div>
+                            ` : ''}
+                        </div>
+
+                        <div id="contact-full-${member.id}" class="hidden mb-3 p-2 bg-gray-50 rounded border border-gray-100">
+                            <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Contact Details</div>
+                            ${member.show_email && member.email ? `
+                                <div class="text-xs text-gray-700 mb-1 select-all font-medium">${member.email}</div>
+                            ` : ''}
+                            ${member.show_phone && member.phone ? `
+                                <div class="text-xs text-gray-700 select-all font-medium">${member.phone}</div>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex gap-2">
+                            ${member.show_email && member.email ? `
+                                <a href="mailto:${member.email}" class="flex-1 py-1.5 rounded text-center text-xs font-bold bg-gray-100 text-gray-700 hover:bg-[var(--color-pma-green)] hover:!text-white transition-colors" title="Send Email">
+                                    Email
+                                </a>
+                            ` : ''}
+                            ${member.show_phone && member.phone ? `
+                                <a href="tel:${member.phone}" class="flex-1 py-1.5 rounded text-center text-xs font-bold bg-gray-100 text-gray-700 hover:bg-[var(--color-pma-green)] hover:!text-white transition-colors" title="Call">
+                                    Call
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    function generateMinistryPopup(ministry, color) {
+        const location = [ministry.city, ministry.province, ministry.country].filter(Boolean).join(', ');
+        return `
+            <div class="font-sans p-1 min-w-[220px]">
+                ${ministry.logo ? `
+                    <div class="mb-3 flex justify-center">
+                        <img src="/storage/${ministry.logo}" class="max-w-[120px] max-h-[80px] object-contain" alt="${ministry.name}">
+                    </div>
+                ` : ''}
+                <div class="text-center mb-3">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide text-white inline-block mb-2"
+                          style="background-color: ${color}">
+                        Ministry
+                    </span>
+                    <h4 class="text-lg font-bold text-gray-900 leading-tight">${ministry.name}</h4>
+                    ${location ? `<p class="text-xs text-gray-500 mt-1">📍 ${location}</p>` : ''}
+                </div>
+
+                ${ministry.focus_areas && ministry.focus_areas.length > 0 ? `
+                    <div class="mb-2">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Focus Areas</div>
+                        <div class="flex flex-wrap gap-1">
+                            ${ministry.focus_areas.map(area =>
+                                `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-50 text-purple-700 border border-purple-100">${area}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${ministry.languages && ministry.languages.length > 0 ? `
+                    <div class="mb-2">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Languages</div>
+                        <div class="flex flex-wrap gap-1">
+                            ${ministry.languages.map(lang =>
+                                `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-700 border border-gray-200">${lang}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${ministry.tags && ministry.tags.length > 0 ? `
+                    <div class="mb-2">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Tags</div>
+                        <div class="flex flex-wrap gap-1">
+                            ${ministry.tags.map(tag =>
+                                `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-50 text-gray-600 border border-gray-200">${tag}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${ministry.description ? `
+                    <div x-data="{ expanded: false, hasLongDesc: ${ministry.description.length > 100} }" class="mb-3">
+                        <p x-show="!expanded" class="text-sm text-gray-600 line-clamp-3">${ministry.description}</p>
+                        <p x-show="expanded" class="text-sm text-gray-600 whitespace-pre-wrap">${ministry.description}</p>
+                        <button x-show="hasLongDesc"
+                                @click="expanded = !expanded"
+                                class="text-xs font-semibold text-purple-600 hover:underline mt-1 focus:outline-none">
+                            <span x-text="expanded ? 'Show Less' : 'Read All'"></span>
+                        </button>
+                    </div>
+                ` : '<p class="text-sm text-gray-600 mb-3">No description available.</p>'}
+
+                ${(ministry.website || ministry.facebook || ministry.twitter || ministry.instagram || ministry.youtube) ? `
+                    <div class="mb-3">
+                        <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Online Presence</div>
+                        <div class="flex flex-wrap gap-2">
+                            ${ministry.website ? `
+                                <a href="${ministry.website}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-purple-600 hover:!text-white transition-colors text-xs font-medium"
+                                   title="Website">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                    </svg>
+                                    Website
+                                </a>
+                            ` : ''}
+                            ${ministry.facebook ? `
+                                <a href="${ministry.facebook}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:!text-white transition-colors text-xs font-medium"
+                                   title="Facebook">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                    Facebook
+                                </a>
+                            ` : ''}
+                            ${ministry.twitter ? `
+                                <a href="${ministry.twitter}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:!text-white transition-colors text-xs font-medium"
+                                   title="X (Twitter)">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                    </svg>
+                                    X
+                                </a>
+                            ` : ''}
+                            ${ministry.instagram ? `
+                                <a href="${ministry.instagram}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-pink-50 text-pink-600 hover:bg-pink-600 hover:!text-white transition-colors text-xs font-medium"
+                                   title="Instagram">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                    </svg>
+                                    Instagram
+                                </a>
+                            ` : ''}
+                            ${ministry.youtube ? `
+                                <a href="${ministry.youtube}" target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:!text-white transition-colors text-xs font-medium"
+                                   title="YouTube">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
+                                    YouTube
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${(ministry.show_email || ministry.show_phone) ? `
+                    <div class="mt-2 pt-2 border-t border-gray-100">
+                        <div id="ministry-contact-masked-${ministry.id}"
+                             class="mb-2 cursor-pointer p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                             onclick="document.getElementById('ministry-contact-full-${ministry.id}').classList.remove('hidden'); this.classList.add('hidden');">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">Contact Details</span>
+                                <span class="text-[10px] text-purple-600 font-medium">Show</span>
+                            </div>
+                            ${ministry.show_email && ministry.email ? `
+                                <div class="text-xs text-gray-500 mt-1 truncate">${maskEmail(ministry.email)}</div>
+                            ` : ''}
+                            ${ministry.show_phone && ministry.phone ? `
+                                <div class="text-xs text-gray-500 mt-0.5">${maskPhone(ministry.phone)}</div>
+                            ` : ''}
+                        </div>
+
+                        <div id="ministry-contact-full-${ministry.id}" class="hidden mb-3 p-2 bg-gray-50 rounded border border-gray-100">
+                            <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Contact Details</div>
+                            ${ministry.show_email && ministry.email ? `
+                                <div class="text-xs text-gray-700 mb-1 select-all font-medium">${ministry.email}</div>
+                            ` : ''}
+                            ${ministry.show_phone && ministry.phone ? `
+                                <div class="text-xs text-gray-700 select-all font-medium">${ministry.phone}</div>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex gap-2">
+                            ${ministry.show_email && ministry.email ? `
+                                <a href="mailto:${ministry.email}" class="flex-1 py-1.5 rounded text-center text-xs font-bold bg-gray-100 text-gray-700 hover:bg-purple-600 hover:!text-white transition-colors" title="Send Email">
+                                    Email
+                                </a>
+                            ` : ''}
+                            ${ministry.show_phone && ministry.phone ? `
+                                <a href="tel:${ministry.phone}" class="flex-1 py-1.5 rounded text-center text-xs font-bold bg-gray-100 text-gray-700 hover:bg-purple-600 hover:!text-white transition-colors" title="Call">
+                                    Call
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
     function updateNetworkMarkers() {
         if (!networkMap || !markerGroup) return;
 
@@ -304,17 +650,19 @@
 
         networkMembers.forEach((member) => {
             const isIndividual = member.type === 'individual';
-            const color = isIndividual ? '#1E2749' : '#0A753A'; // Indigo vs Green
-            
+            const isMinistry = member.type === 'ministry';
+            const color = isMinistry ? '#7C3AED' : (isIndividual ? '#1E2749' : '#0A753A'); // Purple vs Indigo vs Green
+
             // Modern Custom Icon logic
             let iconContent;
-            if (member.image_path) {
-                iconContent = `<img src="/storage/${member.image_path}" class="w-full h-full rounded-full object-cover shadow-md box-border" style="border: 3px solid ${color};" alt="${member.name}">`;
+            const imagePath = member.image_path || member.logo;
+            if (imagePath) {
+                iconContent = `<img src="/storage/${imagePath}" class="w-full h-full rounded-full object-cover shadow-md box-border" style="border: 3px solid ${color};" alt="${member.name}">`;
             } else {
                 iconContent = `
                     <div class="absolute inset-0 rounded-full shadow-lg" style="background: white; border: 3px solid ${color};"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-gray-800 text-lg">
-                        ${isIndividual ? '👤' : '⛪'}
+                        ${isMinistry ? '🏛️' : (isIndividual ? '👤' : '⛪')}
                     </div>
                 `;
             }
@@ -323,186 +671,19 @@
                 html: `
                     <div class="relative group cursor-pointer transition-transform duration-300 hover:scale-110" style="width: 40px; height: 40px;">
                         ${iconContent}
-                        ${!member.image_path ? `<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rotate-45"></div>` : ''}
+                        ${!imagePath ? `<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rotate-45"></div>` : ''}
                     </div>
                 `,
-                className: 'custom-marker-icon-modern', 
+                className: 'custom-marker-icon-modern',
                 iconSize: [40, 40],
                 iconAnchor: [20, 45], // Tip of the pin
                 popupAnchor: [0, -45]
             });
 
             // Create marker with modernized popup
+            const popupContent = isMinistry ? generateMinistryPopup(member, color) : generateMemberPopup(member, color, isIndividual);
             const marker = L.marker([member.latitude, member.longitude], { icon: icon })
-                .bindPopup(`
-                    <div class="font-sans p-1 min-w-[220px]">
-                        <div class="flex items-start gap-3 mb-3">
-                            ${member.image_path ? 
-                                `<img src="/storage/${member.image_path}" class="w-12 h-12 rounded-full object-cover border border-gray-200 shadow-sm flex-shrink-0">` 
-                                : ''}
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide text-white"
-                                          style="background-color: ${color}">
-                                        ${isIndividual ? 'Individual' : 'Group'}
-                                    </span>
-                                    ${member.total_believers > 0 ? `
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1">
-                                        <span class="text-xs">👥</span> ${member.total_believers}
-                                    </span>
-                                    ` : ''}
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 leading-tight">${member.name}</h4>
-                            </div>
-                        </div>
-                        
-                        ${member.meeting_times ? `
-                            <div class="mb-2 p-2 bg-gray-50 rounded border border-gray-100">
-                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Meeting Times</div>
-                                <p class="text-xs text-gray-700">${member.meeting_times}</p>
-                            </div>
-                        ` : ''}
-
-                        ${member.professional_skills && member.professional_skills.length > 0 ? `
-                            <div class="mb-2">
-                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Trade & Skills</div>
-                                <div class="flex flex-wrap gap-1">
-                                    ${member.professional_skills.map(skill => 
-                                        `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">${skill}</span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        ${member.ministry_skills && member.ministry_skills.length > 0 ? `
-                            <div class="mb-2">
-                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Ministry Gifts</div>
-                                <div class="flex flex-wrap gap-1">
-                                    ${member.ministry_skills.map(skill => 
-                                        `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-50 text-green-700 border border-green-100">${skill}</span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        ${member.languages && member.languages.length > 0 ? `
-                            <div class="mb-2">
-                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Languages</div>
-                                <div class="flex flex-wrap gap-1">
-                                    ${member.languages.map(lang => 
-                                        `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-700 border border-gray-200">
-                                            ${lang.name}
-                                        </span>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${member.bio ? `
-                            <div x-data="{ expanded: false, hasLongBio: ${member.bio.length > 100} }" class="mb-3">
-                                <p x-show="!expanded" class="text-sm text-gray-600 line-clamp-3">${member.bio}</p>
-                                <p x-show="expanded" class="text-sm text-gray-600 whitespace-pre-wrap">${member.bio}</p>
-                                <button x-show="hasLongBio"
-                                        @click="expanded = !expanded"
-                                        class="text-xs font-semibold text-[var(--color-pma-green)] hover:underline mt-1 focus:outline-none">
-                                    <span x-text="expanded ? 'Show Less' : 'Read All'"></span>
-                                </button>
-                            </div>
-                        ` : '<p class="text-sm text-gray-600 mb-3">No bio available.</p>'}
-
-                        ${(member.website_url || member.facebook_url || member.twitter_url || member.youtube_url) ? `
-                            <div class="mb-3">
-                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2">Online Presence</div>
-                                <div class="flex flex-wrap gap-2">
-                                    ${member.website_url ? `
-                                        <a href="${member.website_url}" target="_blank" rel="noopener noreferrer"
-                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-[var(--color-pma-green)] hover:!text-white transition-colors text-xs font-medium"
-                                           title="Website">
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                                            </svg>
-                                            Website
-                                        </a>
-                                    ` : ''}
-                                    ${member.facebook_url ? `
-                                        <a href="${member.facebook_url}" target="_blank" rel="noopener noreferrer"
-                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:!text-white transition-colors text-xs font-medium"
-                                           title="Facebook">
-                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                            </svg>
-                                            Facebook
-                                        </a>
-                                    ` : ''}
-                                    ${member.twitter_url ? `
-                                        <a href="${member.twitter_url}" target="_blank" rel="noopener noreferrer"
-                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-800 hover:!text-white transition-colors text-xs font-medium"
-                                           title="X (Twitter)">
-                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                            </svg>
-                                            X
-                                        </a>
-                                    ` : ''}
-                                    ${member.youtube_url ? `
-                                        <a href="${member.youtube_url}" target="_blank" rel="noopener noreferrer"
-                                           class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:!text-white transition-colors text-xs font-medium"
-                                           title="YouTube">
-                                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                            </svg>
-                                            YouTube
-                                        </a>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        ${(member.show_email || member.show_phone) ? `
-                            <div class="mt-2 pt-2 border-t border-gray-100">
-                                <!-- Toggleable Contact Info -->
-                                <div id="contact-masked-${member.id}" 
-                                     class="mb-2 cursor-pointer p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
-                                     onclick="document.getElementById('contact-full-${member.id}').classList.remove('hidden'); this.classList.add('hidden');">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase">Contact Details</span>
-                                        <span class="text-[10px] text-[var(--color-pma-green)] font-medium">Show</span>
-                                    </div>
-                                    ${member.show_email && member.email ? `
-                                        <div class="text-xs text-gray-500 mt-1 truncate">${maskEmail(member.email)}</div>
-                                    ` : ''}
-                                    ${member.show_phone && member.phone ? `
-                                        <div class="text-xs text-gray-500 mt-0.5">${maskPhone(member.phone)}</div>
-                                    ` : ''}
-                                </div>
-
-                                <div id="contact-full-${member.id}" class="hidden mb-3 p-2 bg-gray-50 rounded border border-gray-100">
-                                    <div class="text-[10px] font-bold text-gray-400 uppercase mb-1">Contact Details</div>
-                                    ${member.show_email && member.email ? `
-                                        <div class="text-xs text-gray-700 mb-1 select-all font-medium">${member.email}</div>
-                                    ` : ''}
-                                    ${member.show_phone && member.phone ? `
-                                        <div class="text-xs text-gray-700 select-all font-medium">${member.phone}</div>
-                                    ` : ''}
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div class="flex gap-2">
-                                    ${member.show_email && member.email ? `
-                                        <a href="mailto:${member.email}" class="flex-1 py-1.5 rounded text-center text-xs font-bold bg-gray-100 text-gray-700 hover:bg-[var(--color-pma-green)] hover:!text-white transition-colors" title="Send Email">
-                                            Email
-                                        </a>
-                                    ` : ''}
-                                    ${member.show_phone && member.phone ? `
-                                        <a href="tel:${member.phone}" class="flex-1 py-1.5 rounded text-center text-xs font-bold bg-gray-100 text-gray-700 hover:bg-[var(--color-pma-green)] hover:!text-white transition-colors" title="Call">
-                                            Call
-                                        </a>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        ` : ''}
-                    </div>
-                `, {
+                .bindPopup(popupContent, {
                     closeButton: false,
                     className: 'modern-leaflet-popup',
                     minWidth: 260
