@@ -8,13 +8,7 @@ class ShortController extends Controller
 {
     public function index()
     {
-        $shorts = Short::published()
-            ->ordered()
-            ->get();
-
-        return view('shorts.index', [
-            'shorts' => $shorts,
-        ]);
+        return view('shorts.index');
     }
 
     public function show(Short $short)
