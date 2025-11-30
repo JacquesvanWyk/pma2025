@@ -20,9 +20,10 @@
             <h1 class="pma-hero-title pma-display text-white mb-6">
                 Photo Gallery
             </h1>
-            <p class="pma-hero-subtitle pma-accent text-white/90">
-                Browse photos from our events, camp meetings, and mission activities across Africa.
+            <p class="pma-hero-subtitle pma-accent text-white/90 italic mb-4">
+                "That which we have seen and heard declare we unto you, that ye also may have fellowship with us: and truly our fellowship is with the Father, and with his Son Jesus Christ."
             </p>
+            <p class="text-white/70 text-sm">— 1 John 1:3</p>
         </div>
     </div>
 </section>
