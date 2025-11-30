@@ -86,10 +86,10 @@ class PictureStudyForm
                         Toggle::make('publish_to_facebook')
                             ->label('Publish to Facebook Page')
                             ->helperText('Automatically post this image to the PMA Facebook Page')
-                            ->default(false)
-                            ->dehydrated(false),
+                            ->default(false),
                     ])
-                    ->collapsible(),
+                    ->collapsible()
+                    ->hiddenOn('edit'),
             ]);
     }
 }

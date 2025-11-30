@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Resources\PictureStudies\Pages;
 use App\Filament\Admin\Resources\PictureStudies\PictureStudyResource;
 use App\Helpers\SocialShareHelper;
 use App\Jobs\PostToFacebookJob;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Storage;
