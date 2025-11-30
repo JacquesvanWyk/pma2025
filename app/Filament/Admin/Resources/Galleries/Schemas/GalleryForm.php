@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Galleries\Schemas;
 
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -48,14 +47,12 @@ class GalleryForm
                     ]),
 
                 Section::make('Event Link')
-                    ->description('Link to an existing event or enter a manual date and location')
-                    ->columns(2)
+                    ->description('Link to an existing event')
                     ->schema([
                         Select::make('event_id')
                             ->relationship('event', 'title')
                             ->searchable()
                             ->preload()
-                            ->live()
                             ->label('Linked Event')
                             ->helperText('Select an event or create a new one')
                             ->createOptionForm([
@@ -91,17 +88,6 @@ class GalleryForm
                                 return \App\Models\Event::create($data)->id;
                             })
                             ->columnSpanFull(),
-
-                        DatePicker::make('event_date')
-                            ->label('Event Date')
-                            ->helperText('Only if not linked to an event')
-                            ->hidden(fn ($get) => filled($get('event_id'))),
-
-                        TextInput::make('location')
-                            ->label('Location')
-                            ->placeholder('e.g., Gauteng')
-                            ->helperText('Only if not linked to an event')
-                            ->hidden(fn ($get) => filled($get('event_id'))),
                     ]),
 
                 Section::make('Cover Image')
