@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Galleries\Tables;
 
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -75,11 +74,6 @@ class GalleriesTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                Action::make('view')
-                    ->label('View')
-                    ->icon('heroicon-o-eye')
-                    ->url(fn ($record) => route('gallery.show', $record->slug))
-                    ->openUrlInNewTab(),
                 EditAction::make(),
                 DeleteAction::make(),
                 RestoreAction::make(),
