@@ -13,7 +13,8 @@
                 
                 <div class="prose prose-lg max-w-none">
                     <p class="text-gray-700 leading-relaxed mb-8">
-                        Pioneer Missions Africa is committed to supporting individuals, groups, and home churches across South Africa and Africa in their spiritual journey and understanding of God's truth.
+                        We are a faith-based community committed to sharing the truth of the only true God and His Son, Jesus Christ.
+                        Together, we strive to uplift communities, strengthen faith, and spread hope in every corner of Africa.
                     </p>
 
                     <section class="mb-8">
@@ -55,8 +56,11 @@
                         <a href="{{ route('contact') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors mr-4">
                             Contact Us
                         </a>
-                        <a href="{{ route('resources') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                        <a href="{{ route('resources') }}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors mr-4">
                             View Resources
+                        </a>
+                        <a href="{{ route('donate') }}" class="bg-amber-600 text-white px-6 py-3 rounded-lg hover:bg-amber-700 transition-colors">
+                            Donate
                         </a>
                     </div>
                 </div>

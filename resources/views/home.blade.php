@@ -30,7 +30,8 @@
                     </h1>
                     
                     <p class="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                        We are a ministry dedicated to spreading the truth of the one true God and His Son, Jesus Christ, supporting spiritual growth through biblical resources and fellowship.
+                        We are a faith-based community committed to sharing the truth of the only true God and His Son, Jesus Christ.
+                        Together, we strive to uplift communities, strengthen faith, and spread hope in every corner of Africa.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
