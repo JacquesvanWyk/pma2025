@@ -63,8 +63,8 @@ Route::get('/donate/once', [DonateController::class, 'once'])->name('donate.once
 Route::get('/donate/monthly', [DonateController::class, 'monthly'])->name('donate.monthly');
 Route::get('/pledge', [DonateController::class, 'pledge'])->name('pledge');
 
-// Placeholder routes
-Route::view('/privacy', 'home')->name('privacy');
+// Legal routes
+Route::view('/privacy', 'legal.privacy')->name('privacy');
 Route::view('/terms', 'home')->name('terms');
 Route::view('/partner', 'home')->name('partner');
 
