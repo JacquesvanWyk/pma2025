@@ -91,5 +91,9 @@
     <!-- Copyright Bar - Integrated into footer, removing separate one -->
 
     @stack('scripts')
+
+    <script defer src="https://api.pirsch.io/pa.js"
+        id="pianjs"
+        data-code="GVL5UWNm9oqItEobieniq1sXJAQ44QMH"></script>
 </body>
 </html>
