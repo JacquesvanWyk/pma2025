@@ -7,7 +7,7 @@
     <section class="relative min-h-screen flex items-center overflow-hidden bg-[var(--color-indigo-dark)]">
         <!-- Background Elements -->
         <div class="pma-light-rays"></div>
-        
+
         <!-- Animated Blobs -->
         <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-pma-green)] opacity-20 rounded-full blur-[100px] animate-pulse"></div>
         <div class="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-[var(--color-ochre)] opacity-10 rounded-full blur-[120px]" style="animation-delay: 2s;"></div>
@@ -21,14 +21,14 @@
                 <!-- Left Column: Mission Statement -->
                 <div class="lg:col-span-7 text-center lg:text-left">
                     <h1 class="text-5xl lg:text-7xl font-bold text-white leading-tight mb-6 tracking-tight">
-                        Proclaiming the <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-pma-green-light)] to-[var(--color-ochre-light)]">Everlasting Gospel</span> in Africa and Beyond
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-pma-green-light)] to-[var(--color-ochre-light)]">Proclaiming the Everlasting Gospel in Africa and Beyond</span>
                     </h1>
-                    
+
                     <p class="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                         We are a faith-based community committed to sharing the truth of the only true God and His Son, Jesus Christ.
                         Together, we strive to uplift communities, strengthen faith, and spread hope in every corner of Africa.
                     </p>
-                    
+
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                         <a href="{{ route('studies') }}" class="px-8 py-4 bg-[var(--color-pma-green)] hover:bg-[var(--color-pma-green-light)] text-white rounded-xl font-semibold shadow-lg shadow-[var(--color-pma-green)]/30 transition-all hover:-translate-y-1 hover:shadow-xl flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -386,9 +386,9 @@
 
         @include('partials.support-section')
         @include('partials.newsletter-section')
-    
+
     @endsection
-    
+
 @push('styles')
 <style>
     @keyframes shimmer {
@@ -451,4 +451,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
-    
