@@ -10,7 +10,7 @@ new class extends Component {
 
     public string $search = '';
     public string $language = '';
-    public string $tag = '';
+    public array $selectedTags = [];
 
     public function updatedSearch(): void
     {
@@ -22,7 +22,7 @@ new class extends Component {
         $this->resetPage();
     }
 
-    public function updatedTag(): void
+    public function updatedSelectedTags(): void
     {
         $this->resetPage();
     }
@@ -31,7 +31,7 @@ new class extends Component {
     {
         $this->search = '';
         $this->language = '';
-        $this->tag = '';
+        $this->selectedTags = [];
         $this->resetPage();
     }
 
@@ -45,8 +45,8 @@ new class extends Component {
             })
             ->with('tags');
 
-        if ($this->tag) {
-            $query->whereHas('tags', fn ($q) => $q->where('slug', $this->tag));
+        if (!empty($this->selectedTags)) {
+            $query->whereHas('tags', fn ($q) => $q->whereIn('slug', $this->selectedTags));
         }
 
         if ($this->language) {
@@ -74,46 +74,96 @@ new class extends Component {
 
 <div>
     <!-- Filters Section -->
-    <section class="py-8 border-b" style="background: var(--gradient-spiritual); border-color: var(--color-cream-dark);">
+    <section class="sticky top-16 z-40 py-6" style="background: var(--color-cream); border-bottom: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
         <div class="container mx-auto px-6">
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="flex-1 min-w-[200px]">
-                    <input type="text"
-                           wire:model.live.debounce.300ms="search"
-                           placeholder="Search picture studies..."
-                           class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
-                           style="border-color: var(--color-cream-dark);">
+            <div class="space-y-4">
+                <!-- Main Filters Row -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Search -->
+                    <div class="md:col-span-2">
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5" style="color: var(--color-olive);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text"
+                                   wire:model.live.debounce.300ms="search"
+                                   placeholder="Search picture studies..."
+                                   class="w-full pl-10 pr-4 py-2 rounded-lg border-2 transition-all"
+                                   style="border-color: var(--color-pma-green-light); outline: none;">
+                        </div>
+                    </div>
+
+                    <!-- Language -->
+                    <div>
+                        <select wire:model.live="language"
+                                class="w-full px-4 py-2 rounded-lg border-2 transition-all"
+                                style="border-color: var(--color-pma-green-light); outline: none;">
+                            <option value="">All Languages</option>
+                            <option value="en">English</option>
+                            <option value="af">Afrikaans</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="w-40">
-                    <select wire:model.live="language"
-                            class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
-                            style="border-color: var(--color-cream-dark);">
-                        <option value="">All Languages</option>
-                        <option value="en">English</option>
-                        <option value="af">Afrikaans</option>
-                    </select>
-                </div>
+                <!-- Topic Tags Row -->
+                @if($tags->count() > 0)
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span class="pma-body text-sm font-semibold" style="color: var(--color-indigo);">Topics:</span>
 
-                @if($tags->isNotEmpty())
-                <div class="w-48">
-                    <select wire:model.live="tag"
-                            class="w-full px-4 py-2 rounded-lg border focus:outline-none focus:ring-2"
-                            style="border-color: var(--color-cream-dark);">
-                        <option value="">All Tags</option>
-                        @foreach($tags as $tagItem)
-                            <option value="{{ $tagItem->slug }}">{{ $tagItem->name }}</option>
-                        @endforeach
-                    </select>
+                    @foreach($tags as $tagItem)
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox"
+                                   wire:model.live="selectedTags"
+                                   value="{{ $tagItem->slug }}"
+                                   class="hidden peer">
+                            <span class="px-4 py-2 rounded-full text-sm pma-heading-light transition-all peer-checked:text-white"
+                                  style="background: {{ in_array($tagItem->slug, $selectedTags) ? 'var(--color-pma-green)' : 'white' }}; border: 2px solid var(--color-pma-green); color: {{ in_array($tagItem->slug, $selectedTags) ? 'white' : 'var(--color-pma-green)' }};">
+                                {{ $tagItem->name }}
+                            </span>
+                        </label>
+                    @endforeach
+
+                    @if($search || !empty($selectedTags) || $language)
+                        <button wire:click="clearFilters"
+                                class="ml-4 px-4 py-2 rounded-full text-sm pma-body"
+                                style="background: var(--color-terracotta); color: white;">
+                            Clear Filters
+                        </button>
+                    @endif
                 </div>
                 @endif
 
-                @if($search || $language || $tag)
-                    <button wire:click="clearFilters"
-                            class="px-4 py-2 rounded-lg font-medium transition-colors"
-                            style="color: var(--color-olive);">
-                        Clear
-                    </button>
+                <!-- Active Filters Display -->
+                @if($search || !empty($selectedTags) || $language)
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <span class="pma-body text-sm" style="color: var(--color-olive);">Active filters:</span>
+
+                        @if($search)
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm pma-body"
+                                  style="background: var(--color-pma-green-light); color: white;">
+                                Search: "{{ $search }}"
+                            </span>
+                        @endif
+
+                        @if($language)
+                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm pma-body"
+                                  style="background: var(--color-pma-green-light); color: white;">
+                                {{ $language === 'en' ? 'English' : 'Afrikaans' }}
+                            </span>
+                        @endif
+
+                        @if(!empty($selectedTags))
+                            @foreach($selectedTags as $tagSlug)
+                                @php
+                                    $tagName = $tags->firstWhere('slug', $tagSlug)?->name ?? $tagSlug;
+                                @endphp
+                                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm pma-body"
+                                      style="background: var(--color-pma-green-light); color: white;">
+                                    {{ $tagName }}
+                                </span>
+                            @endforeach
+                        @endif
+                    </div>
                 @endif
 
                 <div wire:loading class="text-sm" style="color: var(--color-olive);">
@@ -129,6 +179,19 @@ new class extends Component {
     <!-- Picture Studies Grid -->
     <section class="py-20 lg:py-32" style="background: white;">
         <div class="container mx-auto px-6">
+            <!-- Print Tip Banner -->
+            <div class="mb-8 p-4 rounded-lg border flex items-center gap-4"
+                 style="background: var(--color-cream); border-color: var(--color-cream-dark);">
+                <div class="shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" style="color: var(--color-pma-green);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                </div>
+                <p class="pma-body" style="color: var(--color-indigo);">
+                    <strong>Tip:</strong> Print these pictures in A5 for best use as short studies or tracts.
+                </p>
+            </div>
+
             @if($pictureStudies->isEmpty())
                 <div class="text-center py-12">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4" style="color: var(--color-olive);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
