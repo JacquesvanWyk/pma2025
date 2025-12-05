@@ -28,6 +28,11 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    'usesend' => [
+        'key' => env('USESEND_API_KEY'),
+        'base_url' => env('USESEND_BASE_URL', 'https://app.usesend.com/api/'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
