@@ -100,7 +100,7 @@
                 <div class="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
                      style="background: var(--color-pma-green);">
                     <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.003 9.003 0 01-4.216-7.919M9 16a9.003 9.003 0 01-4.216-7.919M12 8c0 4.418-4.03 8-9 8a9.003 9.003 0 01-9-8c0-4.418 4.03-8 9-8a9.003 9.003 0 019 8" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
                 <h3 class="pma-heading text-xl mb-3" style="color: var(--color-indigo);">Connect & Fellowship</h3>
