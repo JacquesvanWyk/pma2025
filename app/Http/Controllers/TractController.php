@@ -75,12 +75,18 @@ class TractController extends Controller
         ]);
     }
 
-    protected function downloadPdf(Tract $tract): mixed
+    protected function downloadPdf(Tract $tract): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        $filename = \Illuminate\Support\Str::slug($tract->title).'-'.now()->format('Y-m-d').'.pdf';
+        $path = storage_path('app/public/tracts/'.$tract->pdf_file);
 
-        return \Spatie\LaravelPdf\Facades\Pdf::view('tracts.download-pdf', compact('tract'))
-            ->format('a4')
-            ->name($filename);
+        if (! file_exists($path)) {
+            abort(404, 'PDF file not found');
+        }
+
+        $filename = \Illuminate\Support\Str::slug($tract->title).'.pdf';
+
+        return response()->download($path, $filename, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }
