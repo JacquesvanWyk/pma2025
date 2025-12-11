@@ -12,10 +12,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pledge/update', [PledgeController::class, 'update']);
 });
 
-Route::prefix('video-editor')->group(function () {
-    Route::post('/upload', [VideoEditorController::class, 'upload']);
-    Route::post('/auto-detect', [VideoEditorController::class, 'autoDetect']);
-    Route::post('/export', [VideoEditorController::class, 'export']);
+Route::middleware('web')->group(function () {
+    Route::prefix('video-editor')->group(function () {
+        Route::post('/upload', [VideoEditorController::class, 'upload']);
+        Route::post('/upload-image', [VideoEditorController::class, 'uploadImage']);
+        Route::post('/upload-video', [VideoEditorController::class, 'uploadVideo']);
+        Route::post('/auto-detect', [VideoEditorController::class, 'autoDetect']);
+        Route::post('/export', [VideoEditorController::class, 'export']);
+        Route::get('/status/{taskId}', [VideoEditorController::class, 'status']);
+
+        Route::get('/projects', [VideoEditorController::class, 'projects']);
+        Route::post('/projects', [VideoEditorController::class, 'storeProject']);
+        Route::get('/projects/{project}', [VideoEditorController::class, 'showProject']);
+        Route::put('/projects/{project}', [VideoEditorController::class, 'updateProject']);
+        Route::delete('/projects/{project}', [VideoEditorController::class, 'destroyProject']);
+        Route::delete('/exports/{export}', [VideoEditorController::class, 'destroyExport']);
+    });
 });
 
 Route::get('/shorts/{short}', function (Short $short) {

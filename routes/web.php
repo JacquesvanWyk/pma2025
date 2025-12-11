@@ -25,6 +25,19 @@ Route::middleware(['auth'])->group(function () {
     // Slide export routes
     Route::get('slides/export/powerpoint', [\App\Http\Controllers\SlideExportController::class, 'exportPowerPoint'])->name('slides.export.powerpoint');
     Route::get('slides/export/pdf', [\App\Http\Controllers\SlideExportController::class, 'exportPdf'])->name('slides.export.pdf');
+
+    // Video Editor Project Routes (with web auth)
+    Route::prefix('video-editor')->name('video-editor.')->group(function () {
+        Route::post('/upload', [\App\Http\Controllers\Api\VideoEditorController::class, 'upload'])->name('upload');
+        Route::post('/auto-detect', [\App\Http\Controllers\Api\VideoEditorController::class, 'autoDetect'])->name('auto-detect');
+        Route::post('/export', [\App\Http\Controllers\Api\VideoEditorController::class, 'export'])->name('export');
+        Route::get('/projects', [\App\Http\Controllers\Api\VideoEditorController::class, 'projects'])->name('projects.index');
+        Route::post('/projects', [\App\Http\Controllers\Api\VideoEditorController::class, 'storeProject'])->name('projects.store');
+        Route::get('/projects/{project}', [\App\Http\Controllers\Api\VideoEditorController::class, 'showProject'])->name('projects.show');
+        Route::put('/projects/{project}', [\App\Http\Controllers\Api\VideoEditorController::class, 'updateProject'])->name('projects.update');
+        Route::delete('/projects/{project}', [\App\Http\Controllers\Api\VideoEditorController::class, 'destroyProject'])->name('projects.destroy');
+        Route::delete('/exports/{export}', [\App\Http\Controllers\Api\VideoEditorController::class, 'destroyExport'])->name('exports.destroy');
+    });
 });
 
 // User Profile Route (public)

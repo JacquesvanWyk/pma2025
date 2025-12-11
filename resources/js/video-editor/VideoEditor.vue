@@ -68,6 +68,23 @@
         <!-- Top Toolbar -->
         <div class="editor-toolbar">
             <div class="toolbar-left">
+                <a v-if="projectsListUrl" :href="projectsListUrl" class="toolbar-btn" title="Back to Projects">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span>Projects</span>
+                </a>
+                <div v-if="projectsListUrl" class="toolbar-divider"></div>
+                <button class="toolbar-btn" @click="saveProject" :disabled="isSavingProject" title="Save Project">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    <span v-if="isSavingProject">Saving...</span>
+                    <span v-else>Save</span>
+                </button>
+                <div class="toolbar-divider"></div>
                 <button class="toolbar-btn" @click="undo" :disabled="!canUndo" title="Undo">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 10h10a5 5 0 0 1 5 5v2M3 10l4-4M3 10l4 4"/>
@@ -89,7 +106,12 @@
                 </button>
             </div>
             <div class="toolbar-center">
-                <span class="project-title">{{ projectTitle || 'Lyric Video Editor' }}</span>
+                <input
+                    type="text"
+                    v-model="videoTitle"
+                    class="title-input"
+                    placeholder="Enter video title..."
+                />
             </div>
             <div class="toolbar-right">
                 <select v-model="outputSize" class="size-select">
@@ -117,6 +139,26 @@
                     <h3>Lyrics</h3>
                     <button class="btn-sm" @click="addLyricLine" title="Add line">+</button>
                 </div>
+
+                <!-- Reference Lyrics Section -->
+                <div class="reference-lyrics-section">
+                    <div class="reference-header" @click="showReferenceLyrics = !showReferenceLyrics">
+                        <span>📝 Reference Lyrics</span>
+                        <span class="toggle-icon">{{ showReferenceLyrics ? '▼' : '▶' }}</span>
+                    </div>
+                    <div v-if="showReferenceLyrics" class="reference-content">
+                        <textarea
+                            v-model="referenceLyrics"
+                            class="reference-textarea"
+                            placeholder="Paste the actual lyrics here. When you use Auto Detect, AI will correct any transcription mistakes using these lyrics..."
+                            rows="6"
+                        ></textarea>
+                        <div class="reference-hint">
+                            Tip: Paste your lyrics here before running Auto Detect. AI will match detected timestamps to your correct lyrics.
+                        </div>
+                    </div>
+                </div>
+
                 <div class="lyrics-list">
                     <div
                         v-for="(lyric, index) in localLyrics"
@@ -283,9 +325,23 @@
                             <label>Image</label>
                             <input type="file" accept="image/*" @change="onBackgroundImageChange" class="file-input" />
                         </div>
+                        <div v-if="style.backgroundImage && !style.backgroundImage.startsWith('data:')" class="current-file">
+                            <span class="file-icon">🖼️</span>
+                            <span class="file-name">{{ getFilenameFromUrl(style.backgroundImage) }}</span>
+                        </div>
                         <div class="style-row">
                             <label>Video</label>
-                            <input type="file" accept="video/mp4,video/webm,video/ogg,.mp4,.webm,.mov" @change="onBackgroundVideoChange" class="file-input" />
+                            <input type="file" accept="video/mp4,video/webm,video/ogg,.mp4,.webm,.mov" @change="onBackgroundVideoChange" class="file-input" :disabled="videoUploadProgress > 0 && videoUploadProgress < 100" />
+                        </div>
+                        <div v-if="videoUploadProgress > 0" class="upload-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" :style="{ width: videoUploadProgress + '%' }"></div>
+                            </div>
+                            <span class="progress-text">{{ videoUploadProgress < 100 ? 'Uploading... ' + videoUploadProgress + '%' : 'Processing...' }}</span>
+                        </div>
+                        <div v-if="style.backgroundVideo && !style.backgroundVideo.startsWith('data:')" class="current-file">
+                            <span class="file-icon">🎬</span>
+                            <span class="file-name">{{ getFilenameFromUrl(style.backgroundVideo) }}</span>
                         </div>
                         <button v-if="style.backgroundImage || style.backgroundVideo" class="btn-sm clear-btn" @click="clearBackground">
                             Clear Background
@@ -298,6 +354,10 @@
                         <div class="style-row">
                             <label>Image</label>
                             <input type="file" accept="image/*" @change="onLogoChange" class="file-input" />
+                        </div>
+                        <div v-if="style.logo && !style.logo.startsWith('data:')" class="current-file">
+                            <span class="file-icon">🏷️</span>
+                            <span class="file-name">{{ getFilenameFromUrl(style.logo) }}</span>
                         </div>
                         <div class="style-row" v-if="style.logo">
                             <label>Position</label>
@@ -467,6 +527,28 @@
                 <p>{{ processingMessage }}</p>
             </div>
         </div>
+
+        <!-- Error notification -->
+        <div v-if="errorMessage" class="error-notification">
+            <div class="error-content">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>{{ errorMessage }}</span>
+                <button @click="errorMessage = null" class="error-close">&times;</button>
+            </div>
+        </div>
+
+        <!-- Success notification -->
+        <div v-if="successMessage" class="success-notification">
+            <div class="success-content">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>{{ successMessage }}</span>
+                <button @click="successMessage = null" class="success-close">&times;</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -479,7 +561,10 @@ export default {
         audioUrl: { type: String, default: '' },
         lyrics: { type: Array, default: () => [] },
         projectId: { type: [String, Number], default: null },
+        project: { type: Object, default: null },
+        projectsListUrl: { type: String, default: '' },
         csrfToken: { type: String, default: '' },
+        livewireId: { type: String, default: null },
     },
     data() {
         return {
@@ -491,7 +576,11 @@ export default {
             localAudioUrl: '',
             audioUrlInput: '',
             isUploading: false,
+            pendingUploads: 0,
             uploadProgress: 0,
+            videoUploadProgress: 0,
+            referenceLyrics: '',
+            showReferenceLyrics: false,
             selectedLyricIndex: null,
             currentLyricIndex: null,
             zoomLevel: 1,
@@ -501,7 +590,9 @@ export default {
             isExporting: false,
             processingMessage: '',
             isDark: true,
-            projectTitle: 'Lyric Video',
+            videoTitle: 'Untitled Lyric Video',
+            errorMessage: null,
+            successMessage: null,
             history: [],
             historyIndex: -1,
             style: {
@@ -519,6 +610,14 @@ export default {
             },
             selectedAnimation: 'fade',
             dragState: null,
+            // Projects & Exports
+            currentProjectId: null,
+            projects: [],
+            exports: [],
+            showProjectsSidebar: true,
+            isSavingProject: false,
+            isLoadingProjects: false,
+            hasUnsavedChanges: false,
         };
     },
     computed: {
@@ -596,8 +695,13 @@ export default {
         },
     },
     mounted() {
-        this.localLyrics = JSON.parse(JSON.stringify(this.lyrics));
-        this.localAudioUrl = this.audioUrl;
+        if (this.project) {
+            this.loadProjectData(this.project);
+        } else {
+            this.localLyrics = JSON.parse(JSON.stringify(this.lyrics));
+            this.localAudioUrl = this.audioUrl;
+            this.currentProjectId = this.projectId;
+        }
         this.saveToHistory();
 
         if (this.localAudioUrl) {
@@ -765,7 +869,9 @@ export default {
             try {
                 const response = await fetch('/api/video-editor/upload', {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': this.csrfToken,
                     },
                     body: formData,
@@ -792,18 +898,23 @@ export default {
             if (!this.localAudioUrl) return;
 
             this.isProcessing = true;
-            this.processingMessage = 'Detecting lyrics with AI...';
+            this.processingMessage = this.referenceLyrics
+                ? 'Detecting lyrics with AI and correcting with reference...'
+                : 'Detecting lyrics with AI...';
 
             try {
                 const response = await fetch('/api/video-editor/auto-detect', {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': this.csrfToken,
                     },
                     body: JSON.stringify({
                         audio_url: this.localAudioUrl,
                         project_id: this.projectId,
+                        reference_lyrics: this.referenceLyrics || null,
                     }),
                 });
 
@@ -811,28 +922,49 @@ export default {
 
                 if (data.success && data.timestamps) {
                     this.localLyrics = data.timestamps;
+                    if (data.corrected) {
+                        this.successMessage = 'Lyrics detected and corrected with reference!';
+                        setTimeout(() => this.successMessage = null, 3000);
+                    }
+                } else if (data.error) {
+                    this.errorMessage = data.error;
                 }
             } catch (error) {
                 console.error('Auto-detect failed:', error);
+                this.errorMessage = 'Auto-detect failed: ' + error.message;
             } finally {
                 this.isProcessing = false;
             }
         },
         async exportVideo() {
+            if (!this.localLyrics.length) {
+                this.errorMessage = 'Please add some lyrics before exporting.';
+                return;
+            }
+
+            if (!this.videoTitle.trim()) {
+                this.errorMessage = 'Please enter a video title.';
+                return;
+            }
+
             this.isExporting = true;
-            this.processingMessage = 'Rendering video...';
+            this.errorMessage = null;
+            this.processingMessage = 'Rendering video... This may take a few minutes.';
 
             try {
                 const [width, height] = this.outputSize.split('x').map(Number);
 
                 const response = await fetch('/api/video-editor/export', {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': this.csrfToken,
                     },
                     body: JSON.stringify({
-                        project_id: this.projectId,
+                        title: this.videoTitle,
+                        project_id: this.currentProjectId,
                         audio_url: this.localAudioUrl,
                         lyrics: this.localLyrics,
                         style: this.style,
@@ -844,12 +976,24 @@ export default {
 
                 const data = await response.json();
 
-                if (data.success && data.download_url) {
-                    window.open(data.download_url, '_blank');
+                if (data.success) {
+                    this.isExporting = false;
+                    this.successMessage = data.message || 'Video rendered successfully!';
+
+                    if (data.export) {
+                        this.exports.unshift(data.export);
+                    }
+
+                    if (data.downloadUrl) {
+                        window.open(data.downloadUrl, '_blank');
+                    }
+                } else {
+                    this.errorMessage = data.error || 'Export failed. Please try again.';
+                    this.isExporting = false;
                 }
             } catch (error) {
                 console.error('Export failed:', error);
-            } finally {
+                this.errorMessage = 'Export failed: ' + (error.message || 'Unknown error');
                 this.isExporting = false;
             }
         },
@@ -858,36 +1002,160 @@ export default {
                 lyric.animation = this.selectedAnimation;
             });
         },
-        onBackgroundImageChange(event) {
+        async onBackgroundImageChange(event) {
             const file = event.target.files[0];
             if (file) {
                 this.style.backgroundVideo = null;
+
+                // Show preview immediately with data URL
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     this.style.backgroundImage = e.target.result;
                 };
                 reader.readAsDataURL(file);
+
+                // Upload to server
+                this.pendingUploads++;
+                this.processingMessage = 'Uploading background image...';
+                try {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('type', 'background');
+
+                    const response = await fetch('/api/video-editor/upload-image', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        },
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+                    if (data.success && data.url) {
+                        this.style.backgroundImage = data.url;
+                        this.successMessage = 'Background uploaded';
+                        setTimeout(() => this.successMessage = null, 2000);
+                    } else {
+                        this.errorMessage = data.message || 'Failed to upload background';
+                        this.style.backgroundImage = null;
+                    }
+                } catch (error) {
+                    console.error('Background upload failed:', error);
+                    this.errorMessage = 'Failed to upload background';
+                    this.style.backgroundImage = null;
+                } finally {
+                    this.pendingUploads--;
+                    if (this.pendingUploads === 0) this.processingMessage = '';
+                }
             }
         },
-        onBackgroundVideoChange(event) {
+        async onBackgroundVideoChange(event) {
             const file = event.target.files[0];
             if (file) {
                 this.style.backgroundImage = null;
+
+                // Show preview immediately
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     this.style.backgroundVideo = e.target.result;
                 };
                 reader.readAsDataURL(file);
+
+                // Upload to server with progress tracking
+                this.pendingUploads++;
+                this.videoUploadProgress = 1;
+
+                const formData = new FormData();
+                formData.append('video', file);
+
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        this.videoUploadProgress = Math.round((e.loaded / e.total) * 100);
+                    }
+                });
+
+                xhr.addEventListener('load', () => {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (xhr.status === 200 && data.success && data.url) {
+                            this.style.backgroundVideo = data.url;
+                            this.successMessage = 'Video background uploaded';
+                            setTimeout(() => this.successMessage = null, 2000);
+                        } else {
+                            this.errorMessage = data.message || 'Failed to upload video';
+                            this.style.backgroundVideo = null;
+                        }
+                    } catch (error) {
+                        this.errorMessage = 'Failed to upload video';
+                        this.style.backgroundVideo = null;
+                    }
+                    this.videoUploadProgress = 0;
+                    this.pendingUploads--;
+                });
+
+                xhr.addEventListener('error', () => {
+                    this.errorMessage = 'Failed to upload video';
+                    this.style.backgroundVideo = null;
+                    this.videoUploadProgress = 0;
+                    this.pendingUploads--;
+                });
+
+                xhr.open('POST', '/api/video-editor/upload-video');
+                xhr.setRequestHeader('Accept', 'application/json');
+                xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]')?.content || '');
+                xhr.withCredentials = true;
+                xhr.send(formData);
             }
         },
-        onLogoChange(event) {
+        async onLogoChange(event) {
             const file = event.target.files[0];
             if (file) {
+                // Show preview immediately
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     this.style.logo = e.target.result;
                 };
                 reader.readAsDataURL(file);
+
+                // Upload to server
+                this.pendingUploads++;
+                this.processingMessage = 'Uploading logo...';
+                try {
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('type', 'logo');
+
+                    const response = await fetch('/api/video-editor/upload-image', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                        },
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+                    if (data.success && data.url) {
+                        this.style.logo = data.url;
+                        this.successMessage = 'Logo uploaded';
+                        setTimeout(() => this.successMessage = null, 2000);
+                    } else {
+                        this.errorMessage = data.message || 'Failed to upload logo';
+                        this.style.logo = null;
+                    }
+                } catch (error) {
+                    console.error('Logo upload failed:', error);
+                    this.errorMessage = 'Failed to upload logo';
+                    this.style.logo = null;
+                } finally {
+                    this.pendingUploads--;
+                    if (this.pendingUploads === 0) this.processingMessage = '';
+                }
             }
         },
         clearBackground() {
@@ -896,6 +1164,15 @@ export default {
         },
         clearLogo() {
             this.style.logo = null;
+        },
+        getFilenameFromUrl(url) {
+            if (!url) return '';
+            try {
+                const pathname = new URL(url).pathname;
+                return pathname.split('/').pop() || url;
+            } catch {
+                return url.split('/').pop() || url;
+            }
         },
         formatTimeEditable(ms) {
             if (!ms && ms !== 0) return '0:00.0';
@@ -936,11 +1213,17 @@ export default {
         zoomToFit() {
             if (!this.durationMs || !this.$refs.timelineTracks) return;
 
-            const containerWidth = this.$refs.timelineTracks.offsetWidth - 60;
+            const containerWidth = this.$refs.timelineTracks.clientWidth;
             const durationSec = this.durationMs / 1000;
             const targetPxPerSec = containerWidth / durationSec;
-            this.zoomLevel = Math.max(0.25, Math.min(5, targetPxPerSec / 50));
-            this.applyZoom();
+            this.zoomLevel = targetPxPerSec / 50;
+
+            // Set waveform width to exactly match container
+            this.waveformWidth = containerWidth;
+
+            if (this.wavesurfer) {
+                this.wavesurfer.zoom(targetPxPerSec);
+            }
 
             this.$nextTick(() => {
                 if (this.$refs.timelineTracks) {
@@ -1122,6 +1405,270 @@ export default {
                 this.selectedLyricIndex--;
             }
         },
+        // Project Management Methods
+        async loadProjects() {
+            this.isLoadingProjects = true;
+            try {
+                const response = await fetch('/api/video-editor/projects', {
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': this.csrfToken,
+                    },
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.projects = data.projects;
+                }
+            } catch (error) {
+                console.error('Failed to load projects:', error);
+            } finally {
+                this.isLoadingProjects = false;
+            }
+        },
+        async saveProject() {
+            if (this.pendingUploads > 0) {
+                this.errorMessage = 'Please wait for uploads to complete before saving';
+                return;
+            }
+
+            if (!this.localAudioUrl) {
+                this.errorMessage = 'Please upload audio first';
+                return;
+            }
+
+            this.isSavingProject = true;
+            try {
+                // Only save URL references, not base64 data
+                const isDataUrl = (url) => url && url.startsWith('data:');
+                const bgImage = this.style.backgroundImage;
+                const bgVideo = this.style.backgroundVideo;
+                const backgroundImageUrl = bgImage && !isDataUrl(bgImage) ? bgImage : null;
+                const backgroundVideoUrl = bgVideo && !isDataUrl(bgVideo) ? bgVideo : null;
+                const logoUrl = this.style.logo && !isDataUrl(this.style.logo) ? this.style.logo : null;
+
+                // Determine background type
+                let backgroundType = 'color';
+                if (backgroundVideoUrl) backgroundType = 'video';
+                else if (backgroundImageUrl) backgroundType = 'image';
+
+                const projectData = {
+                    name: this.videoTitle || 'Untitled Project',
+                    audio_url: this.localAudioUrl,
+                    audio_duration_ms: Math.round(this.durationMs) || 0,
+                    background_type: backgroundType,
+                    background_color: this.style.backgroundColor || '#000000',
+                    background_image: backgroundImageUrl,
+                    background_video: backgroundVideoUrl,
+                    logo_url: logoUrl,
+                    logo_position: this.style.logoPosition || 'bottom-right',
+                    resolution: this.outputSize || '1920x1080',
+                    text_style: {
+                        fontFamily: this.style.fontFamily,
+                        fontSize: this.style.fontSize,
+                        fontColor: this.style.fontColor,
+                        textPosition: this.style.textPosition,
+                        textShadow: this.style.textShadow,
+                    },
+                    settings: {
+                        outputSize: this.outputSize,
+                        selectedAnimation: this.selectedAnimation,
+                    },
+                    lyrics: this.localLyrics || [],
+                    reference_lyrics: this.referenceLyrics || null,
+                };
+                console.log('Saving project data:', projectData);
+
+                // Use API instead of Livewire to avoid memory issues
+                const url = this.currentProjectId
+                    ? `/api/video-editor/projects/${this.currentProjectId}`
+                    : '/api/video-editor/projects';
+                const method = this.currentProjectId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    },
+                    body: JSON.stringify(projectData),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('API error:', response.status, errorData);
+                    if (errorData.errors) {
+                        const firstError = Object.values(errorData.errors)[0];
+                        this.errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+                    } else {
+                        this.errorMessage = errorData.message || `Save failed (${response.status})`;
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    this.currentProjectId = data.project.id;
+                    this.hasUnsavedChanges = false;
+                    this.successMessage = 'Project saved!';
+                    setTimeout(() => this.successMessage = null, 3000);
+                } else {
+                    this.errorMessage = data.error || 'Failed to save project';
+                }
+            } catch (error) {
+                console.error('Failed to save project:', error);
+                this.errorMessage = 'Failed to save project: ' + error.message;
+            } finally {
+                this.isSavingProject = false;
+            }
+        },
+        loadProjectData(project) {
+            this.currentProjectId = project.id;
+            this.videoTitle = project.name;
+            this.localAudioUrl = project.audio_url;
+            this.durationMs = project.audio_duration_ms || 0;
+            this.localLyrics = project.lyrics || [];
+            this.exports = project.exports || [];
+
+            // Clear previous background settings
+            this.style.backgroundImage = null;
+            this.style.backgroundVideo = null;
+
+            if (project.background_color) {
+                this.style.backgroundColor = project.background_color;
+            }
+            if (project.background_image) {
+                this.style.backgroundImage = project.background_image;
+            }
+            if (project.background_video) {
+                this.style.backgroundVideo = project.background_video;
+            }
+            if (project.logo_url) {
+                this.style.logo = project.logo_url;
+            }
+            if (project.logo_position) {
+                this.style.logoPosition = project.logo_position;
+            }
+            if (project.text_style) {
+                this.style = { ...this.style, ...project.text_style };
+            }
+            if (project.resolution) {
+                this.outputSize = project.resolution;
+            }
+            if (project.settings) {
+                if (project.settings.outputSize) this.outputSize = project.settings.outputSize;
+                if (project.settings.selectedAnimation) this.selectedAnimation = project.settings.selectedAnimation;
+            }
+
+            if (project.reference_lyrics) {
+                this.referenceLyrics = project.reference_lyrics;
+                this.showReferenceLyrics = true;
+            }
+
+            this.hasUnsavedChanges = false;
+        },
+        async loadProject(projectId) {
+            try {
+                const response = await fetch(`/api/video-editor/projects/${projectId}`, {
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': this.csrfToken,
+                    },
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    this.loadProjectData(data.project);
+                    this.$nextTick(() => {
+                        if (this.localAudioUrl && !this.wavesurfer) {
+                            this.initWaveSurfer();
+                        } else if (this.wavesurfer) {
+                            this.wavesurfer.load(this.localAudioUrl);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load project:', error);
+                this.errorMessage = 'Failed to load project';
+            }
+        },
+        async deleteProject(projectId) {
+            if (!confirm('Are you sure you want to delete this project? This will also delete all exports.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/video-editor/projects/${projectId}`, {
+                    method: 'DELETE',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': this.csrfToken,
+                    },
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    if (this.currentProjectId === projectId) {
+                        this.newProject();
+                    }
+                    this.loadProjects();
+                }
+            } catch (error) {
+                console.error('Failed to delete project:', error);
+            }
+        },
+        newProject() {
+            this.currentProjectId = null;
+            this.videoTitle = 'Untitled Lyric Video';
+            this.localAudioUrl = '';
+            this.localLyrics = [];
+            this.exports = [];
+            this.durationMs = 0;
+            this.hasUnsavedChanges = false;
+
+            if (this.wavesurfer) {
+                this.wavesurfer.destroy();
+                this.wavesurfer = null;
+            }
+        },
+        async deleteExport(exportId) {
+            if (!confirm('Are you sure you want to delete this export?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/video-editor/exports/${exportId}`, {
+                    method: 'DELETE',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': this.csrfToken,
+                    },
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    this.exports = this.exports.filter(e => e.id !== exportId);
+                }
+            } catch (error) {
+                console.error('Failed to delete export:', error);
+            }
+        },
+        downloadExport(fileUrl) {
+            window.open(fileUrl, '_blank');
+        },
+        toggleProjectsSidebar() {
+            this.showProjectsSidebar = !this.showProjectsSidebar;
+        },
+        formatDate(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        },
     },
 };
 </script>
@@ -1234,11 +1781,182 @@ export default {
     font-weight: 600;
 }
 
+/* Projects Sidebar */
+.projects-sidebar {
+    width: 220px;
+    background: #12192e;
+    border-right: 1px solid #0f3460;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.2s ease, opacity 0.2s ease;
+}
+
+.projects-sidebar.collapsed {
+    width: 0;
+    opacity: 0;
+    border: none;
+}
+
+.sidebar-section {
+    padding: 0.75rem;
+    border-bottom: 1px solid #0f3460;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-header h4 {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.projects-list, .exports-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.project-item, .export-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.project-item:hover, .export-item:hover {
+    background: #1a2744;
+}
+
+.project-item.active {
+    background: #0f3460;
+}
+
+.project-info, .export-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    overflow: hidden;
+}
+
+.project-name {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-meta, .export-size {
+    font-size: 0.6875rem;
+    color: #888;
+}
+
+.export-resolution {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.export-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.empty-state {
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.loading-state {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.spinner.small {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+.toolbar-btn.active {
+    background: #0f3460;
+    border-color: #4a90d9;
+}
+
 /* Lyrics Panel */
 .lyrics-panel {
     width: 280px;
     display: flex;
     flex-direction: column;
+}
+
+.reference-lyrics-section {
+    border-bottom: 1px solid #0f3460;
+    margin-bottom: 0.5rem;
+}
+
+.reference-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    background: rgba(74, 144, 217, 0.1);
+    font-size: 0.875rem;
+    color: #6dd5ed;
+}
+
+.reference-header:hover {
+    background: rgba(74, 144, 217, 0.2);
+}
+
+.toggle-icon {
+    font-size: 0.75rem;
+}
+
+.reference-content {
+    padding: 0.5rem;
+}
+
+.reference-textarea {
+    width: 100%;
+    background: #1a1a2e;
+    border: 1px solid #0f3460;
+    border-radius: 4px;
+    padding: 0.5rem;
+    color: #e0e0e0;
+    font-size: 0.8rem;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+.reference-textarea:focus {
+    outline: none;
+    border-color: #4a90d9;
+}
+
+.reference-hint {
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    color: #888;
+    line-height: 1.4;
 }
 
 .lyrics-list {
@@ -1577,6 +2295,56 @@ export default {
     color: #aaa;
 }
 
+.upload-progress {
+    margin: 0.5rem 0;
+    padding-left: 68px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #1a1a2e;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a90d9, #6dd5ed);
+    border-radius: 4px;
+    transition: width 0.2s ease;
+}
+
+.progress-text {
+    font-size: 0.75rem;
+    color: #6dd5ed;
+}
+
+.current-file {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    margin-left: 68px;
+    margin-bottom: 0.5rem;
+    background: rgba(74, 144, 217, 0.15);
+    border: 1px solid rgba(74, 144, 217, 0.3);
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.file-icon {
+    font-size: 1rem;
+}
+
+.file-name {
+    color: #6dd5ed;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 150px;
+}
+
 .color-input {
     width: 40px;
     height: 30px;
@@ -1629,7 +2397,8 @@ export default {
 .timeline-section {
     background: #16213e;
     border-top: 1px solid #0f3460;
-    padding: 0.5rem 0;
+    padding: 0.5rem;
+    width: 100%;
 }
 
 .timeline-header {
@@ -1674,7 +2443,8 @@ export default {
     overflow-y: hidden;
     background: #1a1a2e;
     border-radius: 6px;
-    margin: 0 1rem;
+    margin: 0;
+    width: 100%;
 }
 
 .track-row {
@@ -2081,5 +2851,110 @@ export default {
     font-size: 0.75rem;
     color: #666;
     margin: 0.25rem 0;
+}
+
+/* Title Input */
+.title-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    min-width: 250px;
+    text-align: center;
+}
+
+.title-input:focus {
+    outline: none;
+    border-color: #4a90d9;
+    background: #16213e;
+}
+
+.title-input::placeholder {
+    color: #666;
+    font-weight: 400;
+}
+
+/* Error Notification */
+.error-notification {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    animation: slideDown 0.3s ease;
+}
+
+.error-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #c0392b;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.error-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    line-height: 1;
+}
+
+.error-close:hover {
+    color: white;
+}
+
+/* Success Notification */
+.success-notification {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    animation: slideDown 0.3s ease;
+}
+
+.success-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #27ae60;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.success-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    line-height: 1;
+}
+
+.success-close:hover {
+    color: white;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
 }
 </style>

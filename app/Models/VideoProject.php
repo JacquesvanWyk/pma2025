@@ -26,6 +26,8 @@ class VideoProject extends Model
         'background_type',
         'background_value',
         'background_images',
+        'logo_path',
+        'logo_position',
         'text_style',
         'resolution',
         'aspect_ratio',
@@ -35,6 +37,7 @@ class VideoProject extends Model
         'output_duration_ms',
         'output_size_bytes',
         'settings',
+        'reference_lyrics',
         'metadata',
         'error_message',
         'processing_started_at',
@@ -66,6 +69,11 @@ class VideoProject extends Model
     public function lyricTimestamps(): HasMany
     {
         return $this->hasMany(LyricTimestamp::class)->orderBy('order');
+    }
+
+    public function exports(): HasMany
+    {
+        return $this->hasMany(VideoExport::class)->orderByDesc('created_at');
     }
 
     public function scopeDraft($query)
@@ -106,6 +114,15 @@ class VideoProject extends Model
     {
         if ($this->thumbnail_path) {
             return Storage::disk(config('kie.storage.disk', 'public'))->url($this->thumbnail_path);
+        }
+
+        return null;
+    }
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        if ($this->logo_path) {
+            return Storage::disk(config('kie.storage.disk', 'public'))->url($this->logo_path);
         }
 
         return null;

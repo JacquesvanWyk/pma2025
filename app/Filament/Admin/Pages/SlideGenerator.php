@@ -2,11 +2,10 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Models\Sermon;
-use App\Services\SlideGenerationService;
+use App\Jobs\GenerateKimiSlidesJob;
+use App\Models\SlidePresentation;
+use App\Services\SlideOutlineService;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -17,11 +16,8 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
-/**
- * @property-read Schema $form
- */
 class SlideGenerator extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -34,40 +30,62 @@ class SlideGenerator extends Page implements HasForms
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $title = 'Generate Slides';
+    protected static ?string $title = 'Kimi-Style Slide Generator';
 
     protected string $view = 'filament.admin.pages.slide-generator';
 
     public ?array $data = [];
 
-    public array $generatedSlides = [];
+    public string $step = 'input';
 
-    public bool $isGenerating = false;
+    public ?SlidePresentation $presentation = null;
+
+    public ?array $outline = null;
+
+    public bool $isGeneratingOutline = false;
+
+    public bool $isGeneratingImages = false;
 
     public ?string $currentStatus = null;
 
-    public int $currentSlideNumber = 0;
-
-    public int $totalSlides = 0;
-
-    public ?string $jobId = null;
-
-    public ?int $sermonId = null;
-
-    public array $slideViewModes = [];
-
-    public string $aiPrompt = '';
-
     public function mount(): void
     {
-        $sermonId = request()->query('sermon');
+        $presentationId = request()->query('presentation');
 
-        $this->form->fill([
-            'mode' => $sermonId ? 'existing' : 'new',
-            'sermon_id' => $sermonId,
-            'theme' => config('slides.default_theme'),
-            'slide_count' => config('slides.ai.default_slide_count'),
-        ]);
+        if ($presentationId) {
+            $this->presentation = SlidePresentation::find($presentationId);
+            if ($this->presentation) {
+                $this->loadPresentationState();
+
+                return;
+            }
+        }
+
+        $this->form->fill([]);
+    }
+
+    protected function loadPresentationState(): void
+    {
+        if (! $this->presentation) {
+            return;
+        }
+
+        $this->outline = $this->presentation->outline;
+
+        if ($this->presentation->status === 'complete') {
+            $this->step = 'complete';
+        } elseif ($this->presentation->status === 'generating') {
+            $this->step = 'generating';
+            $this->isGeneratingImages = true;
+        } elseif ($this->presentation->status === 'outline_ready') {
+            $this->step = 'outline';
+        } else {
+            $this->step = 'input';
+            $this->form->fill([
+                'title' => $this->presentation->title,
+                'source_text' => $this->presentation->source_text,
+            ]);
+        }
     }
 
     public function form(Schema $schema): Schema
@@ -75,65 +93,18 @@ class SlideGenerator extends Page implements HasForms
         return $schema
             ->components([
                 Form::make([
-                    Radio::make('mode')
-                        ->label('Slide Source')
-                        ->options([
-                            'existing' => 'From Existing Sermon',
-                            'new' => 'Create New Content',
-                        ])
-                        ->default('existing')
-                        ->inline()
-                        ->live()
-                        ->required(),
-
-                    Select::make('sermon_id')
-                        ->label('Select Sermon')
-                        ->options(Sermon::query()->pluck('title', 'id'))
-                        ->searchable()
-                        ->required(fn ($get) => $get('mode') === 'existing')
-                        ->visible(fn ($get) => $get('mode') === 'existing')
-                        ->helperText('Choose an existing sermon to generate slides from'),
-
                     TextInput::make('title')
                         ->label('Presentation Title')
-                        ->required(fn ($get) => $get('mode') === 'new')
-                        ->visible(fn ($get) => $get('mode') === 'new')
-                        ->maxLength(255),
-
-                    Textarea::make('content')
-                        ->label('Content')
-                        ->required(fn ($get) => $get('mode') === 'new')
-                        ->visible(fn ($get) => $get('mode') === 'new')
-                        ->rows(8)
-                        ->helperText('Enter the main content for your presentation'),
-
-                    TextInput::make('scripture')
-                        ->label('Primary Scripture (Optional)')
-                        ->visible(fn ($get) => $get('mode') === 'new')
+                        ->required()
                         ->maxLength(255)
-                        ->placeholder('e.g., John 3:16'),
+                        ->placeholder('e.g., The Holy Spirit: Not a Third Person'),
 
-                    Select::make('theme')
-                        ->label('Slide Theme')
+                    Textarea::make('source_text')
+                        ->label('Source Content')
                         ->required()
-                        ->options(collect(config('slides.themes'))->mapWithKeys(fn ($theme, $key) => [$key => $theme['name']]))
-                        ->default(config('slides.default_theme'))
-                        ->helperText('Choose the visual theme for your slides'),
-
-                    TextInput::make('slide_count')
-                        ->label('Number of Slides')
-                        ->required()
-                        ->numeric()
-                        ->minValue(config('slides.ai.min_slides'))
-                        ->maxValue(config('slides.ai.max_slides'))
-                        ->default(config('slides.ai.default_slide_count'))
-                        ->helperText('AI will suggest this many slides'),
-
-                    Textarea::make('additional_instructions')
-                        ->label('Additional Instructions (Optional)')
-                        ->rows(3)
-                        ->placeholder('Any specific requirements for the slides...')
-                        ->columnSpanFull(),
+                        ->rows(12)
+                        ->placeholder('Paste your sermon notes, study material, or any text you want to turn into slides...')
+                        ->helperText('The AI will analyze this content and create illustrated slides with text baked into the images. Visual style will be chosen automatically based on content.'),
                 ])
                     ->key('form-actions')
                     ->footer([
@@ -146,229 +117,181 @@ class SlideGenerator extends Page implements HasForms
     protected function getFormActions(): array
     {
         return [
-            Action::make('generateSlides')
-                ->label('Generate Slides')
+            Action::make('generateOutline')
+                ->label('Generate Outline')
                 ->icon('heroicon-o-sparkles')
                 ->color('primary')
                 ->size('lg')
-                ->disabled(fn () => $this->isGenerating)
-                ->action(function () {
-                    // Dispatch immediately to trigger UI update
-                    $this->dispatch('generation-started');
-                    $this->generateSlides();
-                }),
-
-            Action::make('reset')
-                ->label('Reset')
-                ->icon('heroicon-o-arrow-path')
-                ->color('gray')
-                ->visible(fn () => ! $this->isGenerating && count($this->generatedSlides) > 0)
-                ->action(function () {
-                    $this->reset(['generatedSlides', 'currentStatus', 'currentSlideNumber', 'totalSlides', 'jobId']);
-                }),
+                ->disabled(fn () => $this->isGeneratingOutline)
+                ->action(fn () => $this->generateOutline()),
         ];
     }
 
-    public function generateSlides(): void
+    public function generateOutline(): void
     {
         $this->validate();
 
         $data = $this->form->getState();
 
-        // Set these immediately so UI updates
-        $this->isGenerating = true;
-        $this->generatedSlides = [];
-        $this->currentSlideNumber = 0;
-        $this->totalSlides = (int) $data['slide_count'];
-        $this->currentStatus = 'Preparing to generate slides...';
-        $this->jobId = Str::uuid()->toString();
+        $this->isGeneratingOutline = true;
+        $this->currentStatus = 'AI is analyzing your content and creating slide outline...';
 
         try {
-            $sermon = null;
-            if ($data['mode'] === 'existing') {
-                $sermon = Sermon::find($data['sermon_id']);
-                if (! $sermon) {
-                    throw new \Exception('Sermon not found');
-                }
-                $this->sermonId = $sermon->id;
-            } else {
-                $this->sermonId = null;
-            }
+            $this->presentation = SlidePresentation::create([
+                'user_id' => Auth::id(),
+                'title' => $data['title'],
+                'source_text' => $data['source_text'],
+                'style' => 'auto',
+                'status' => 'draft',
+            ]);
 
-            // Dispatch job with raw form data - ALL AI work happens in the job
-            $job = new \App\Jobs\GenerateSlidesJob(
-                sermon: $sermon,
-                formData: $data,
-                jobId: $this->jobId
-            );
+            $outlineService = new SlideOutlineService;
+            $outline = $outlineService->generateOutline($data['source_text']);
 
-            dispatch($job);
+            $this->presentation->update([
+                'title' => $outline['title'] ?? $data['title'],
+                'outline' => $outline,
+                'status' => 'outline_ready',
+                'total_slides' => count($outline['slides'] ?? []),
+            ]);
 
-            $this->currentStatus = 'AI is creating your slide plan...';
-
-            Notification::make()
-                ->title('Generation Started')
-                ->info()
-                ->body('Your slides are being generated. They will appear below as they are created.')
-                ->send();
-        } catch (\Exception $e) {
-            $this->isGenerating = false;
+            $this->outline = $outline;
+            $this->step = 'outline';
+            $this->isGeneratingOutline = false;
             $this->currentStatus = null;
 
             Notification::make()
-                ->title('Generation Failed')
-                ->danger()
-                ->body('Error: '.$e->getMessage())
-                ->send();
-        }
-    }
-
-    public function checkGenerationProgress(): void
-    {
-        if (! $this->jobId || ! $this->isGenerating) {
-            return;
-        }
-
-        $service = new SlideGenerationService;
-        $progress = $service->getProgress($this->jobId);
-
-        $this->currentStatus = $progress['message'];
-        $this->currentSlideNumber = $progress['current_slide'];
-        $this->generatedSlides = $progress['slides'];
-
-        if ($progress['status'] === 'completed') {
-            $this->isGenerating = false;
-            $this->currentStatus = 'All slides generated successfully!';
-
-            Notification::make()
-                ->title('Generation Complete')
+                ->title('Outline Generated')
                 ->success()
-                ->body("Successfully generated {$this->currentSlideNumber} slides.")
+                ->body('Review the outline below and click "Generate Slides" when ready.')
                 ->send();
 
-            // Clear the job ID to stop polling
-            $service->clearProgress($this->jobId);
-            $this->jobId = null;
-        } elseif ($progress['status'] === 'failed') {
-            $this->isGenerating = false;
-
-            Notification::make()
-                ->title('Generation Failed')
-                ->danger()
-                ->body($progress['message'])
-                ->send();
-
-            // Clear the job ID to stop polling
-            $service->clearProgress($this->jobId);
-            $this->jobId = null;
-        }
-    }
-
-    protected function getHeaderActions(): array
-    {
-        $actions = [];
-
-        if (count($this->generatedSlides) > 0 && ! $this->isGenerating && $this->sermonId) {
-            $actions[] = Action::make('editSlides')
-                ->label('Edit Slides')
-                ->icon('heroicon-o-pencil-square')
-                ->color('primary')
-                ->url(fn () => route('filament.admin.resources.sermons.sermons.slide-editor', ['record' => $this->sermonId]));
-        }
-
-        return $actions;
-    }
-
-    public function exportAsPowerPoint(): void
-    {
-        if (empty($this->generatedSlides)) {
-            Notification::make()
-                ->title('No Slides to Export')
-                ->warning()
-                ->body('Please generate slides first.')
-                ->send();
-
-            return;
-        }
-
-        try {
-            // Store slides in cache for the download route
-            $cacheKey = 'slide_export_'.uniqid();
-            \Cache::put($cacheKey, $this->generatedSlides, now()->addMinutes(5));
-
-            // Redirect to download route
-            $this->redirect(route('slides.export.powerpoint', [
-                'cacheKey' => $cacheKey,
-                'sermonId' => $this->sermonId,
-            ]));
         } catch (\Exception $e) {
+            $this->isGeneratingOutline = false;
+            $this->currentStatus = null;
+
+            if ($this->presentation) {
+                $this->presentation->update(['status' => 'failed']);
+            }
+
             Notification::make()
-                ->title('Export Failed')
+                ->title('Outline Generation Failed')
                 ->danger()
                 ->body('Error: '.$e->getMessage())
                 ->send();
         }
     }
 
-    public function exportAsPdf(): void
+    public function approveAndGenerate(): void
     {
-        if (empty($this->generatedSlides)) {
-            Notification::make()
-                ->title('No Slides to Export')
-                ->warning()
-                ->body('Please generate slides first.')
-                ->send();
-
+        if (! $this->presentation || ! $this->outline) {
             return;
         }
 
-        try {
-            // Store slides in cache for the download route
-            $cacheKey = 'slide_export_'.uniqid();
-            \Cache::put($cacheKey, $this->generatedSlides, now()->addMinutes(5));
+        $this->step = 'generating';
+        $this->isGeneratingImages = true;
+        $this->currentStatus = 'Starting image generation...';
 
-            // Redirect to download route
-            $this->redirect(route('slides.export.pdf', [
-                'cacheKey' => $cacheKey,
-                'sermonId' => $this->sermonId,
-            ]));
-        } catch (\Exception $e) {
-            Notification::make()
-                ->title('Export Failed')
-                ->danger()
-                ->body('Error: '.$e->getMessage())
-                ->send();
-        }
-    }
+        $this->presentation->update([
+            'status' => 'generating',
+            'current_slide' => 0,
+        ]);
 
-    public function applyAiEdit(): void
-    {
-        if (empty($this->aiPrompt)) {
-            Notification::make()
-                ->title('Prompt Required')
-                ->warning()
-                ->body('Please enter what you would like to change.')
-                ->send();
+        dispatch(new GenerateKimiSlidesJob($this->presentation->id));
 
-            return;
-        }
-
-        // TODO: Implement AI editing logic
         Notification::make()
-            ->title('AI Editing')
+            ->title('Image Generation Started')
             ->info()
-            ->body('This feature is coming soon!')
+            ->body('Your slides are being generated. This may take a few minutes.')
             ->send();
     }
 
-    public function toggleSlideView(int $index): void
+    public function checkProgress(): void
     {
-        $this->slideViewModes[$index] = ($this->slideViewModes[$index] ?? 'image') === 'image' ? 'html' : 'image';
+        if (! $this->presentation || $this->step !== 'generating') {
+            return;
+        }
+
+        $this->presentation->refresh();
+
+        $progress = $this->presentation->getProgressPercentage();
+        $current = $this->presentation->current_slide;
+        $total = $this->presentation->total_slides;
+
+        $this->currentStatus = "Generating slide {$current} of {$total}...";
+
+        if ($this->presentation->status === 'complete') {
+            $this->step = 'complete';
+            $this->isGeneratingImages = false;
+            $this->currentStatus = null;
+
+            Notification::make()
+                ->title('Slides Generated!')
+                ->success()
+                ->body('Your presentation is ready. Download or view your slides below.')
+                ->send();
+        } elseif ($this->presentation->status === 'failed') {
+            $this->isGeneratingImages = false;
+            $this->currentStatus = 'Generation failed. Please try again.';
+
+            Notification::make()
+                ->title('Generation Failed')
+                ->danger()
+                ->body('Something went wrong. Please try again.')
+                ->send();
+        }
     }
 
-    public function resetToForm(): void
+    public function editOutline(): void
     {
-        $this->reset(['generatedSlides', 'currentStatus', 'currentSlideNumber', 'totalSlides', 'jobId', 'aiPrompt', 'slideViewModes']);
+        $this->step = 'outline';
+    }
+
+    public function backToInput(): void
+    {
+        $this->step = 'input';
+        $this->outline = null;
+
+        if ($this->presentation) {
+            $this->form->fill([
+                'title' => $this->presentation->title,
+                'source_text' => $this->presentation->source_text,
+            ]);
+        }
+    }
+
+    public function startNew(): void
+    {
+        $this->presentation = null;
+        $this->outline = null;
+        $this->step = 'input';
+        $this->currentStatus = null;
+        $this->isGeneratingOutline = false;
+        $this->isGeneratingImages = false;
+
+        $this->form->fill([]);
+    }
+
+    public function downloadSlide(int $index): void
+    {
+        if (! $this->presentation || ! $this->presentation->slides) {
+            return;
+        }
+
+        $slides = $this->presentation->slides;
+
+        if (! isset($slides[$index]) || ! $slides[$index]['image_path']) {
+            Notification::make()
+                ->title('Download Failed')
+                ->warning()
+                ->body('This slide image is not available.')
+                ->send();
+
+            return;
+        }
+
+        $path = $slides[$index]['image_path'];
+        $this->redirect(asset('storage/'.$path));
     }
 
     public function getMaxContentWidth(): Width|string|null

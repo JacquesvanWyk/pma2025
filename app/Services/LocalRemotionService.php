@@ -205,15 +205,15 @@ class LocalRemotionService
             return false;
         }
 
-        try {
-            $result = Process::timeout(30)
-                ->path($this->projectPath)
-                ->run(['npx', 'remotion', '--version']);
-
-            return $result->successful();
-        } catch (\Exception $e) {
+        $packageJson = $this->projectPath.'/package.json';
+        if (! file_exists($packageJson)) {
             return false;
         }
+
+        $package = json_decode(file_get_contents($packageJson), true);
+        $deps = array_merge($package['dependencies'] ?? [], $package['devDependencies'] ?? []);
+
+        return isset($deps['@remotion/cli']) || isset($deps['remotion']);
     }
 
     public function getAvailableCompositions(): array

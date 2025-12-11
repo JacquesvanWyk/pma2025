@@ -12,6 +12,7 @@
         "cheesegrits/filament-google-maps": "*",
         "filament/filament": "^4.0",
         "guzzlehttp/guzzle": "*",
+        "intervention/image-laravel": "*",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.10.1",
@@ -20,6 +21,7 @@
         "livewire/volt": "^1.7.0",
         "phpoffice/phppresentation": "^1.2",
         "prism-php/prism": "^0.96.1",
+        "ritechoice23/laravel-fluent-ffmpeg": "^1.3",
         "spatie/laravel-pdf": "^1.8"
     },
     "require-dev": {

@@ -47,7 +47,8 @@ return [
 
     'nanobanana' => [
         'api_key' => env('NANOBANANA_API_KEY'),
-        'base_url' => 'https://api.nanobananaapi.ai/api/v1/nanobanana',
+        'base_url' => 'https://api.nanobananaapi.ai',
+        'callback_url' => env('NANOBANANA_CALLBACK_URL'),
     ],
 
     'google_maps' => [

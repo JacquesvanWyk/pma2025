@@ -4,8 +4,10 @@ namespace App\Jobs;
 
 use App\Models\Sermon;
 use App\Models\SermonSlide;
+use App\Services\NanoBananaService;
 use App\Services\SlideBuilderService;
 use App\Services\SlideGenerationService;
+use App\Services\SlideImageService;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,13 +16,14 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Prism\Prism\Prism;
 
 class GenerateSlidesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $timeout = 300;
+    public int $timeout = 900; // 15 minutes for image generation
 
     protected ?array $lastImageSearch = null;
 
@@ -166,11 +169,11 @@ class GenerateSlidesJob implements ShouldQueue
         $theme = $formData['theme'];
         $themeConfig = config("slides.themes.{$theme}");
 
-        // Create slide builder with tools
+        $useAiImages = $themeConfig['use_ai_images'] ?? false;
         $slideBuilder = new SlideBuilderService($themeConfig);
 
         $prompt = $this->buildToolBasedPrompt($title, $content, $scripture, $formData, $themeConfig);
-        $systemPrompt = $this->buildToolBasedSystemPrompt();
+        $systemPrompt = $this->buildToolBasedSystemPrompt($useAiImages);
 
         $modelConfig = config('study-ai.models.text');
 
@@ -179,7 +182,7 @@ class GenerateSlidesJob implements ShouldQueue
             ->withSystemPrompt($systemPrompt)
             ->withPrompt($prompt)
             ->withTools($slideBuilder->getTools())
-            ->withMaxSteps(50) // Allow multiple tool calls
+            ->withMaxSteps(50)
             ->withMaxTokens(8000)
             ->usingTemperature(0.7)
             ->withClientOptions([
@@ -188,13 +191,159 @@ class GenerateSlidesJob implements ShouldQueue
             ])
             ->generate();
 
-        // Build HTML from the slides created via tools
         $htmlSlides = $slideBuilder->buildHtml();
+
+        if ($useAiImages && config('slides.images.ai_generation.enabled')) {
+            $nanoBanana = app(NanoBananaService::class);
+            if ($nanoBanana->isConfigured()) {
+                $imageService = new SlideImageService($nanoBanana);
+                $htmlSlides = $this->generateImagesForSlides($htmlSlides, $imageService, $title);
+            }
+        }
 
         return [
             'totalSlides' => count($htmlSlides),
             'slides' => $htmlSlides,
         ];
+    }
+
+    protected function generateImagesForSlides(array $slides, SlideImageService $imageService, string $presentationTitle): array
+    {
+        $nanoBanana = app(NanoBananaService::class);
+        $pendingTasks = [];
+
+        foreach ($slides as $index => $slide) {
+            $slideType = $this->mapSlideType($slide['type'] ?? 'content');
+            $topic = $this->extractTopicFromSlide($slide, $presentationTitle);
+
+            \Log::info("Starting image generation for slide {$index}", [
+                'type' => $slideType,
+                'topic' => $topic,
+            ]);
+
+            $result = $imageService->startImageGeneration($slideType, $topic);
+
+            if ($result && $result['success']) {
+                $pendingTasks[$index] = [
+                    'task_id' => $result['task_id'],
+                    'topic' => $topic,
+                ];
+            }
+        }
+
+        foreach ($pendingTasks as $index => $task) {
+            $imageUrl = $this->waitForSingleImage($nanoBanana, $task['task_id']);
+
+            if ($imageUrl) {
+                $localPath = $nanoBanana->downloadAndStore($imageUrl);
+                $finalUrl = $localPath
+                    ? Storage::disk('public')->url($localPath)
+                    : $imageUrl;
+
+                $slides[$index]['background_type'] = 'image';
+                $slides[$index]['background_value'] = $finalUrl;
+                $slides[$index]['background_image_local'] = $localPath;
+
+                $slides[$index]['html_content'] = $this->updateHtmlWithImage(
+                    $slides[$index]['html_content'],
+                    $finalUrl
+                );
+
+                \Log::info("Slide {$index} image ready", ['url' => $finalUrl]);
+            }
+        }
+
+        return $slides;
+    }
+
+    protected function waitForSingleImage(NanoBananaService $nanoBanana, string $taskId): ?string
+    {
+        $maxAttempts = 60;
+        $pollInterval = 3;
+
+        for ($i = 0; $i < $maxAttempts; $i++) {
+            sleep($pollInterval);
+
+            $status = $nanoBanana->getTaskStatus($taskId);
+
+            if ($status['is_complete'] && ! empty($status['image_url'])) {
+                return $status['image_url'];
+            }
+
+            if ($status['is_failed']) {
+                \Log::warning("Image generation failed for task {$taskId}", [
+                    'error' => $status['error'] ?? 'Unknown',
+                ]);
+
+                return null;
+            }
+        }
+
+        \Log::warning("Image generation timed out for task {$taskId}");
+
+        return null;
+    }
+
+    protected function mapSlideType(string $type): string
+    {
+        return match ($type) {
+            'title' => 'title',
+            'scripture', 'quote' => 'scripture',
+            'outline', 'points' => 'diagram',
+            'two-column' => 'two_column',
+            'conclusion', 'application' => 'conclusion',
+            default => 'content',
+        };
+    }
+
+    protected function extractTopicFromSlide(array $slide, string $presentationTitle): string
+    {
+        $html = $slide['html_content'] ?? '';
+
+        if (preg_match('/<h1[^>]*>([^<]+)<\/h1>/i', $html, $matches)) {
+            return trim(strip_tags($matches[1]));
+        }
+
+        if (preg_match('/<h2[^>]*>([^<]+)<\/h2>/i', $html, $matches)) {
+            return trim(strip_tags($matches[1]));
+        }
+
+        return $presentationTitle;
+    }
+
+    protected function updateHtmlWithImage(string $html, string $imageUrl): string
+    {
+        $html = preg_replace(
+            '/\.background\s*\{([^}]*?)background:\s*[^;]+;/s',
+            ".background {\\1background-image: url('{$imageUrl}'); background-size: cover; background-position: center;",
+            $html
+        );
+
+        $html = preg_replace(
+            "/font-family:\s*'Source Sans Pro'[^;]*;/",
+            "font-family: 'Playfair Display', 'Georgia', serif;",
+            $html
+        );
+
+        $html = str_replace(
+            'fonts.googleapis.com/css2?family=Source+Sans+Pro',
+            'fonts.googleapis.com/css2?family=Playfair+Display',
+            $html
+        );
+
+        $html = preg_replace(
+            '/color:\s*#FFFFFF/i',
+            'color: #4A3C2A',
+            $html
+        );
+
+        $html = preg_replace(
+            '/text-shadow:\s*0\s+2px\s+4px\s+rgba\(0,0,0,0\.3\)/i',
+            'text-shadow: 0 1px 2px rgba(255,255,255,0.5)',
+            $html
+        );
+
+        return $html;
     }
 
     protected function buildPlanningPrompt(string $title, string $content, ?string $scripture, array $formData): string
@@ -247,6 +396,8 @@ class GenerateSlidesJob implements ShouldQueue
 
     protected function buildToolBasedPrompt(string $title, string $content, ?string $scripture, array $formData, array $themeConfig): string
     {
+        $useAiImages = $themeConfig['use_ai_images'] ?? false;
+
         $prompt = "Create a slide deck for this presentation using the provided tools:\n\n";
         $prompt .= "TITLE: {$title}\n";
         $prompt .= "CONTENT:\n{$content}\n\n";
@@ -267,33 +418,52 @@ class GenerateSlidesJob implements ShouldQueue
         $prompt .= "- Accent: {$themeConfig['accent']}\n\n";
 
         $prompt .= "INSTRUCTIONS:\n";
-        $prompt .= "1. Use createSlide() to create each new slide with the background gradient\n";
+        $prompt .= "1. Use createSlide() to create each new slide\n";
         $prompt .= "2. Use addHeading() for titles (h1 for main titles, h2 for subtitles)\n";
         $prompt .= "3. Use addText() for paragraph content\n";
         $prompt .= "4. Use addBulletPoints() for lists of key points\n";
         $prompt .= "5. Use addQuote() for scripture verses or quotations\n";
-        $prompt .= "6. Use white (#FFFFFF) for all text colors for best contrast\n";
-        $prompt .= "7. Title slides should use h1 at 64px\n";
-        $prompt .= "8. Content slides should use h2 at 48px for headings, 28px for text\n";
-        $prompt .= "9. Create engaging, well-structured slides that flow logically\n\n";
 
-        $prompt .= 'Start creating the slides now using the tools!';
+        if ($useAiImages) {
+            $prompt .= "6. Use dark brown (#4A3C2A) for ALL text colors - the background will be light imagery\n";
+            $prompt .= "7. Title slides should use h1 at 64px with color #4A3C2A\n";
+            $prompt .= "8. Content slides should use h2 at 48px for headings, 28px for text, all in #4A3C2A\n";
+            $prompt .= "9. Biblical imagery backgrounds will be added automatically\n";
+        } else {
+            $prompt .= "6. Use white (#FFFFFF) for all text colors for best contrast\n";
+            $prompt .= "7. Title slides should use h1 at 64px\n";
+            $prompt .= "8. Content slides should use h2 at 48px for headings, 28px for text\n";
+            $prompt .= "9. Create engaging, well-structured slides that flow logically\n";
+        }
+
+        $prompt .= "\nStart creating the slides now using the tools!";
 
         return $prompt;
     }
 
-    protected function buildToolBasedSystemPrompt(): string
+    protected function buildToolBasedSystemPrompt(bool $useAiImages = false): string
     {
-        return "You are an expert presentation designer. Use the provided tools to build professional, engaging slides.\n\n".
+        $basePrompt = "You are an expert presentation designer. Use the provided tools to build professional, engaging slides.\n\n".
             "Best practices:\n".
             "- Title slide: Large h1 heading with presentation title\n".
             "- Content slides: h2 heading + supporting text or bullet points\n".
             "- Scripture slides: Use addQuote() with the verse and citation\n".
             "- Keep text concise and readable\n".
             "- Use bullet points for lists of 3-5 items\n".
-            "- Ensure good visual hierarchy with font sizes\n".
-            "- Use the theme's gradient background for all slides\n".
-            '- White text (#FFFFFF) works best on gradient backgrounds';
+            "- Ensure good visual hierarchy with font sizes\n";
+
+        if ($useAiImages) {
+            $basePrompt .= "\nBiblical Classic Theme:\n".
+                "- AI will automatically generate beautiful biblical imagery backgrounds\n".
+                "- IMPORTANT: Use dark brown (#4A3C2A) for ALL text colors - titles, headings, body text\n".
+                "- The backgrounds will be warm cream/sepia with sacred imagery\n".
+                "- Keep text concise for readability over imagery\n";
+        } else {
+            $basePrompt .= "- Use the theme's gradient background for all slides\n".
+                '- White text (#FFFFFF) works best on gradient backgrounds';
+        }
+
+        return $basePrompt;
     }
 
     protected function extractJsonFromResponse(string $response): array
