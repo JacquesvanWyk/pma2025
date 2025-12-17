@@ -37,6 +37,7 @@ class Song extends Model
         'bundle_download_count',
         'bundle_path',
         'bundle_generated_at',
+        'play_count',
     ];
 
     protected function casts(): array
@@ -51,6 +52,7 @@ class Song extends Model
             'lyrics_download_count' => 'integer',
             'bundle_download_count' => 'integer',
             'bundle_generated_at' => 'datetime',
+            'play_count' => 'integer',
         ];
     }
 
@@ -130,6 +132,11 @@ class Song extends Model
     {
         $this->increment('download_count');
         $this->increment('bundle_download_count');
+    }
+
+    public function incrementPlayCount(): void
+    {
+        $this->increment('play_count');
     }
 
     public function getDownloadBreakdown(): array

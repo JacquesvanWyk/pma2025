@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\KieCallbackController;
 use App\Http\Controllers\Api\PledgeController;
+use App\Http\Controllers\Api\SongPlayController;
 use App\Http\Controllers\Api\VideoEditorController;
 use App\Models\Short;
 use Illuminate\Support\Facades\Route;
@@ -38,3 +39,5 @@ Route::get('/shorts/{short}', function (Short $short) {
         'youtube_embed' => $short->youtube_embed_url,
     ]);
 });
+
+Route::post('/songs/{song}/play', [SongPlayController::class, 'store'])->name('songs.play');

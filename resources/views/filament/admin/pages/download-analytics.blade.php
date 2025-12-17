@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         <!-- Summary Stats Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
             <!-- Total Downloads -->
             <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-lg">
                 <x-filament::icon icon="heroicon-o-arrow-down-tray" class="w-6 h-6 opacity-80" />
@@ -58,10 +58,19 @@
 
             <!-- Songs -->
             <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl p-4 text-white shadow-lg cursor-pointer hover:scale-105 transition-transform" wire:click="setActiveTab('songs')">
-                <x-filament::icon icon="heroicon-o-play" class="w-6 h-6 opacity-80" />
+                <x-filament::icon icon="heroicon-o-arrow-down-tray" class="w-6 h-6 opacity-80" />
                 <div class="mt-2">
                     <p class="text-2xl font-bold">{{ number_format($summary['songs']['downloads'] ?? 0) }}</p>
-                    <p class="text-xs opacity-80">Songs ({{ $summary['songs']['published'] ?? 0 }})</p>
+                    <p class="text-xs opacity-80">Song Downloads</p>
+                </div>
+            </div>
+
+            <!-- Song Plays -->
+            <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl p-4 text-white shadow-lg cursor-pointer hover:scale-105 transition-transform" wire:click="setActiveTab('songs')">
+                <x-filament::icon icon="heroicon-o-play" class="w-6 h-6 opacity-80" />
+                <div class="mt-2">
+                    <p class="text-2xl font-bold">{{ number_format($summary['songs']['plays'] ?? 0) }}</p>
+                    <p class="text-xs opacity-80">Song Plays</p>
                 </div>
             </div>
         </div>
@@ -153,6 +162,27 @@
                                     <span class="text-sm text-gray-600 dark:text-gray-400">Song Bundles</span>
                                     <span class="font-medium text-gray-900 dark:text-white">{{ number_format($summary['songs']['bundle_downloads'] ?? 0) }}</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Song Plays Stats -->
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                            <h4 class="font-medium text-gray-900 dark:text-white mb-3">Song Play Stats</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">Total Plays</span>
+                                    <span class="font-medium text-pink-600 dark:text-pink-400">{{ number_format($summary['songs']['plays'] ?? 0) }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">Total Songs</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">{{ number_format($summary['songs']['published'] ?? 0) }}</span>
+                                </div>
+                                @if(($summary['songs']['published'] ?? 0) > 0)
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-600 dark:text-gray-400">Avg Plays/Song</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">{{ number_format(($summary['songs']['plays'] ?? 0) / $summary['songs']['published'], 1) }}</span>
+                                </div>
+                                @endif
                             </div>
                         </div>
 
@@ -358,7 +388,8 @@
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Song</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Album</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-pink-500 dark:text-pink-400 uppercase tracking-wider">Plays</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Downloads</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Audio</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Video</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Lyrics</th>
@@ -375,6 +406,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $song->album?->title ?? '-' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-pink-600 dark:text-pink-400">{{ number_format($song->play_count) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-gray-900 dark:text-white">{{ number_format($song->download_count) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500 dark:text-gray-400">{{ number_format($song->audio_download_count) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-500 dark:text-gray-400">{{ number_format($song->video_download_count) }}</td>
@@ -383,7 +415,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No songs found</td>
+                                    <td colspan="8" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No songs found</td>
                                 </tr>
                             @endforelse
                         </tbody>

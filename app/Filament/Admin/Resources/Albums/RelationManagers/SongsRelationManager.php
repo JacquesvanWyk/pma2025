@@ -128,6 +128,11 @@ class SongsRelationManager extends RelationManager
                     ->trueColor('warning')
                     ->falseColor('gray'),
 
+                TextColumn::make('play_count')
+                    ->label('Plays')
+                    ->sortable()
+                    ->color('danger'),
+
                 TextColumn::make('download_count')
                     ->label('Downloads')
                     ->sortable(),

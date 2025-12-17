@@ -103,6 +103,7 @@ class DownloadAnalytics extends Page
                 'total' => Song::count(),
                 'published' => Song::where('is_published', true)->count(),
                 'downloads' => (int) Song::sum('download_count'),
+                'plays' => (int) Song::sum('play_count'),
                 'audio_downloads' => (int) Song::sum('audio_download_count'),
                 'video_downloads' => (int) Song::sum('video_download_count'),
                 'lyrics_downloads' => (int) Song::sum('lyrics_download_count'),

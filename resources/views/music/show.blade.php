@@ -854,11 +854,24 @@
         // Play audio
         if (audio.src !== url) {
             audio.src = url;
+            // Track play count when a new song is played
+            trackSongPlay(songId);
         }
         audio.play();
         isPlaying = true;
         updatePlayPauseIcon();
         updateSongRowStates();
+    }
+
+    // Track song play count
+    function trackSongPlay(songId) {
+        fetch(`/api/songs/${songId}/play`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            }
+        }).catch(err => console.log('Play tracking failed:', err));
     }
 
     function togglePlayPause() {
