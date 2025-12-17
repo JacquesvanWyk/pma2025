@@ -174,7 +174,7 @@
                     </div>
 
                     @if($album->description)
-                        <div class="prose prose-lg prose-invert max-w-none mb-8">
+                        <div class="text-gray-300 text-lg leading-relaxed max-w-none mb-8">
                             {!! $album->description !!}
                         </div>
                     @endif
