@@ -94,12 +94,18 @@
                         <a href="{{ route('resources.notes') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
                             <div class="font-semibold">Study Notes</div>
                         </a>
+                        <a href="{{ route('kingdom-kids') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
+                            <div class="font-semibold">Kingdom Kids</div>
+                        </a>
                     </div>
                 </div>
 
-                <a href="{{ route('kingdom-kids') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
-                    <img src="{{ url('images/kingdomKids.png') }}" alt="Kingdom Kids" class="h-4 w-auto brightness-0 invert shrink-0">
-                    Kingdom Kids
+                <a href="{{ route('music.index') }}" class="relative px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                    PMA Worship
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold animate-pulse">NEW</span>
                 </a>
 
                 <a href="{{ route('gallery') }}" class="px-3 py-1.5 rounded-lg bg-[var(--color-pma-green)] text-white font-medium text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
@@ -167,6 +173,7 @@
                         <a href="{{ route('resources.tracts') }}" class="text-gray-600">Tracts</a>
                         <a href="{{ route('resources.ebooks') }}" class="text-gray-600">E-Books</a>
                         <a href="{{ route('resources.notes') }}" class="text-gray-600">Study Notes</a>
+                        <a href="{{ route('kingdom-kids') }}" class="text-gray-600">Kingdom Kids</a>
                     </div>
                 </div>
 
@@ -174,7 +181,13 @@
 
                 <a href="{{ route('network.index') }}" class="text-lg font-medium text-[var(--color-pma-green)]">Network</a>
 
-                <a href="{{ route('kingdom-kids') }}" class="text-lg font-medium text-[var(--color-indigo)]">Kingdom Kids</a>
+                <a href="{{ route('music.index') }}" class="relative text-lg font-medium text-[var(--color-pma-green)] flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                    </svg>
+                    PMA Worship
+                    <span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">NEW</span>
+                </a>
 
                 <a href="{{ route('gallery') }}" class="text-lg font-medium text-[var(--color-indigo)]">Gallery</a>
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonateController;
 use App\Http\Controllers\EbookController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\MusicController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\PictureStudyController;
@@ -59,6 +60,15 @@ Route::get('/resources/picture-studies', [PictureStudyController::class, 'index'
 // Gallery routes
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
 Route::get('/gallery/{slug}', [GalleryController::class, 'show'])->name('gallery.show');
+
+// Music routes
+Route::get('/music', [MusicController::class, 'index'])->name('music.index');
+Route::get('/music/{slug}', [MusicController::class, 'show'])->name('music.show');
+Route::get('/music/{album}/songs/{song}/download/audio', [MusicController::class, 'downloadSong'])->name('music.download.song');
+Route::get('/music/{album}/songs/{song}/download/video', [MusicController::class, 'downloadSongVideo'])->name('music.download.song.video');
+Route::get('/music/{album}/songs/{song}/download/lyrics', [MusicController::class, 'downloadSongLyrics'])->name('music.download.song.lyrics');
+Route::get('/music/{album}/songs/{song}/download/bundle', [MusicController::class, 'downloadSongBundle'])->name('music.download.song.bundle');
+Route::get('/music/{album}/download/{type}', [MusicController::class, 'downloadAlbum'])->name('music.download.album')->where('type', 'audio|video|full');
 
 // Other routes
 Route::get('/sermons', [SermonController::class, 'index'])->name('sermons');
