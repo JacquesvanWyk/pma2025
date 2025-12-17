@@ -52,12 +52,21 @@ class SongsRelationManager extends RelationManager
                     ->columnSpan(1),
 
                 FileUpload::make('wav_file')
-                    ->label('Audio File (WAV)')
+                    ->label('Audio File (WAV/MP3)')
                     ->disk('public')
                     ->directory('albums/songs')
-                    ->acceptedFileTypes(['audio/wav', 'audio/x-wav', 'audio/wave'])
-                    ->maxSize(102400)
-                    ->helperText('Upload WAV audio file (max 100MB)')
+                    ->acceptedFileTypes([
+                        'audio/wav',
+                        'audio/x-wav',
+                        'audio/wave',
+                        'audio/vnd.wave',
+                        'audio/mpeg',
+                        'audio/mp3',
+                        '.wav',
+                        '.mp3',
+                    ])
+                    ->maxSize(204800)
+                    ->helperText('Upload audio file (max 200MB)')
                     ->columnSpanFull(),
 
                 FileUpload::make('mp4_video')

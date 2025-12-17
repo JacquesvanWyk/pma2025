@@ -65,7 +65,7 @@ return [
 
     'temporary_file_upload' => [
         'disk' => 'local',
-        'rules' => ['required', 'file', 'max:131072'], // 128MB
+        'rules' => ['required', 'file', 'max:524288'], // 512MB
         'directory' => 'livewire-tmp',
         'middleware' => 'throttle:60,1',
         'preview_mimes' => [
@@ -73,7 +73,7 @@ return [
             'mov', 'avi', 'wmv', 'mp3', 'm4a',
             'jpg', 'jpeg', 'mpga', 'webp', 'wma', 'ogg',
         ],
-        'max_upload_time' => 15, // 15 minutes for large video uploads
+        'max_upload_time' => 30, // 30 minutes for large video/audio uploads
         'cleanup' => true,
     ],
 
