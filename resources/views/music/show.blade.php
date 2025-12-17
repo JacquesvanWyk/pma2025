@@ -822,9 +822,13 @@
         }
     }
 
-    // Songs data
+    // Songs data - only include preview songs if album not released
     @php
-        $songsData = $album->songs->map(function($s) use ($album) {
+        $availableSongs = $album->isReleased()
+            ? $album->songs
+            : $album->songs->where('is_preview', true)->where('is_published', true);
+
+        $songsData = $availableSongs->map(function($s) use ($album) {
             return [
                 'id' => $s->id,
                 'title' => $s->title,
@@ -833,7 +837,7 @@
                 'videoUrl' => $s->mp4_video ? $s->mp4_video_url : null,
                 'cover' => $album->cover_image_url
             ];
-        });
+        })->values();
     @endphp
     const songs = @json($songsData);
 
