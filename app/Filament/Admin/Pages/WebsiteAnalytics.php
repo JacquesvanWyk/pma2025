@@ -2,28 +2,23 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Models\Ebook;
-use App\Models\Note;
-use App\Models\PictureStudy;
-use App\Models\Tract;
-use App\Models\User;
 use App\Services\PirschAnalyticsService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 
-class Analytics extends Page
+class WebsiteAnalytics extends Page
 {
-    protected static \BackedEnum|string|null $navigationIcon = Heroicon::ChartBarSquare;
+    protected static \BackedEnum|string|null $navigationIcon = Heroicon::GlobeAlt;
 
     protected static \UnitEnum|string|null $navigationGroup = 'Reports';
 
-    protected static ?string $navigationLabel = 'Analytics';
+    protected static ?string $navigationLabel = 'Website Analytics';
 
-    protected static ?string $title = 'Analytics Dashboard';
+    protected static ?string $title = 'Website Analytics';
 
     protected static ?int $navigationSort = 1;
 
-    protected string $view = 'filament.admin.pages.analytics';
+    protected string $view = 'filament.admin.pages.website-analytics';
 
     public string $dateRange = '30';
 
@@ -41,60 +36,19 @@ class Analytics extends Page
 
     public array $activeVisitors = [];
 
-    public array $downloadStats = [];
-
     public bool $hasError = false;
 
     public string $errorMessage = '';
 
     public function mount(): void
     {
-        $this->loadAnalytics();
+        $this->loadPirschData();
     }
 
     public function updatedDateRange(): void
     {
-        $this->loadAnalytics();
-        $this->dispatch('analyticsUpdated', chartData: $this->getChartData());
-    }
-
-    protected function loadAnalytics(): void
-    {
-        $this->loadDownloadStats();
         $this->loadPirschData();
-    }
-
-    protected function loadDownloadStats(): void
-    {
-        $this->downloadStats = [
-            'tracts' => [
-                'total' => Tract::count(),
-                'published' => Tract::published()->count(),
-                'downloads' => (int) Tract::sum('download_count'),
-            ],
-            'notes' => [
-                'total' => Note::count(),
-                'published' => Note::published()->count(),
-                'downloads' => (int) Note::sum('download_count'),
-            ],
-            'picture_studies' => [
-                'total' => PictureStudy::count(),
-                'published' => PictureStudy::published()->count(),
-                'downloads' => (int) PictureStudy::sum('download_count'),
-            ],
-            'ebooks' => [
-                'total' => Ebook::count(),
-                'downloads' => (int) Ebook::sum('download_count'),
-            ],
-            'users' => [
-                'total' => User::count(),
-                'recent' => User::where('created_at', '>=', now()->subDays(30))->count(),
-            ],
-            'total_downloads' => (int) Tract::sum('download_count')
-                + (int) Note::sum('download_count')
-                + (int) PictureStudy::sum('download_count')
-                + (int) Ebook::sum('download_count'),
-        ];
+        $this->dispatch('analyticsUpdated', chartData: $this->getChartData());
     }
 
     protected function loadPirschData(): void

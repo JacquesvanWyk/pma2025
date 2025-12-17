@@ -43,7 +43,7 @@
         @endif
 
         <!-- Overview Stats Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <!-- Visitors -->
             <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg">
                 <div class="flex items-center justify-between">
@@ -66,39 +66,6 @@
                 </div>
             </div>
 
-            <!-- Bounce Rate -->
-            <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                    <x-filament::icon icon="heroicon-o-arrow-uturn-left" class="w-8 h-8 opacity-80" />
-                </div>
-                <div class="mt-3">
-                    <p class="text-2xl font-bold">{{ $summary['bounce_rate'] ?? 0 }}%</p>
-                    <p class="text-sm opacity-80">Bounce Rate</p>
-                </div>
-            </div>
-
-            <!-- Total Downloads -->
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                    <x-filament::icon icon="heroicon-o-arrow-down-tray" class="w-8 h-8 opacity-80" />
-                </div>
-                <div class="mt-3">
-                    <p class="text-2xl font-bold">{{ number_format($downloadStats['total_downloads'] ?? 0) }}</p>
-                    <p class="text-sm opacity-80">Total Downloads</p>
-                </div>
-            </div>
-
-            <!-- Users -->
-            <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl p-4 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                    <x-filament::icon icon="heroicon-o-user-group" class="w-8 h-8 opacity-80" />
-                </div>
-                <div class="mt-3">
-                    <p class="text-2xl font-bold">{{ number_format($downloadStats['users']['total'] ?? 0) }}</p>
-                    <p class="text-sm opacity-80">Users</p>
-                </div>
-            </div>
-
             <!-- Sessions -->
             <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl p-4 text-white shadow-lg">
                 <div class="flex items-center justify-between">
@@ -107,6 +74,17 @@
                 <div class="mt-3">
                     <p class="text-2xl font-bold">{{ number_format($summary['sessions'] ?? 0) }}</p>
                     <p class="text-sm opacity-80">Sessions</p>
+                </div>
+            </div>
+
+            <!-- Bounce Rate -->
+            <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 text-white shadow-lg">
+                <div class="flex items-center justify-between">
+                    <x-filament::icon icon="heroicon-o-arrow-uturn-left" class="w-8 h-8 opacity-80" />
+                </div>
+                <div class="mt-3">
+                    <p class="text-2xl font-bold">{{ $summary['bounce_rate'] ?? 0 }}%</p>
+                    <p class="text-sm opacity-80">Bounce Rate</p>
                 </div>
             </div>
         </div>
@@ -192,68 +170,6 @@
                     <p>No data available for the selected period</p>
                 </div>
             @endif
-        </div>
-
-        <!-- Download Statistics -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Download Statistics</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <!-- Tracts -->
-                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                            <x-filament::icon icon="heroicon-o-document-text" class="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Tracts</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($downloadStats['tracts']['downloads'] ?? 0) }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $downloadStats['tracts']['published'] ?? 0 }} published</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Notes -->
-                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <x-filament::icon icon="heroicon-o-clipboard-document-list" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Notes</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($downloadStats['notes']['downloads'] ?? 0) }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $downloadStats['notes']['published'] ?? 0 }} published</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Picture Studies -->
-                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                            <x-filament::icon icon="heroicon-o-photo" class="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Picture Studies</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($downloadStats['picture_studies']['downloads'] ?? 0) }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $downloadStats['picture_studies']['published'] ?? 0 }} published</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- eBooks -->
-                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                            <x-filament::icon icon="heroicon-o-book-open" class="w-6 h-6 text-green-600 dark:text-green-400" />
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">eBooks</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">{{ number_format($downloadStats['ebooks']['downloads'] ?? 0) }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $downloadStats['ebooks']['total'] ?? 0 }} total</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Two Column Layout -->
