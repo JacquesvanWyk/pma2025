@@ -180,7 +180,7 @@
                class="w-full rounded-xl shadow-2xl"
                controls
                poster="{{ asset('images/poster.jpeg') }}">
-            <source src="{{ asset('images/GodsTrueSonFinalV1.mp4') }}" type="video/mp4">
+            <source src="https://pub-35e3553e7d65416e982fef921a999df9.r2.dev/GodsTrueSonFinalV1.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
