@@ -115,8 +115,77 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Visitor Trends</h3>
             @if(!empty($dailyStats))
-                <div class="h-64">
-                    <canvas id="visitorsChart"></canvas>
+                <div
+                    class="h-64"
+                    x-data="{
+                        chart: null,
+                        init() {
+                            this.$nextTick(() => this.renderChart());
+                            Livewire.on('analyticsUpdated', (event) => {
+                                this.updateChart(event.chartData);
+                            });
+                        },
+                        renderChart() {
+                            const ctx = this.$refs.canvas;
+                            if (!ctx) return;
+
+                            const chartData = {{ Js::from($this->getChartData()) }};
+                            const isDark = document.documentElement.classList.contains('dark');
+                            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                            const textColor = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+
+                            if (this.chart) {
+                                this.chart.destroy();
+                            }
+
+                            this.chart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: chartData.labels,
+                                    datasets: [
+                                        {
+                                            label: 'Visitors',
+                                            data: chartData.visitors,
+                                            borderColor: 'rgb(59, 130, 246)',
+                                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                            fill: true,
+                                            tension: 0.4,
+                                        },
+                                        {
+                                            label: 'Page Views',
+                                            data: chartData.views,
+                                            borderColor: 'rgb(168, 85, 247)',
+                                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                                            fill: true,
+                                            tension: 0.4,
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    interaction: { intersect: false, mode: 'index' },
+                                    plugins: {
+                                        legend: { position: 'top', labels: { color: textColor } },
+                                    },
+                                    scales: {
+                                        x: { grid: { color: gridColor }, ticks: { color: textColor } },
+                                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } }
+                                    }
+                                }
+                            });
+                        },
+                        updateChart(chartData) {
+                            if (this.chart && chartData) {
+                                this.chart.data.labels = chartData.labels;
+                                this.chart.data.datasets[0].data = chartData.visitors;
+                                this.chart.data.datasets[1].data = chartData.views;
+                                this.chart.update();
+                            }
+                        }
+                    }"
+                >
+                    <canvas x-ref="canvas"></canvas>
                 </div>
             @else
                 <div class="flex items-center justify-center h-64 text-gray-500 dark:text-gray-400">
@@ -344,97 +413,5 @@
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('livewire:navigated', initChart);
-        document.addEventListener('DOMContentLoaded', initChart);
-
-        function initChart() {
-            const ctx = document.getElementById('visitorsChart');
-            if (!ctx) return;
-
-            const chartData = @json($this->getChartData());
-
-            if (window.visitorsChartInstance) {
-                window.visitorsChartInstance.destroy();
-            }
-
-            const isDark = document.documentElement.classList.contains('dark');
-            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            const textColor = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
-
-            window.visitorsChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartData.labels,
-                    datasets: [
-                        {
-                            label: 'Visitors',
-                            data: chartData.visitors,
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            fill: true,
-                            tension: 0.4,
-                        },
-                        {
-                            label: 'Page Views',
-                            data: chartData.views,
-                            borderColor: 'rgb(168, 85, 247)',
-                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
-                            fill: true,
-                            tension: 0.4,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index',
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: textColor,
-                            }
-                        },
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                color: gridColor,
-                            },
-                            ticks: {
-                                color: textColor,
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: gridColor,
-                            },
-                            ticks: {
-                                color: textColor,
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        Livewire.on('analyticsUpdated', (event) => {
-            updateChart(event.chartData);
-        });
-
-        function updateChart(chartData) {
-            if (window.visitorsChartInstance && chartData) {
-                window.visitorsChartInstance.data.labels = chartData.labels;
-                window.visitorsChartInstance.data.datasets[0].data = chartData.visitors;
-                window.visitorsChartInstance.data.datasets[1].data = chartData.views;
-                window.visitorsChartInstance.update();
-            }
-        }
-    </script>
     @endpush
 </x-filament-panels::page>
