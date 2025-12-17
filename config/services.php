@@ -62,4 +62,10 @@ return [
         'page_access_token' => env('FACEBOOK_PAGE_ACCESS_TOKEN'),
     ],
 
+    'pirsch' => [
+        'client_id' => env('PIRSCH_CLIENT_ID'),
+        'client_secret' => env('PIRSCH_CLIENT_SECRET'),
+        'domain_id' => env('PIRSCH_DOMAIN_ID'),
+    ],
+
 ];
