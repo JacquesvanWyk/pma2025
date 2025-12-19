@@ -206,7 +206,7 @@
                                         </div>
                                         <div>
                                             <div class="font-semibold text-gray-900">Audio Only</div>
-                                            <div class="text-xs text-gray-500">WAV files</div>
+                                            <div class="text-xs text-gray-500">MP3 files</div>
                                         </div>
                                     </button>
                                     {{-- Video download options temporarily disabled
@@ -424,7 +424,7 @@
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                                                         </svg>
-                                                        Audio (WAV)
+                                                        Audio (MP3)
                                                     </button>
                                                 @endif
                                                 {{-- Video download temporarily disabled
@@ -1152,8 +1152,29 @@
 
             const data = await response.json();
 
-            if (data.url) {
-                window.open(data.url, '_blank');
+            if (data.url && data.filename) {
+                // Force download using fetch + blob
+                showDownloadProgress('Downloading...', 'loading');
+                const fileResponse = await fetch(data.url);
+                const blob = await fileResponse.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = data.filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                a.remove();
+                showDownloadStarted();
+            } else if (data.url) {
+                // Fallback: use download attribute
+                const a = document.createElement('a');
+                a.href = data.url;
+                a.download = '';
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
                 showDownloadStarted();
             } else if (data.error) {
                 hideDownloadProgress();
@@ -1219,8 +1240,8 @@
         const subtitle = document.getElementById('modalSubtitle');
 
         const typeLabels = {
-            'audio': 'Audio Only (WAV files)',
-            'video': 'Audio + Video (WAV + MP4 files)',
+            'audio': 'Audio Only (MP3 files)',
+            'video': 'Audio + Video (MP3 + MP4 files)',
             'full': 'Full Bundle (Audio + Video + Lyrics PDF)'
         };
         subtitle.textContent = `Download album: ${typeLabels[albumType]}`;

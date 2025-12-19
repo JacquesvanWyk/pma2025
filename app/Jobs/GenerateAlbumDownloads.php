@@ -92,7 +92,8 @@ class GenerateAlbumDownloads implements ShouldQueue
             if ($song->wav_file) {
                 $audioPath = Storage::disk('public')->path($song->wav_file);
                 if (file_exists($audioPath)) {
-                    $audioFileName = sprintf('%02d - %s.wav', $song->track_number, Str::slug($song->title));
+                    $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
+                    $audioFileName = sprintf('%02d - %s.%s', $song->track_number, Str::slug($song->title), $extension);
                     $zip->addFile($audioPath, 'Audio/'.$audioFileName);
                 }
             }

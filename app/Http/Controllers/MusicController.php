@@ -55,7 +55,8 @@ class MusicController extends Controller
 
         $song->incrementAudioDownload();
 
-        $filename = Str::slug($album->artist.' - '.$song->title).'.wav';
+        $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
+        $filename = Str::slug($album->artist.' - '.$song->title).'.'.$extension;
         $r2Path = 'downloads/audio/'.$filename;
 
         if (! Storage::disk('r2')->exists($r2Path)) {
@@ -65,7 +66,7 @@ class MusicController extends Controller
             fclose($stream);
         }
 
-        return response()->json(['url' => Storage::disk('r2')->url($r2Path)]);
+        return response()->json(['url' => Storage::disk('r2')->url($r2Path), 'filename' => $filename]);
     }
 
     public function downloadSongVideo(Album $album, Song $song): JsonResponse
@@ -90,7 +91,7 @@ class MusicController extends Controller
             fclose($stream);
         }
 
-        return response()->json(['url' => Storage::disk('r2')->url($r2Path)]);
+        return response()->json(['url' => Storage::disk('r2')->url($r2Path), 'filename' => $filename]);
     }
 
     public function downloadSongLyrics(Album $album, Song $song): JsonResponse
@@ -106,8 +107,8 @@ class MusicController extends Controller
         $song->incrementLyricsDownload();
 
         $lyricsHash = substr(md5($song->lyrics), 0, 8);
-        $filename = Str::slug($album->artist.' - '.$song->title.' - Lyrics').'-'.$lyricsHash.'.pdf';
-        $r2Path = 'downloads/lyrics/'.$filename;
+        $filename = Str::slug($album->artist.' - '.$song->title.' - Lyrics').'.pdf';
+        $r2Path = 'downloads/lyrics/'.Str::slug($album->artist.' - '.$song->title.' - Lyrics').'-'.$lyricsHash.'.pdf';
 
         if (! Storage::disk('r2')->exists($r2Path)) {
             $pdf = Pdf::loadView('pdf.lyrics', [
@@ -120,7 +121,7 @@ class MusicController extends Controller
             Storage::disk('r2')->put($r2Path, $pdf->output(), 'public');
         }
 
-        return response()->json(['url' => Storage::disk('r2')->url($r2Path)]);
+        return response()->json(['url' => Storage::disk('r2')->url($r2Path), 'filename' => $filename]);
     }
 
     public function downloadSongBundle(Album $album, Song $song): JsonResponse
@@ -140,7 +141,9 @@ class MusicController extends Controller
 
         $song->incrementBundleDownload();
 
-        return response()->json(['url' => $url]);
+        $filename = Str::slug($album->artist.' - '.$song->title).'.zip';
+
+        return response()->json(['url' => $url, 'filename' => $filename]);
     }
 
     public function downloadAlbum(Album $album, string $type = 'full'): JsonResponse
