@@ -209,6 +209,7 @@
                                             <div class="text-xs text-gray-500">WAV files</div>
                                         </div>
                                     </button>
+                                    {{-- Video download options temporarily disabled
                                     <button onclick="showDonationModal('album', 'video')"
                                             class="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-lg bg-[var(--color-indigo)]/10 flex items-center justify-center">
@@ -234,6 +235,7 @@
                                             <div class="text-xs text-gray-500">Audio + Video + Lyrics PDF</div>
                                         </div>
                                     </button>
+                                    --}}
                                 </div>
                             </div>
                             <a href="{{ route('music.index') }}"
@@ -425,6 +427,7 @@
                                                         Audio (WAV)
                                                     </button>
                                                 @endif
+                                                {{-- Video download temporarily disabled
                                                 @if($song->mp4_video)
                                                     <button onclick="downloadSongFile('video', {{ $song->id }})"
                                                             class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
@@ -434,6 +437,7 @@
                                                         Video (MP4)
                                                     </button>
                                                 @endif
+                                                --}}
                                                 @if($song->lyrics)
                                                     <button onclick="downloadSongFile('lyrics', {{ $song->id }})"
                                                             class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
@@ -443,6 +447,7 @@
                                                         Lyrics (PDF)
                                                     </button>
                                                 @endif
+                                                {{-- Bundle download temporarily disabled (includes video)
                                                 @if(($song->wav_file || $song->mp4_video) && ($song->wav_file || $song->lyrics || $song->mp4_video))
                                                     <div class="border-t border-gray-100 my-2"></div>
                                                     <button onclick="downloadSongFile('bundle', {{ $song->id }})"
@@ -453,6 +458,7 @@
                                                         Bundle (ZIP)
                                                     </button>
                                                 @endif
+                                                --}}
                                             </div>
                                         </div>
                                     @else
