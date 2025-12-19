@@ -747,28 +747,60 @@
                     All our music is free to download. If you'd like to support our ministry, consider making a donation.
                 </p>
 
-                @if($album->suggested_donation > 0)
-                    <div class="bg-[var(--color-cream)] rounded-xl p-4 mb-6">
-                        <p class="text-sm text-gray-600">Suggested donation</p>
-                        <p class="text-2xl font-bold text-[var(--color-pma-green)]">R{{ number_format($album->suggested_donation, 2) }}</p>
+                {{-- Custom Amount Selection --}}
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Choose your donation amount</label>
+
+                    {{-- Quick Amount Buttons --}}
+                    <div class="grid grid-cols-4 gap-2 mb-4">
+                        <button type="button" onclick="setDonationAmount(20)" class="donation-amount-btn px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:border-[var(--color-pma-green)] hover:text-[var(--color-pma-green)] transition-colors">
+                            R20
+                        </button>
+                        <button type="button" onclick="setDonationAmount(50)" class="donation-amount-btn px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:border-[var(--color-pma-green)] hover:text-[var(--color-pma-green)] transition-colors">
+                            R50
+                        </button>
+                        <button type="button" onclick="setDonationAmount(100)" class="donation-amount-btn px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:border-[var(--color-pma-green)] hover:text-[var(--color-pma-green)] transition-colors">
+                            R100
+                        </button>
+                        <button type="button" onclick="setDonationAmount(200)" class="donation-amount-btn px-3 py-2 border-2 border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:border-[var(--color-pma-green)] hover:text-[var(--color-pma-green)] transition-colors">
+                            R200
+                        </button>
                     </div>
-                @endif
+
+                    {{-- Custom Amount Input --}}
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">R</span>
+                        <input type="number"
+                               id="customDonationAmount"
+                               min="10"
+                               step="1"
+                               value="{{ $album->suggested_donation > 0 ? $album->suggested_donation : 50 }}"
+                               onchange="updateDonationAmount(this.value)"
+                               oninput="updateDonationAmount(this.value)"
+                               class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl text-lg font-semibold text-[var(--color-indigo)] focus:border-[var(--color-pma-green)] focus:ring-2 focus:ring-[var(--color-pma-green)]/20 focus:outline-none transition-colors"
+                               placeholder="Enter amount">
+                    </div>
+                    @if($album->suggested_donation > 0)
+                        <p class="text-xs text-gray-500 mt-2">Suggested: R{{ number_format($album->suggested_donation, 2) }}</p>
+                    @endif
+                </div>
 
                 <div class="mb-4">
                     <h4 class="font-semibold text-[var(--color-indigo)] mb-3">Pay Online</h4>
-                    <form action="https://payment.payfast.io/eng/process" method="post">
+                    <form id="payfastForm" action="https://payment.payfast.io/eng/process" method="post">
                         <input type="hidden" name="cmd" value="_paynow">
                         <input type="hidden" name="receiver" value="13157150">
                         <input type="hidden" name="item_name" value="PMA Worship - {{ $album->title }} Donation">
-                        <input type="hidden" name="amount" value="{{ $album->suggested_donation > 0 ? $album->suggested_donation : 50 }}">
+                        <input type="hidden" name="amount" id="payfastAmount" value="{{ $album->suggested_donation > 0 ? $album->suggested_donation : 50 }}">
                         <input type="hidden" name="return_url" value="{{ url()->current() }}?donated=true">
                         <input type="hidden" name="cancel_url" value="{{ url()->current() }}">
                         <button type="submit"
+                                id="donateBtn"
                                 class="w-full px-6 py-3 bg-[#0B79BF] hover:bg-[#0967a3] text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                             </svg>
-                            Donate with PayFast
+                            <span id="donateBtnText">Donate R{{ $album->suggested_donation > 0 ? number_format($album->suggested_donation, 2) : '50.00' }} with PayFast</span>
                         </button>
                     </form>
                 </div>
@@ -1137,6 +1169,42 @@
     // Donation Modal Functions (Album downloads only)
     let currentAlbumType = 'full';
 
+    // Donation Amount Functions
+    function setDonationAmount(amount) {
+        document.getElementById('customDonationAmount').value = amount;
+        updateDonationAmount(amount);
+
+        // Update button styles
+        document.querySelectorAll('.donation-amount-btn').forEach(btn => {
+            btn.classList.remove('border-[var(--color-pma-green)]', 'text-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+            btn.classList.add('border-gray-200', 'text-gray-700');
+        });
+
+        // Highlight selected button
+        event.target.classList.remove('border-gray-200', 'text-gray-700');
+        event.target.classList.add('border-[var(--color-pma-green)]', 'text-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+    }
+
+    function updateDonationAmount(amount) {
+        amount = parseFloat(amount) || 0;
+        if (amount < 10) amount = 10;
+
+        document.getElementById('payfastAmount').value = amount.toFixed(2);
+        document.getElementById('donateBtnText').textContent = `Donate R${amount.toFixed(2)} with PayFast`;
+
+        // Clear button highlights when typing custom amount
+        document.querySelectorAll('.donation-amount-btn').forEach(btn => {
+            const btnAmount = parseInt(btn.textContent.replace('R', ''));
+            if (btnAmount === amount) {
+                btn.classList.remove('border-gray-200', 'text-gray-700');
+                btn.classList.add('border-[var(--color-pma-green)]', 'text-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+            } else {
+                btn.classList.remove('border-[var(--color-pma-green)]', 'text-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+                btn.classList.add('border-gray-200', 'text-gray-700');
+            }
+        });
+    }
+
     function showDonationModal(downloadType, albumType) {
         currentAlbumType = albumType;
 
@@ -1156,6 +1224,11 @@
             'full': 'Full Bundle (Audio + Video + Lyrics PDF)'
         };
         subtitle.textContent = `Download album: ${typeLabels[albumType]}`;
+
+        // Reset donation amount to suggested amount
+        const suggestedAmount = {{ $album->suggested_donation > 0 ? $album->suggested_donation : 50 }};
+        document.getElementById('customDonationAmount').value = suggestedAmount;
+        updateDonationAmount(suggestedAmount);
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
