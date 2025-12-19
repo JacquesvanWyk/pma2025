@@ -6,8 +6,10 @@ use App\Models\Album;
 use App\Models\Song;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MusicController extends Controller
 {
@@ -43,30 +45,22 @@ class MusicController extends Controller
         return view('music.show', compact('album', 'relatedAlbums'));
     }
 
-    public function downloadSong(Album $album, Song $song): JsonResponse
+    public function downloadSong(Album $album, Song $song): StreamedResponse
     {
         if (! $album->isReleased()) {
-            return response()->json(['error' => 'This album has not been released yet'], 403);
+            abort(403, 'This album has not been released yet');
         }
 
         if (! $song->wav_file || ! Storage::disk('public')->exists($song->wav_file)) {
-            return response()->json(['error' => 'Audio file not found'], 404);
+            abort(404, 'Audio file not found');
         }
 
         $song->incrementAudioDownload();
 
         $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
         $filename = Str::slug($album->artist.' - '.$song->title).'.'.$extension;
-        $r2Path = 'downloads/audio/'.$filename;
 
-        if (! Storage::disk('r2')->exists($r2Path)) {
-            $localPath = Storage::disk('public')->path($song->wav_file);
-            $stream = fopen($localPath, 'r');
-            Storage::disk('r2')->writeStream($r2Path, $stream, ['visibility' => 'public']);
-            fclose($stream);
-        }
-
-        return response()->json(['url' => Storage::disk('r2')->url($r2Path), 'filename' => $filename]);
+        return Storage::disk('public')->download($song->wav_file, $filename);
     }
 
     public function downloadSongVideo(Album $album, Song $song): JsonResponse
@@ -94,34 +88,26 @@ class MusicController extends Controller
         return response()->json(['url' => Storage::disk('r2')->url($r2Path), 'filename' => $filename]);
     }
 
-    public function downloadSongLyrics(Album $album, Song $song): JsonResponse
+    public function downloadSongLyrics(Album $album, Song $song): Response
     {
         if (! $album->isReleased()) {
-            return response()->json(['error' => 'This album has not been released yet'], 403);
+            abort(403, 'This album has not been released yet');
         }
 
         if (! $song->lyrics) {
-            return response()->json(['error' => 'Lyrics not available'], 404);
+            abort(404, 'Lyrics not available');
         }
 
         $song->incrementLyricsDownload();
 
-        $lyricsHash = substr(md5($song->lyrics), 0, 8);
-        $filename = Str::slug($album->artist.' - '.$song->title.' - Lyrics').'.pdf';
-        $r2Path = 'downloads/lyrics/'.Str::slug($album->artist.' - '.$song->title.' - Lyrics').'-'.$lyricsHash.'.pdf';
+        $pdf = Pdf::loadView('pdf.lyrics', [
+            'song' => $song,
+            'album' => $album,
+        ]);
 
-        if (! Storage::disk('r2')->exists($r2Path)) {
-            $pdf = Pdf::loadView('pdf.lyrics', [
-                'song' => $song,
-                'album' => $album,
-            ]);
+        $pdf->setPaper('A4', 'portrait');
 
-            $pdf->setPaper('A4', 'portrait');
-
-            Storage::disk('r2')->put($r2Path, $pdf->output(), 'public');
-        }
-
-        return response()->json(['url' => Storage::disk('r2')->url($r2Path), 'filename' => $filename]);
+        return $pdf->stream();
     }
 
     public function downloadSongBundle(Album $album, Song $song): JsonResponse

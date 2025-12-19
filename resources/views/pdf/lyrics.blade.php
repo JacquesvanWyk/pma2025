@@ -39,8 +39,9 @@
             background-color: #2d5a3d;
             text-align: center;
             line-height: 80px;
-            font-size: 32px;
+            font-size: 36px;
             color: #ffffff;
+            border: 3px solid #1a3d28;
         }
 
         .song-info {

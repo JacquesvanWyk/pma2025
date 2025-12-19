@@ -1136,54 +1136,12 @@
     }
 
     // Direct Song Download Function (no donation modal)
-    async function downloadSongFile(type, songId) {
-        const typeLabels = { audio: 'audio', video: 'video', lyrics: 'lyrics PDF', bundle: 'bundle' };
-        showDownloadProgress(`Preparing ${typeLabels[type] || type} download...`, 'loading');
-
+    function downloadSongFile(type, songId) {
         const url = `/music/{{ $album->id }}/songs/${songId}/download/${type}`;
-
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.url && data.filename) {
-                // Force download using fetch + blob
-                showDownloadProgress('Downloading...', 'loading');
-                const fileResponse = await fetch(data.url);
-                const blob = await fileResponse.blob();
-                const downloadUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = data.filename;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(downloadUrl);
-                a.remove();
-                showDownloadStarted();
-            } else if (data.url) {
-                // Fallback: use download attribute
-                const a = document.createElement('a');
-                a.href = data.url;
-                a.download = '';
-                a.target = '_blank';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                showDownloadStarted();
-            } else if (data.error) {
-                hideDownloadProgress();
-                alert(data.error);
-            }
-        } catch (error) {
-            hideDownloadProgress();
-            console.error('Download error:', error);
-            alert('Failed to prepare download. Please try again.');
+        if (type === 'lyrics') {
+            window.open(url, '_blank');
+        } else {
+            window.location.href = url;
         }
     }
 
