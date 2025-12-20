@@ -251,6 +251,13 @@
                             <p class="mt-4 text-gray-400 text-sm">
                                 Suggested donation: R{{ number_format($album->suggested_donation, 2) }}
                             </p>
+                            <button onclick="showDonationModal('donate', 'donate')"
+                                    class="mt-3 px-6 py-2 bg-[var(--color-ochre)] hover:bg-[var(--color-ochre)]/90 text-white rounded-lg font-semibold transition-all hover:-translate-y-0.5 flex items-center gap-2 mx-auto lg:mx-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                Just Donate
+                            </button>
                         @endif
                     @else
                         {{-- Countdown Timer --}}
@@ -298,6 +305,25 @@
     <section class="py-16 bg-[var(--color-cream)]">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl font-bold text-[var(--color-indigo)] mb-8">Track Listing</h2>
+
+            {{-- Support Message --}}
+            <div class="bg-gradient-to-r from-[var(--color-pma-green)]/10 to-[var(--color-ochre)]/10 rounded-2xl p-6 mb-8 border border-[var(--color-pma-green)]/20">
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-1 text-center md:text-left">
+                        <h3 class="text-lg font-semibold text-[var(--color-indigo)] mb-2">Support Our Music Ministry</h3>
+                        <p class="text-gray-600">
+                            We had a wonderful experience creating this music about God and His Son. If you'd like to support us so we can continue making more worship music, please consider donating.
+                        </p>
+                    </div>
+                    <button onclick="showDonationModal('donate', 'donate')"
+                            class="shrink-0 px-6 py-3 bg-[var(--color-ochre)] hover:bg-[var(--color-ochre)]/90 text-white rounded-xl font-semibold transition-all hover:-translate-y-0.5 flex items-center gap-2 shadow-lg shadow-[var(--color-ochre)]/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        Donate Now
+                    </button>
+                </div>
+            </div>
 
             @if($album->songs->count() > 0)
                 <div class="bg-white rounded-2xl shadow-lg">
@@ -1187,22 +1213,30 @@
     function showDonationModal(downloadType, albumType) {
         currentAlbumType = albumType;
 
-        // Store download intent in localStorage for post-payment
-        localStorage.setItem('pma_download_intent', JSON.stringify({
-            albumId: {{ $album->id }},
-            type: albumType,
-            timestamp: Date.now()
-        }));
-
         const modal = document.getElementById('donationModal');
         const subtitle = document.getElementById('modalSubtitle');
+        const skipBtn = document.getElementById('skipDownloadBtn');
 
-        const typeLabels = {
-            'audio': 'Audio Only (MP3 files)',
-            'video': 'Audio + Video (MP3 + MP4 files)',
-            'full': 'Full Bundle (Audio + Video + Lyrics PDF)'
-        };
-        subtitle.textContent = `Download album: ${typeLabels[albumType]}`;
+        // Handle "just donate" case
+        if (albumType === 'donate') {
+            subtitle.textContent = 'Your support helps us create more worship music.';
+            skipBtn.classList.add('hidden');
+        } else {
+            // Store download intent in localStorage for post-payment
+            localStorage.setItem('pma_download_intent', JSON.stringify({
+                albumId: {{ $album->id }},
+                type: albumType,
+                timestamp: Date.now()
+            }));
+
+            const typeLabels = {
+                'audio': 'Audio Only (MP3 files)',
+                'video': 'Audio + Video (MP3 + MP4 files)',
+                'full': 'Full Bundle (Audio + Video + Lyrics PDF)'
+            };
+            subtitle.textContent = `Download album: ${typeLabels[albumType]}`;
+            skipBtn.classList.remove('hidden');
+        }
 
         // Reset donation amount to suggested amount
         const suggestedAmount = {{ $album->suggested_donation > 0 ? $album->suggested_donation : 50 }};
