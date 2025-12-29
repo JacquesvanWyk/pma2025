@@ -180,13 +180,36 @@
                     @endif
 
                     @if($album->isReleased())
-                        {{-- Downloads temporarily disabled --}}
+                        {{-- Download Album Dropdown --}}
                         <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
-                            <div class="px-8 py-4 bg-gray-500/50 text-white/80 rounded-xl font-semibold cursor-not-allowed flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                                Downloads Temporarily Unavailable
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open"
+                                        class="px-8 py-4 bg-[var(--color-pma-green)] hover:bg-[var(--color-pma-green-light)] text-white rounded-xl font-semibold shadow-lg shadow-[var(--color-pma-green)]/30 transition-all hover:-translate-y-1 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Download Album
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div x-show="open"
+                                     @click.away="open = false"
+                                     x-transition
+                                     class="absolute left-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2 z-30">
+                                    <button onclick="showDonationModal('album', 'audio')"
+                                            class="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-[var(--color-pma-green)]/10 flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-pma-green)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-gray-900">Audio Only</div>
+                                            <div class="text-xs text-gray-500">MP3 files</div>
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                             <a href="{{ route('music.index') }}"
                                class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-semibold backdrop-blur-md transition-all hover:-translate-y-1 flex items-center gap-2">
@@ -196,12 +219,6 @@
                                 All Albums
                             </a>
                         </div>
-                        <p class="mt-4 text-[var(--color-ochre)] text-sm flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            We're working on technical issues. Downloads will be back shortly!
-                        </p>
 
                         @if($album->suggested_donation > 0)
                             <p class="mt-4 text-gray-400 text-sm">
@@ -261,21 +278,6 @@
     <section class="py-16 bg-[var(--color-cream)]">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl font-bold text-[var(--color-indigo)] mb-8">Track Listing</h2>
-
-            {{-- Technical Issues Notice --}}
-            <div class="bg-[var(--color-ochre)]/10 border border-[var(--color-ochre)]/30 rounded-2xl p-6 mb-8">
-                <div class="flex items-start gap-4">
-                    <div class="shrink-0 w-10 h-10 bg-[var(--color-ochre)]/20 rounded-full flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-ochre)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-[var(--color-indigo)] mb-1">Downloads Temporarily Unavailable</h3>
-                        <p class="text-gray-600">We're experiencing some technical issues with our download system. Our team is working on it and downloads will be back shortly. You can still listen to all tracks here!</p>
-                    </div>
-                </div>
-            </div>
 
             {{-- Support Message --}}
             <div class="bg-gradient-to-r from-[var(--color-pma-green)]/10 to-[var(--color-ochre)]/10 rounded-2xl p-6 mb-8 border border-[var(--color-pma-green)]/20">
@@ -401,19 +403,38 @@
                                         </button>
                                     @endif
 
-                                    {{-- Download Dropdown - Temporarily Disabled --}}
+                                    {{-- Download Dropdown --}}
                                     @if($song->wav_file || $song->mp4_video || $song->lyrics)
-                                        <div class="relative group/disabled">
-                                            <div class="p-2 rounded-lg bg-gray-200 text-gray-400 cursor-not-allowed"
-                                                 title="Downloads temporarily unavailable">
+                                        <div class="relative" x-data="{ open: false }">
+                                            <button @click="open = !open"
+                                                    class="p-2 rounded-lg bg-[var(--color-pma-green)]/10 text-[var(--color-pma-green)] hover:bg-[var(--color-pma-green)] hover:text-white transition-colors"
+                                                    title="Download">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                                 </svg>
-                                            </div>
-                                            {{-- Tooltip --}}
-                                            <div class="absolute bottom-full right-0 mb-2 w-48 bg-gray-800 text-white text-xs rounded-lg p-2 opacity-0 invisible group-hover/disabled:opacity-100 group-hover/disabled:visible transition-all z-30 text-center">
-                                                Downloads temporarily unavailable. We're fixing technical issues.
-                                                <div class="absolute -bottom-1 right-4 w-2 h-2 bg-gray-800 rotate-45"></div>
+                                            </button>
+                                            <div x-show="open"
+                                                 @click.away="open = false"
+                                                 x-transition
+                                                 class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-2 z-20">
+                                                @if($song->wav_file)
+                                                    <button onclick="downloadSongFile('audio', {{ $song->id }})"
+                                                            class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                                        </svg>
+                                                        Audio (MP3)
+                                                    </button>
+                                                @endif
+                                                @if($song->lyrics)
+                                                    <button onclick="downloadSongFile('lyrics', {{ $song->id }})"
+                                                            class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-ochre)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        Lyrics (PDF)
+                                                    </button>
+                                                @endif
                                             </div>
                                         </div>
                                     @else
@@ -1204,32 +1225,24 @@
             'video': 'Audio + Video',
             'full': 'Full Bundle'
         };
-        showDownloadProgress(`Creating ${typeLabels[albumType] || 'album'} ZIP file...`, 'loading');
+        showDownloadProgress(`Preparing ${typeLabels[albumType] || 'album'} download. This may take a few seconds...`, 'loading');
 
         const url = `/music/{{ $album->id }}/download/${albumType}`;
 
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const data = await response.json();
-
-            if (data.url) {
-                window.open(data.url, '_blank');
-                showDownloadStarted();
-            } else if (data.error) {
-                hideDownloadProgress();
-                alert(data.error);
-            }
-        } catch (error) {
-            hideDownloadProgress();
-            console.error('Download error:', error);
-            alert('Failed to prepare download. Please try again.');
+        // Use hidden iframe to trigger download without leaving page
+        let iframe = document.getElementById('downloadFrame');
+        if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'downloadFrame';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
         }
+        iframe.src = url;
+
+        // Show success after delay (download should have started)
+        setTimeout(() => {
+            showDownloadStarted();
+        }, 2000);
     }
 
     function toggleLyrics(songId) {

@@ -141,20 +141,27 @@ class Album extends Model
         ];
     }
 
-    public function getBundleUrl(string $type): ?string
+    public function getBundlePath(string $type): ?string
     {
-        $path = match ($type) {
+        return match ($type) {
             'audio' => $this->audio_bundle_path,
             'video' => $this->video_bundle_path,
             'full' => $this->full_bundle_path,
             default => null,
         };
+    }
+
+    public function getBundleUrl(string $type): ?string
+    {
+        $path = $this->getBundlePath($type);
 
         if (! $path) {
             return null;
         }
 
-        return Storage::disk('r2')->url($path);
+        return Storage::disk('r2')->temporaryUrl($path, now()->addHour(), [
+            'ResponseContentDisposition' => 'attachment; filename="'.basename($path).'"',
+        ]);
     }
 
     public function hasBundles(): bool

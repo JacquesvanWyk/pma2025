@@ -3,16 +3,6 @@
 @section('title', 'PMA Worship - Music')
 
 @section('content')
-    {{-- Technical Issues Banner --}}
-    <div class="bg-[var(--color-ochre)] text-white py-3 px-4">
-        <div class="container mx-auto flex items-center justify-center gap-3 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <span><strong>Downloads temporarily unavailable.</strong> We're working on technical issues. You can still listen to all music here!</span>
-        </div>
-    </div>
-
     {{-- Hero Section --}}
     <section class="relative py-32 bg-gradient-to-br from-[#0a1a0a] via-[#0d2818] to-[#0a1a0a] overflow-hidden">
         {{-- Background effects --}}
@@ -140,14 +130,13 @@
                             @endif
                         </a>
                         @if($featuredAlbum->isReleased())
-                            {{-- Downloads temporarily disabled --}}
-                            <div class="px-6 py-3 bg-gray-200 text-gray-500 border-2 border-gray-300 rounded-xl font-semibold cursor-not-allowed flex items-center gap-2"
-                                 title="Downloads temporarily unavailable">
+                            <a href="{{ route('music.show', $featuredAlbum->slug) }}"
+                               class="px-6 py-3 bg-white/90 hover:bg-white text-[var(--color-pma-green)] border-2 border-[var(--color-pma-green)] rounded-xl font-semibold transition-all hover:-translate-y-1 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                 </svg>
-                                Downloads Unavailable
-                            </div>
+                                Download Album
+                            </a>
                         @endif
                     </div>
                 </div>

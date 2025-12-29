@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\FixSongMetadata;
 use App\Jobs\GenerateAlbumDownloads;
 use App\Jobs\GenerateSongBundle;
 use App\Models\Song;
@@ -17,25 +18,39 @@ class SongObserver
         'is_published',
     ];
 
+    protected array $metadataRelevantFields = [
+        'wav_file',
+        'title',
+        'track_number',
+    ];
+
     public function created(Song $song): void
     {
+        if ($song->album_id && $song->wav_file) {
+            FixSongMetadata::dispatch($song);
+        }
+
         if ($song->album_id && $this->hasBundleableContent($song)) {
-            GenerateSongBundle::dispatch($song);
-            GenerateAlbumDownloads::dispatch($song->album);
+            GenerateSongBundle::dispatch($song)->delay(now()->addSeconds(10));
+            GenerateAlbumDownloads::dispatch($song->album)->delay(now()->addSeconds(15));
         }
     }
 
     public function updated(Song $song): void
     {
+        if ($song->wasChanged($this->metadataRelevantFields) && $song->wav_file) {
+            FixSongMetadata::dispatch($song);
+        }
+
         if ($this->shouldRegenerateBundles($song)) {
             if ($this->hasBundleableContent($song)) {
-                GenerateSongBundle::dispatch($song);
+                GenerateSongBundle::dispatch($song)->delay(now()->addSeconds(10));
             } else {
                 $song->clearBundle();
             }
 
             if ($song->album_id) {
-                GenerateAlbumDownloads::dispatch($song->album);
+                GenerateAlbumDownloads::dispatch($song->album)->delay(now()->addSeconds(15));
             }
         }
     }

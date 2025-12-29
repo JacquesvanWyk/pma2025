@@ -132,7 +132,7 @@ class MusicController extends Controller
         return response()->json(['url' => $url, 'filename' => $filename]);
     }
 
-    public function downloadAlbum(Album $album, string $type = 'full'): JsonResponse
+    public function downloadAlbum(Album $album, string $type = 'full'): StreamedResponse|JsonResponse
     {
         if (! $album->isReleased()) {
             return response()->json(['error' => 'This album has not been released yet'], 403);
@@ -142,8 +142,8 @@ class MusicController extends Controller
             return response()->json(['error' => 'Downloads are being prepared. Please try again in a few minutes.'], 503);
         }
 
-        $url = $album->getBundleUrl($type);
-        if (! $url) {
+        $path = $album->getBundlePath($type);
+        if (! $path || ! Storage::disk('r2')->exists($path)) {
             return response()->json(['error' => 'Download not available'], 404);
         }
 
@@ -158,6 +158,17 @@ class MusicController extends Controller
             $song->incrementDownload();
         }
 
-        return response()->json(['url' => $url]);
+        $filename = basename($path);
+        $size = Storage::disk('r2')->size($path);
+
+        return response()->streamDownload(function () use ($path) {
+            $stream = Storage::disk('r2')->readStream($path);
+            fpassthru($stream);
+            fclose($stream);
+        }, $filename, [
+            'Content-Type' => 'application/zip',
+            'Content-Length' => $size,
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
     }
 }
