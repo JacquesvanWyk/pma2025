@@ -84,7 +84,6 @@
             font-size: 13px;
             line-height: 1.8;
             color: #333333;
-            max-width: 450px;
             margin: 0 auto;
             text-align: center;
         }
@@ -94,13 +93,10 @@
         }
 
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             background-color: #2d5a3d;
             padding: 10px 25px;
             color: #ffffff;
+            margin-top: 40px;
         }
 
         .footer-table {
