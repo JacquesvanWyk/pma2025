@@ -93,7 +93,7 @@ class GenerateAlbumDownloads implements ShouldQueue
                 $audioPath = Storage::disk('public')->path($song->wav_file);
                 if (file_exists($audioPath)) {
                     $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
-                    $audioFileName = sprintf('%02d - %s.%s', $song->track_number, Str::slug($song->title), $extension);
+                    $audioFileName = sprintf('%02d - %s.%s', $song->track_number, $song->title, $extension);
                     $zip->addFile($audioPath, 'Audio/'.$audioFileName);
                 }
             }
@@ -101,7 +101,7 @@ class GenerateAlbumDownloads implements ShouldQueue
             if (($type === 'video' || $type === 'full') && $song->mp4_video) {
                 $videoPath = Storage::disk('public')->path($song->mp4_video);
                 if (file_exists($videoPath)) {
-                    $videoFileName = sprintf('%02d - %s.mp4', $song->track_number, Str::slug($song->title));
+                    $videoFileName = sprintf('%02d - %s.mp4', $song->track_number, $song->title);
                     $zip->addFile($videoPath, 'Video/'.$videoFileName);
                 }
             }
@@ -109,7 +109,7 @@ class GenerateAlbumDownloads implements ShouldQueue
             if ($type === 'full' && $song->lyrics) {
                 $lyricsPath = $this->generateLyricsPdf($album, $song);
                 if ($lyricsPath && file_exists($lyricsPath)) {
-                    $lyricsFileName = sprintf('%02d - %s - Lyrics.pdf', $song->track_number, Str::slug($song->title));
+                    $lyricsFileName = sprintf('%02d - %s - Lyrics.pdf', $song->track_number, $song->title);
                     $zip->addFile($lyricsPath, 'Lyrics/'.$lyricsFileName);
                     $lyricsPaths[] = $lyricsPath;
                 }
@@ -159,7 +159,7 @@ class GenerateAlbumDownloads implements ShouldQueue
         }
 
         $lyricsHash = substr(md5($song->lyrics), 0, 8);
-        $filename = sprintf('%02d - %s - Lyrics - %s.pdf', $song->track_number, Str::slug($song->title), $lyricsHash);
+        $filename = sprintf('%02d - %s - Lyrics - %s.pdf', $song->track_number, $song->title, $lyricsHash);
         $path = $tempDir.'/'.$filename;
 
         $pdf->save($path);
