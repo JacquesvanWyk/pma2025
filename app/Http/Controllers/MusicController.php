@@ -58,7 +58,7 @@ class MusicController extends Controller
         $song->incrementAudioDownload();
 
         $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
-        $filename = Str::slug($album->artist.' - '.$song->title).'.'.$extension;
+        $filename = $song->title.'.'.$extension;
 
         return Storage::disk('public')->download($song->wav_file, $filename);
     }
