@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $song->title }} - Lyrics</title>
+    <link rel="icon" type="image/png" href="{{ public_path('favicon.ico') }}">
     <style>
         @page {
             margin: 40px 50px;
