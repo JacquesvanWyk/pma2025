@@ -5,7 +5,7 @@
     <title>{{ $song->title }} - Lyrics</title>
     <style>
         @page {
-            margin: 25px 30px;
+            margin: 40px 50px;
             size: A4;
         }
 
@@ -13,81 +13,84 @@
             font-family: 'DejaVu Sans', Arial, sans-serif;
             background-color: #ffffff;
             color: #1a1a1a;
-            font-size: 11px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.6;
         }
 
         .header {
             border-bottom: 3px solid #2d5a3d;
-            padding-bottom: 12px;
-            margin-bottom: 15px;
-        }
-
-        .header-table {
-            width: 100%;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            text-align: center;
         }
 
         .album-cover {
-            width: 80px;
-            height: 80px;
-            border: 2px solid #2d5a3d;
+            width: 100px;
+            height: 100px;
+            border: 3px solid #2d5a3d;
+            margin-bottom: 15px;
         }
 
         .album-cover-placeholder {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             background-color: #2d5a3d;
             text-align: center;
-            line-height: 80px;
-            font-size: 36px;
+            line-height: 100px;
+            font-size: 42px;
             color: #ffffff;
             border: 3px solid #1a3d28;
-        }
-
-        .song-info {
-            padding-left: 15px;
-            vertical-align: middle;
+            margin: 0 auto 15px auto;
         }
 
         .song-title {
-            font-size: 20px;
+            font-size: 26px;
             font-weight: bold;
             color: #1a1a1a;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
         .artist {
-            font-size: 14px;
+            font-size: 16px;
             color: #2d5a3d;
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 5px;
         }
 
         .album-name {
-            font-size: 10px;
+            font-size: 12px;
             color: #666666;
+            font-style: italic;
         }
 
         .lyrics-section {
-            margin-top: 10px;
+            margin-top: 20px;
+            text-align: center;
         }
 
         .lyrics-label {
-            font-size: 9px;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             color: #2d5a3d;
-            margin-bottom: 8px;
+            margin-bottom: 20px;
             font-weight: bold;
             border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 4px;
+            padding-bottom: 8px;
         }
 
         .lyrics-content {
-            font-size: 10px;
-            line-height: 1.5;
+            font-size: 13px;
+            line-height: 1.8;
             color: #333333;
-            white-space: pre-wrap;
+            max-width: 450px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .verse {
+            margin-bottom: 25px;
         }
 
         .footer {
@@ -96,7 +99,7 @@
             left: 0;
             right: 0;
             background-color: #2d5a3d;
-            padding: 8px 20px;
+            padding: 10px 25px;
             color: #ffffff;
         }
 
@@ -105,18 +108,18 @@
         }
 
         .ministry-name {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             color: #ffffff;
         }
 
         .website {
-            font-size: 8px;
+            font-size: 9px;
             color: #c0c0c0;
         }
 
         .tagline {
-            font-size: 8px;
+            font-size: 9px;
             color: #c0c0c0;
             font-style: italic;
             text-align: right;
@@ -125,27 +128,27 @@
 </head>
 <body>
     <div class="header">
-        <table class="header-table">
-            <tr>
-                <td style="width: 90px; vertical-align: top;">
-                    @if($album->cover_image && file_exists(storage_path('app/public/' . $album->cover_image)))
-                        <img src="{{ storage_path('app/public/' . $album->cover_image) }}" class="album-cover" alt="{{ $album->title }}">
-                    @else
-                        <div class="album-cover-placeholder">&#9835;</div>
-                    @endif
-                </td>
-                <td class="song-info">
-                    <div class="song-title">{{ $song->title }}</div>
-                    <div class="artist">{{ $album->artist }}</div>
-                    <div class="album-name">From the album "{{ $album->title }}"</div>
-                </td>
-            </tr>
-        </table>
+        @if($album->cover_image && file_exists(storage_path('app/public/' . $album->cover_image)))
+            <img src="{{ storage_path('app/public/' . $album->cover_image) }}" class="album-cover" alt="{{ $album->title }}">
+        @else
+            <div class="album-cover-placeholder">&#9835;</div>
+        @endif
+        <div class="song-title">{{ $song->title }}</div>
+        <div class="artist">{{ $album->artist }}</div>
+        <div class="album-name">From the album "{{ $album->title }}"</div>
     </div>
 
     <div class="lyrics-section">
         <div class="lyrics-label">Lyrics</div>
-        <div class="lyrics-content">{{ $song->lyrics ?? 'Lyrics not available for this song.' }}</div>
+        <div class="lyrics-content">
+            @if($song->lyrics)
+                @foreach(preg_split('/\n\s*\n/', $song->lyrics) as $verse)
+                    <div class="verse">{!! nl2br(e(trim($verse))) !!}</div>
+                @endforeach
+            @else
+                Lyrics not available for this song.
+            @endif
+        </div>
     </div>
 
     <div class="footer">
