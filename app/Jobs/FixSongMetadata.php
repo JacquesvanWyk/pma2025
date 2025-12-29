@@ -44,8 +44,9 @@ class FixSongMetadata implements ShouldQueue
             return;
         }
 
-        // Initialize getID3 engine (required before using writetags)
-        new getID3;
+        // Initialize getID3 engine and read existing tags
+        $getID3 = new getID3;
+        $fileInfo = $getID3->analyze($filePath);
 
         $tagWriter = new getid3_writetags;
         $tagWriter->filename = $filePath;
@@ -64,6 +65,19 @@ class FixSongMetadata implements ShouldQueue
             'genre' => ['Christian'],
             'comment' => ['PMA Worship - pioneermissionsafrica.co.za'],
         ];
+
+        // Preserve existing cover art if present
+        if (isset($fileInfo['id3v2']['APIC'])) {
+            $tagWriter->tag_data['attached_picture'] = [];
+            foreach ($fileInfo['id3v2']['APIC'] as $apic) {
+                $tagWriter->tag_data['attached_picture'][] = [
+                    'data' => $apic['data'],
+                    'picturetypeid' => $apic['picturetypeid'] ?? 3,
+                    'description' => $apic['description'] ?? 'Cover',
+                    'mime' => $apic['mime'] ?? 'image/jpeg',
+                ];
+            }
+        }
 
         if ($tagWriter->WriteTags()) {
             Log::info("FixSongMetadata: Updated metadata for {$this->song->title}");
