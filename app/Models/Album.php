@@ -31,6 +31,8 @@ class Album extends Model
         'video_download_count',
         'full_download_count',
         'audio_bundle_path',
+        'mp3_bundle_path',
+        'wav_bundle_path',
         'video_bundle_path',
         'full_bundle_path',
         'bundles_generated_at',
@@ -145,6 +147,8 @@ class Album extends Model
     {
         return match ($type) {
             'audio' => $this->audio_bundle_path,
+            'mp3' => $this->mp3_bundle_path,
+            'wav' => $this->wav_bundle_path,
             'video' => $this->video_bundle_path,
             'full' => $this->full_bundle_path,
             default => null,
@@ -175,6 +179,12 @@ class Album extends Model
         if ($this->audio_bundle_path) {
             Storage::disk('r2')->delete($this->audio_bundle_path);
         }
+        if ($this->mp3_bundle_path) {
+            Storage::disk('r2')->delete($this->mp3_bundle_path);
+        }
+        if ($this->wav_bundle_path) {
+            Storage::disk('r2')->delete($this->wav_bundle_path);
+        }
         if ($this->video_bundle_path) {
             Storage::disk('r2')->delete($this->video_bundle_path);
         }
@@ -184,6 +194,8 @@ class Album extends Model
 
         $this->update([
             'audio_bundle_path' => null,
+            'mp3_bundle_path' => null,
+            'wav_bundle_path' => null,
             'video_bundle_path' => null,
             'full_bundle_path' => null,
             'bundles_generated_at' => null,

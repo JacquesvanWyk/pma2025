@@ -197,7 +197,7 @@
                                      @click.away="open = false"
                                      x-transition
                                      class="absolute left-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-gray-200 py-2 z-30">
-                                    <button onclick="showDonationModal('album', 'audio')"
+                                    <button onclick="showDonationModal('album', 'mp3')"
                                             class="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3">
                                         <div class="w-10 h-10 rounded-lg bg-[var(--color-pma-green)]/10 flex items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-pma-green)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -205,8 +205,20 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <div class="font-semibold text-gray-900">Audio Only</div>
-                                            <div class="text-xs text-gray-500">MP3 files</div>
+                                            <div class="font-semibold text-gray-900">MP3 Audio</div>
+                                            <div class="text-xs text-gray-500">Compressed audio files</div>
+                                        </div>
+                                    </button>
+                                    <button onclick="showDonationModal('album', 'wav')"
+                                            class="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-[var(--color-ochre)]/10 flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[var(--color-ochre)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-gray-900">WAV Audio</div>
+                                            <div class="text-xs text-gray-500">Lossless high-quality files</div>
                                         </div>
                                     </button>
                                 </div>
@@ -1202,8 +1214,9 @@
             }));
 
             const typeLabels = {
-                'audio': 'Audio Only (MP3 files)',
-                'video': 'Audio + Video (MP3 + MP4 files)',
+                'mp3': 'MP3 Audio (compressed files)',
+                'wav': 'WAV Audio (lossless high-quality)',
+                'video': 'Audio + Video (MP3 + WAV + MP4 files)',
                 'full': 'Full Bundle (Audio + Video + Lyrics PDF)'
             };
             subtitle.textContent = `Download album: ${typeLabels[albumType]}`;
@@ -1243,7 +1256,8 @@
 
     async function triggerAlbumDownload(albumType) {
         const typeLabels = {
-            'audio': 'Audio Only',
+            'mp3': 'MP3 Audio',
+            'wav': 'WAV Audio',
             'video': 'Audio + Video',
             'full': 'Full Bundle'
         };

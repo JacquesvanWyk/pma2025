@@ -39,12 +39,14 @@ class GenerateAlbumDownloads implements ShouldQueue
 
         $baseFileName = Str::slug($album->artist.' - '.$album->title);
 
-        $audioBundlePath = $this->generateBundle($album, $songs, 'audio', $baseFileName);
+        $mp3BundlePath = $this->generateBundle($album, $songs, 'mp3', $baseFileName);
+        $wavBundlePath = $this->generateBundle($album, $songs, 'wav', $baseFileName);
         $videoBundlePath = $this->generateBundle($album, $songs, 'video', $baseFileName);
         $fullBundlePath = $this->generateBundle($album, $songs, 'full', $baseFileName);
 
         $album->update([
-            'audio_bundle_path' => $audioBundlePath,
+            'mp3_bundle_path' => $mp3BundlePath,
+            'wav_bundle_path' => $wavBundlePath,
             'video_bundle_path' => $videoBundlePath,
             'full_bundle_path' => $fullBundlePath,
             'bundles_generated_at' => now(),
@@ -56,7 +58,8 @@ class GenerateAlbumDownloads implements ShouldQueue
     protected function generateBundle(Album $album, $songs, string $type, string $baseFileName): ?string
     {
         $typeSuffix = match ($type) {
-            'audio' => '-audio',
+            'mp3' => '-mp3',
+            'wav' => '-wav',
             'video' => '-audio-video',
             default => '-full',
         };
@@ -78,33 +81,42 @@ class GenerateAlbumDownloads implements ShouldQueue
             return null;
         }
 
-        $zip->addEmptyDir('Audio/MP3');
-        $zip->addEmptyDir('Audio/WAV');
-        if ($type === 'video' || $type === 'full') {
+        // Create directory structure based on type
+        if ($type === 'mp3') {
+            $zip->addEmptyDir('Audio');
+        } elseif ($type === 'wav') {
+            $zip->addEmptyDir('Audio');
+        } elseif ($type === 'video') {
+            $zip->addEmptyDir('Audio/MP3');
+            $zip->addEmptyDir('Audio/WAV');
             $zip->addEmptyDir('Video');
-        }
-        if ($type === 'full') {
+        } else {
+            $zip->addEmptyDir('Audio/MP3');
+            $zip->addEmptyDir('Audio/WAV');
+            $zip->addEmptyDir('Video');
             $zip->addEmptyDir('Lyrics');
         }
 
         $lyricsPaths = [];
 
         foreach ($songs as $song) {
-            // Add MP3 file
-            if ($song->wav_file) {
+            // Add MP3 file for mp3, video, or full bundles
+            if (($type === 'mp3' || $type === 'video' || $type === 'full') && $song->wav_file) {
                 $mp3Path = Storage::disk('public')->path($song->wav_file);
                 if (file_exists($mp3Path)) {
                     $mp3FileName = sprintf('%02d - %s.mp3', $song->track_number, $song->title);
-                    $zip->addFile($mp3Path, 'Audio/MP3/'.$mp3FileName);
+                    $audioDir = $type === 'mp3' ? 'Audio/' : 'Audio/MP3/';
+                    $zip->addFile($mp3Path, $audioDir.$mp3FileName);
                 }
             }
 
-            // Add WAV file
-            if ($song->wav_file_path) {
+            // Add WAV file for wav, video, or full bundles
+            if (($type === 'wav' || $type === 'video' || $type === 'full') && $song->wav_file_path) {
                 $wavPath = Storage::disk('public')->path($song->wav_file_path);
                 if (file_exists($wavPath)) {
                     $wavFileName = sprintf('%02d - %s.wav', $song->track_number, $song->title);
-                    $zip->addFile($wavPath, 'Audio/WAV/'.$wavFileName);
+                    $audioDir = $type === 'wav' ? 'Audio/' : 'Audio/WAV/';
+                    $zip->addFile($wavPath, $audioDir.$wavFileName);
                 }
             }
 

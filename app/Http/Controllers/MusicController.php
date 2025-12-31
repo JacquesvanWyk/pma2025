@@ -157,7 +157,7 @@ class MusicController extends Controller
         }
 
         match ($type) {
-            'audio' => $album->incrementAudioDownload(),
+            'mp3', 'wav', 'audio' => $album->incrementAudioDownload(),
             'video' => $album->incrementVideoDownload(),
             default => $album->incrementFullDownload(),
         };
