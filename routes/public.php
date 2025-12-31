@@ -68,7 +68,7 @@ Route::get('/music/{album}/songs/{song}/download/audio/{format?}', [MusicControl
 Route::get('/music/{album}/songs/{song}/download/video', [MusicController::class, 'downloadSongVideo'])->name('music.download.song.video');
 Route::get('/music/{album}/songs/{song}/download/lyrics', [MusicController::class, 'downloadSongLyrics'])->name('music.download.song.lyrics');
 Route::get('/music/{album}/songs/{song}/download/bundle', [MusicController::class, 'downloadSongBundle'])->name('music.download.song.bundle');
-Route::get('/music/{album}/download/{type}', [MusicController::class, 'downloadAlbum'])->name('music.download.album')->where('type', 'audio|video|full');
+Route::get('/music/{album}/download/{type}', [MusicController::class, 'downloadAlbum'])->name('music.download.album')->where('type', 'mp3|wav|audio|video|full');
 
 // Other routes
 Route::get('/sermons', [SermonController::class, 'index'])->name('sermons');
