@@ -64,7 +64,7 @@ Route::get('/gallery/{slug}', [GalleryController::class, 'show'])->name('gallery
 // Music routes
 Route::get('/music', [MusicController::class, 'index'])->name('music.index');
 Route::get('/music/{slug}', [MusicController::class, 'show'])->name('music.show');
-Route::get('/music/{album}/songs/{song}/download/audio', [MusicController::class, 'downloadSong'])->name('music.download.song');
+Route::get('/music/{album}/songs/{song}/download/audio/{format?}', [MusicController::class, 'downloadSong'])->name('music.download.song')->where('format', 'mp3|wav');
 Route::get('/music/{album}/songs/{song}/download/video', [MusicController::class, 'downloadSongVideo'])->name('music.download.song.video');
 Route::get('/music/{album}/songs/{song}/download/lyrics', [MusicController::class, 'downloadSongLyrics'])->name('music.download.song.lyrics');
 Route::get('/music/{album}/songs/{song}/download/bundle', [MusicController::class, 'downloadSongBundle'])->name('music.download.song.bundle');

@@ -25,6 +25,7 @@ class Song extends Model
         'track_number',
         'duration',
         'wav_file',
+        'wav_file_path',
         'mp4_video',
         'description',
         'lyrics',
@@ -89,6 +90,78 @@ class Song extends Model
         }
 
         return Storage::disk('public')->url($this->wav_file);
+    }
+
+    public function getWavFilePathUrlAttribute(): ?string
+    {
+        if (! $this->wav_file_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->wav_file_path);
+    }
+
+    public function hasMp3(): bool
+    {
+        return ! empty($this->wav_file);
+    }
+
+    public function hasWav(): bool
+    {
+        return ! empty($this->wav_file_path);
+    }
+
+    public function getMp3FileSize(): ?int
+    {
+        if (! $this->wav_file || ! Storage::disk('public')->exists($this->wav_file)) {
+            return null;
+        }
+
+        return Storage::disk('public')->size($this->wav_file);
+    }
+
+    public function getWavFileSize(): ?int
+    {
+        if (! $this->wav_file_path || ! Storage::disk('public')->exists($this->wav_file_path)) {
+            return null;
+        }
+
+        return Storage::disk('public')->size($this->wav_file_path);
+    }
+
+    public function getMp3FileSizeFormatted(): ?string
+    {
+        $size = $this->getMp3FileSize();
+        if (! $size) {
+            return null;
+        }
+
+        return $this->formatFileSize($size);
+    }
+
+    public function getWavFileSizeFormatted(): ?string
+    {
+        $size = $this->getWavFileSize();
+        if (! $size) {
+            return null;
+        }
+
+        return $this->formatFileSize($size);
+    }
+
+    protected function formatFileSize(int $bytes): string
+    {
+        if ($bytes >= 1073741824) {
+            return number_format($bytes / 1073741824, 1) . ' GB';
+        }
+        if ($bytes >= 1048576) {
+            return number_format($bytes / 1048576, 1) . ' MB';
+        }
+        if ($bytes >= 1024) {
+            return number_format($bytes / 1024, 1) . ' KB';
+        }
+
+        return $bytes . ' B';
     }
 
     public function getMp4VideoUrlAttribute(): ?string

@@ -45,22 +45,31 @@ class MusicController extends Controller
         return view('music.show', compact('album', 'relatedAlbums'));
     }
 
-    public function downloadSong(Album $album, Song $song): StreamedResponse
+    public function downloadSong(Album $album, Song $song, string $format = 'mp3'): StreamedResponse
     {
         if (! $album->isReleased()) {
             abort(403, 'This album has not been released yet');
         }
 
-        if (! $song->wav_file || ! Storage::disk('public')->exists($song->wav_file)) {
-            abort(404, 'Audio file not found');
+        if ($format === 'wav') {
+            if (! $song->wav_file_path || ! Storage::disk('public')->exists($song->wav_file_path)) {
+                abort(404, 'WAV file not found');
+            }
+            $filePath = $song->wav_file_path;
+            $extension = 'wav';
+        } else {
+            if (! $song->wav_file || ! Storage::disk('public')->exists($song->wav_file)) {
+                abort(404, 'MP3 file not found');
+            }
+            $filePath = $song->wav_file;
+            $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
         }
 
         $song->incrementAudioDownload();
 
-        $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
         $filename = $song->title.'.'.$extension;
 
-        return Storage::disk('public')->download($song->wav_file, $filename);
+        return Storage::disk('public')->download($filePath, $filename);
     }
 
     public function downloadSongVideo(Album $album, Song $song): JsonResponse

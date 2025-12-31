@@ -78,7 +78,8 @@ class GenerateAlbumDownloads implements ShouldQueue
             return null;
         }
 
-        $zip->addEmptyDir('Audio');
+        $zip->addEmptyDir('Audio/MP3');
+        $zip->addEmptyDir('Audio/WAV');
         if ($type === 'video' || $type === 'full') {
             $zip->addEmptyDir('Video');
         }
@@ -89,12 +90,21 @@ class GenerateAlbumDownloads implements ShouldQueue
         $lyricsPaths = [];
 
         foreach ($songs as $song) {
+            // Add MP3 file
             if ($song->wav_file) {
-                $audioPath = Storage::disk('public')->path($song->wav_file);
-                if (file_exists($audioPath)) {
-                    $extension = pathinfo($song->wav_file, PATHINFO_EXTENSION) ?: 'mp3';
-                    $audioFileName = sprintf('%02d - %s.%s', $song->track_number, $song->title, $extension);
-                    $zip->addFile($audioPath, 'Audio/'.$audioFileName);
+                $mp3Path = Storage::disk('public')->path($song->wav_file);
+                if (file_exists($mp3Path)) {
+                    $mp3FileName = sprintf('%02d - %s.mp3', $song->track_number, $song->title);
+                    $zip->addFile($mp3Path, 'Audio/MP3/'.$mp3FileName);
+                }
+            }
+
+            // Add WAV file
+            if ($song->wav_file_path) {
+                $wavPath = Storage::disk('public')->path($song->wav_file_path);
+                if (file_exists($wavPath)) {
+                    $wavFileName = sprintf('%02d - %s.wav', $song->track_number, $song->title);
+                    $zip->addFile($wavPath, 'Audio/WAV/'.$wavFileName);
                 }
             }
 

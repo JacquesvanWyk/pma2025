@@ -418,12 +418,31 @@
                                                  x-transition
                                                  class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-2 z-20">
                                                 @if($song->wav_file)
-                                                    <button onclick="downloadSongFile('audio', {{ $song->id }})"
-                                                            class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                                                        </svg>
-                                                        Audio (MP3)
+                                                    <button onclick="downloadSongFile('audio', {{ $song->id }}, 'mp3')"
+                                                            class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center justify-between">
+                                                        <span class="flex items-center gap-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                                            </svg>
+                                                            MP3
+                                                        </span>
+                                                        @if($song->getMp3FileSizeFormatted())
+                                                            <span class="text-xs text-gray-400">{{ $song->getMp3FileSizeFormatted() }}</span>
+                                                        @endif
+                                                    </button>
+                                                @endif
+                                                @if($song->wav_file_path)
+                                                    <button onclick="downloadSongFile('audio', {{ $song->id }}, 'wav')"
+                                                            class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center justify-between">
+                                                        <span class="flex items-center gap-2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[var(--color-pma-green)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                                            </svg>
+                                                            WAV
+                                                        </span>
+                                                        @if($song->getWavFileSizeFormatted())
+                                                            <span class="text-xs text-gray-400">{{ $song->getWavFileSizeFormatted() }}</span>
+                                                        @endif
                                                     </button>
                                                 @endif
                                                 @if($song->lyrics)
@@ -1112,8 +1131,11 @@
     }
 
     // Direct Song Download Function (no donation modal)
-    function downloadSongFile(type, songId) {
-        const url = `/music/{{ $album->id }}/songs/${songId}/download/${type}`;
+    function downloadSongFile(type, songId, format = 'mp3') {
+        let url = `/music/{{ $album->id }}/songs/${songId}/download/${type}`;
+        if (type === 'audio' && format) {
+            url += `/${format}`;
+        }
         if (type === 'lyrics') {
             window.open(url, '_blank');
         } else {
