@@ -1,4 +1,9 @@
 <x-filament-panels::page>
+    {{-- Poll for task status when generating --}}
+    @if ($this->isGenerating && $this->pendingTaskId)
+        <div wire:poll.3s="checkTaskStatus"></div>
+    @endif
+
     <div class="space-y-6">
         <!-- Credits Display -->
         @if ($this->kieCredits !== null)
@@ -47,6 +52,9 @@
                             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
                             <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">Generating your image...</p>
                             <p class="text-xs text-gray-500 mt-2">This may take 30-60 seconds</p>
+                            @if ($this->pollAttempts > 0)
+                                <p class="text-xs text-gray-400 mt-1">Checking status... ({{ $this->pollAttempts }}/40)</p>
+                            @endif
                         </div>
                     @elseif ($this->generatedImageUrl)
                         <div class="space-y-4">
@@ -113,12 +121,12 @@
                     <x-filament::icon icon="heroicon-o-currency-dollar" class="w-5 h-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-sm font-medium text-green-800 dark:text-green-200">Image Generation Pricing</h3>
+                    <h3 class="text-sm font-medium text-green-800 dark:text-green-200">NanoBanana Pro Pricing</h3>
                     <div class="mt-2 text-sm text-green-700 dark:text-green-300">
                         <ul class="list-disc list-inside space-y-1">
-                            <li><strong>KIE Seedream 4.0:</strong> $0.0175/image (3.5 credits) - Cheapest option</li>
-                            <li><strong>KIE NanoBanana:</strong> $0.02/image (4 credits) - Gemini 2.5 Flash</li>
-                            <li><strong>Google Gemini:</strong> $0.03/image - Direct API access</li>
+                            <li><strong>1K Resolution:</strong> ~$0.02/image (4 credits)</li>
+                            <li><strong>2K Resolution:</strong> ~$0.04/image (8 credits)</li>
+                            <li><strong>4K Resolution:</strong> ~$0.08/image (16 credits)</li>
                         </ul>
                     </div>
                 </div>
@@ -136,7 +144,7 @@
                     <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
                         <ul class="list-disc list-inside space-y-1">
                             <li><strong>Be Specific:</strong> "A vintage red 1965 Ford Mustang at sunset" beats "a car"</li>
-                            <li><strong>Biblical Style:</strong> Use for reverent, educational ministry content</li>
+                            <li><strong>Add Reference Images:</strong> Upload up to 8 images for style guidance or editing</li>
                             <li><strong>Add Details:</strong> Describe lighting, mood, setting, and atmosphere</li>
                             <li><strong>Example:</strong> "Jesus teaching by the Sea of Galilee, golden hour light, peaceful atmosphere, biblical accuracy"</li>
                         </ul>

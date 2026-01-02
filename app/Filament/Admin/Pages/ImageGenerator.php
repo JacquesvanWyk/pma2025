@@ -4,12 +4,12 @@ namespace App\Filament\Admin\Pages;
 
 use App\Filament\Concerns\HasRoleAccess;
 use App\Models\GeneratedMedia;
-use App\Services\ApiUsageTracker;
 use App\Services\KieAiService;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -17,12 +17,11 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Prism\Prism\Exceptions\PrismRateLimitedException;
-use Prism\Prism\Prism;
 
 /**
  * @property-read Schema $form
@@ -56,13 +55,19 @@ class ImageGenerator extends Page implements HasForms
 
     public ?int $kieCredits = null;
 
+    // For async polling
+    public ?string $pendingTaskId = null;
+
+    public ?array $pendingTaskData = null;
+
+    public int $pollAttempts = 0;
+
     public function mount(): void
     {
         $this->form->fill([
-            'provider' => 'kie_seedream',
-            'style' => 'photorealistic',
-            'size' => '1024x1024',
-            'quality' => 'high',
+            'aspect_ratio' => '1:1',
+            'resolution' => '1K',
+            'reference_images' => [],
         ]);
 
         $this->loadCredits();
@@ -103,66 +108,62 @@ class ImageGenerator extends Page implements HasForms
         return $schema
             ->components([
                 Form::make([
-                    Grid::make(2)
+                    Section::make('NanoBanana Pro')
+                        ->description('Generate high-quality images with AI. Optionally add reference images for style guidance or image editing.')
                         ->schema([
-                            Select::make('provider')
-                                ->label('AI Provider')
-                                ->options([
-                                    'kie_seedream' => 'KIE Seedream 4.0 ($0.0175/image) - Cheapest',
-                                    'kie_nanobanana' => 'KIE NanoBanana ($0.02/image)',
-                                    'gemini' => 'Google Gemini Imagen 3 ($0.03/image)',
-                                ])
-                                ->default('kie_seedream')
-                                ->helperText('Choose the AI provider for image generation')
-                                ->live(),
+                            Grid::make(2)
+                                ->schema([
+                                    Textarea::make('prompt')
+                                        ->label('Image Description')
+                                        ->required()
+                                        ->rows(3)
+                                        ->placeholder('Describe what you want to create. Be specific about style, colors, lighting, and composition.')
+                                        ->helperText('The more detailed your description, the better the result.')
+                                        ->columnSpanFull(),
 
-                            Select::make('size')
-                                ->label('Image Size')
-                                ->options([
-                                    '1024x1024' => 'Square (1024×1024)',
-                                    '1024x1792' => 'Portrait (1024×1792)',
-                                    '1792x1024' => 'Landscape (1792×1024)',
-                                ])
-                                ->default('1024x1024')
-                                ->helperText('Choose the aspect ratio'),
+                                    Select::make('aspect_ratio')
+                                        ->label('Aspect Ratio')
+                                        ->options([
+                                            '1:1' => 'Square (1:1)',
+                                            '2:3' => 'Portrait (2:3)',
+                                            '3:2' => 'Landscape (3:2)',
+                                            '3:4' => 'Portrait (3:4)',
+                                            '4:3' => 'Landscape (4:3)',
+                                            '4:5' => 'Portrait (4:5)',
+                                            '5:4' => 'Landscape (5:4)',
+                                            '9:16' => 'Vertical/Story (9:16)',
+                                            '16:9' => 'Widescreen (16:9)',
+                                            '21:9' => 'Ultra-wide (21:9)',
+                                            'auto' => 'Auto (AI decides)',
+                                        ])
+                                        ->default('1:1')
+                                        ->helperText('Choose the image dimensions'),
 
-                            TextInput::make('prompt')
-                                ->label('Image Description')
-                                ->required()
-                                ->placeholder('e.g., A peaceful sunrise over mountains with a cross in the foreground')
-                                ->helperText('Describe the main subject and scene in detail')
-                                ->columnSpanFull(),
+                                    ToggleButtons::make('resolution')
+                                        ->label('Resolution')
+                                        ->options([
+                                            '1K' => '1K',
+                                            '2K' => '2K',
+                                            '4K' => '4K',
+                                        ])
+                                        ->default('1K')
+                                        ->inline()
+                                        ->helperText('Higher resolution = more credits'),
 
-                            Select::make('style')
-                                ->label('Art Style')
-                                ->options([
-                                    'photorealistic' => 'Photorealistic - High Quality Photo',
-                                    'digital-art' => 'Digital Art - Modern & Clean',
-                                    'artistic' => 'Artistic - Painterly Style',
-                                    'illustration' => 'Illustration - Clean & Simple',
-                                    'watercolor' => 'Watercolor Painting',
-                                    'oil-painting' => 'Oil Painting',
-                                    'biblical' => 'Biblical - Reverent & Educational',
-                                ])
-                                ->default('photorealistic')
-                                ->helperText('Choose the artistic style'),
-
-                            Select::make('quality')
-                                ->label('Quality Level')
-                                ->options([
-                                    'standard' => 'Standard',
-                                    'high' => 'High Quality',
-                                    'ultra' => 'Ultra HD',
-                                ])
-                                ->default('high')
-                                ->helperText('Higher quality for better results'),
-
-                            Textarea::make('details')
-                                ->label('Additional Details (Optional)')
-                                ->rows(2)
-                                ->placeholder('Lighting: soft golden hour light, Colors: warm oranges')
-                                ->helperText('Add specific details about lighting, colors, mood')
-                                ->columnSpanFull(),
+                                    FileUpload::make('reference_images')
+                                        ->label('Reference Images (Optional)')
+                                        ->helperText('Add up to 8 images for style reference or editing. Leave empty to create from scratch.')
+                                        ->multiple()
+                                        ->maxFiles(8)
+                                        ->image()
+                                        ->imageResizeMode('cover')
+                                        ->imageCropAspectRatio(null)
+                                        ->imageResizeTargetWidth(1024)
+                                        ->imageResizeTargetHeight(1024)
+                                        ->directory('temp/reference-images')
+                                        ->visibility('public')
+                                        ->columnSpanFull(),
+                                ]),
                         ]),
                 ])
                     ->livewireSubmitHandler('generateImage')
@@ -184,7 +185,7 @@ class ImageGenerator extends Page implements HasForms
                 ->size('lg')
                 ->requiresConfirmation()
                 ->modalHeading('Generate AI Image?')
-                ->modalDescription('This will use AI to create an image based on your description.')
+                ->modalDescription('This will use NanoBanana Pro to create an image based on your description.')
                 ->modalSubmitActionLabel('Generate')
                 ->action(fn () => $this->generateImage())
                 ->disabled(fn () => $this->isGenerating),
@@ -215,126 +216,127 @@ class ImageGenerator extends Page implements HasForms
         $this->generatedImageUrl = null;
         $this->generatedImagePath = null;
         $this->generationError = null;
+        $this->pendingTaskId = null;
+        $this->pendingTaskData = null;
+        $this->pollAttempts = 0;
 
         try {
-            Notification::make()
-                ->title('Starting Image Generation...')
-                ->info()
-                ->body('This may take 30-60 seconds.')
-                ->send();
+            $service = app(KieAiService::class);
 
-            $prompt = $this->buildEnhancedPrompt($data);
-            $provider = $data['provider'];
-
-            if (str_starts_with($provider, 'kie_')) {
-                $this->generateWithKie($data, $prompt);
-            } else {
-                $this->generateWithGemini($data, $prompt);
+            if (! $service->isConfigured()) {
+                throw new \Exception('KIE.ai not configured. Add KIE_API_KEY to .env');
             }
 
-            $this->loadCredits();
-        } catch (PrismRateLimitedException $e) {
-            $this->generationError = 'Rate limit reached. Please wait and try again.';
-            Notification::make()
-                ->title('Rate Limit Reached')
-                ->danger()
-                ->body($this->generationError)
-                ->send();
+            // Get image URLs from uploaded files
+            $imageUrls = [];
+            if (! empty($data['reference_images'])) {
+                foreach ($data['reference_images'] as $path) {
+                    $imageUrls[] = Storage::disk('public')->url($path);
+                }
+            }
+
+            $result = $service->generateImagePro(
+                prompt: $data['prompt'],
+                aspectRatio: $data['aspect_ratio'],
+                resolution: $data['resolution'],
+                imageUrls: $imageUrls
+            );
+
+            if (! $result['success']) {
+                throw new \Exception($result['error'] ?? 'Failed to generate image');
+            }
+
+            // If immediate result (unlikely but handle it)
+            if ($result['is_complete'] && ! empty($result['image_url'])) {
+                $this->handleImageResult($result['image_url'], $data);
+                $this->isGenerating = false;
+
+                return;
+            }
+
+            // Store task for polling
+            if (! empty($result['task_id'])) {
+                $this->pendingTaskId = $result['task_id'];
+                $this->pendingTaskData = $data;
+
+                Notification::make()
+                    ->title('Image Generation Started')
+                    ->info()
+                    ->body('Processing... This usually takes 30-60 seconds.')
+                    ->send();
+            }
+
         } catch (\Exception $e) {
+            $this->isGenerating = false;
             $this->generationError = $e->getMessage();
             Notification::make()
                 ->title('Image Generation Failed')
                 ->danger()
                 ->body($e->getMessage())
                 ->send();
-        } finally {
-            $this->isGenerating = false;
         }
     }
 
-    protected function generateWithKie(array $data, string $prompt): void
+    /**
+     * Poll for task completion - called by Livewire wire:poll
+     */
+    public function checkTaskStatus(): void
     {
-        $service = app(KieAiService::class);
-
-        if (! $service->isConfigured()) {
-            throw new \Exception('KIE.ai not configured. Add KIE_API_KEY to .env');
+        if (! $this->pendingTaskId || ! $this->isGenerating) {
+            return;
         }
 
-        $model = match ($data['provider']) {
-            'kie_seedream' => 'seedream',
-            'kie_nanobanana' => 'nanobanana',
-            default => 'seedream',
-        };
+        $this->pollAttempts++;
 
-        $result = $service->generateImage($prompt, $model, $data['size']);
-
-        if (! $result['success']) {
-            throw new \Exception($result['error'] ?? 'Failed to generate image');
-        }
-
-        // If immediate result
-        if ($result['is_complete'] && ! empty($result['image_url'])) {
-            $this->handleImageResult($result['image_url'], $data, $model);
+        // Timeout after 40 attempts (2 minutes at 3 second intervals)
+        if ($this->pollAttempts > 40) {
+            $this->isGenerating = false;
+            $this->pendingTaskId = null;
+            $this->generationError = 'Image generation timed out after 2 minutes';
+            Notification::make()
+                ->title('Generation Timed Out')
+                ->danger()
+                ->body('The image took too long to generate. Please try again.')
+                ->send();
 
             return;
         }
 
-        // If async task, poll for result
-        if (! empty($result['task_id'])) {
-            $this->pollKieImageTask($result['task_id'], $data, $model);
+        try {
+            $service = app(KieAiService::class);
+            $result = $service->getJobTaskStatus($this->pendingTaskId);
+
+            if (! $result['success']) {
+                throw new \Exception($result['error'] ?? 'Failed to check task status');
+            }
+
+            if ($result['is_complete'] && ! empty($result['image_url'])) {
+                $this->handleImageResult($result['image_url'], $this->pendingTaskData);
+                $this->isGenerating = false;
+                $this->pendingTaskId = null;
+                $this->pendingTaskData = null;
+                $this->loadCredits();
+
+                return;
+            }
+
+            if ($result['is_failed']) {
+                throw new \Exception('Image generation failed: '.$result['status']);
+            }
+
+        } catch (\Exception $e) {
+            $this->isGenerating = false;
+            $this->pendingTaskId = null;
+            $this->generationError = $e->getMessage();
+            Notification::make()
+                ->title('Image Generation Failed')
+                ->danger()
+                ->body($e->getMessage())
+                ->send();
         }
     }
 
-    protected function pollKieImageTask(string $taskId, array $data, string $model): void
-    {
-        $service = app(KieAiService::class);
-        $maxAttempts = 40;
-
-        for ($i = 0; $i < $maxAttempts; $i++) {
-            sleep(3);
-
-            // For images, we'd need a specific endpoint - for now assume immediate result
-            // This is a placeholder for async image handling
-        }
-
-        throw new \Exception('Image generation timed out');
-    }
-
-    protected function generateWithGemini(array $data, string $prompt): void
-    {
-        $imageConfig = config('study-ai.images');
-
-        ApiUsageTracker::trackRequest(
-            provider: 'gemini',
-            service: 'image-generation',
-            action: 'generate',
-            requestData: ['prompt_length' => strlen($prompt), 'size' => $data['size']],
-            model: $imageConfig['model'],
-            status: 'pending'
-        );
-
-        $response = Prism::image()
-            ->using($imageConfig['provider'], $imageConfig['model'])
-            ->withPrompt($prompt)
-            ->withClientOptions(['timeout' => 120, 'connect_timeout' => 30])
-            ->generate();
-
-        ApiUsageTracker::trackSuccess(
-            provider: 'gemini',
-            service: 'image-generation',
-            action: 'generate',
-            requestData: ['prompt_length' => strlen($prompt)],
-            model: $imageConfig['model']
-        );
-
-        if (isset($response->images[0]['url'])) {
-            $this->handleImageResult($response->images[0]['url'], $data, 'gemini');
-        } else {
-            throw new \Exception('No image URL received from Gemini');
-        }
-    }
-
-    protected function handleImageResult(string $imageUrl, array $data, string $model): void
+    protected function handleImageResult(string $imageUrl, array $data): void
     {
         // Download and store locally
         $imageContents = file_get_contents($imageUrl);
@@ -347,73 +349,35 @@ class ImageGenerator extends Page implements HasForms
         $this->generatedImageUrl = Storage::disk('public')->url($path);
 
         // Save to database
-        $provider = str_starts_with($data['provider'], 'kie_') ? 'kie' : 'gemini';
-        $costUsd = match ($data['provider']) {
-            'kie_seedream' => 0.0175,
-            'kie_nanobanana' => 0.02,
-            'gemini' => 0.03,
-            default => 0,
-        };
-
         GeneratedMedia::create([
             'user_id' => auth()->id(),
             'type' => 'image',
-            'provider' => $provider,
-            'model' => $model,
+            'provider' => 'kie',
+            'model' => 'nanobanana_pro',
             'status' => 'completed',
             'prompt' => $data['prompt'],
             'settings' => [
-                'style' => $data['style'],
-                'size' => $data['size'],
-                'quality' => $data['quality'],
+                'aspect_ratio' => $data['aspect_ratio'],
+                'resolution' => $data['resolution'],
+                'has_reference_images' => ! empty($data['reference_images']),
             ],
             'file_path' => $path,
             'remote_url' => $imageUrl,
-            'cost_usd' => $costUsd,
+            'cost_usd' => 0.02,
         ]);
+
+        // Clean up reference images
+        if (! empty($data['reference_images'])) {
+            foreach ($data['reference_images'] as $refPath) {
+                Storage::disk('public')->delete($refPath);
+            }
+        }
 
         Notification::make()
             ->title('Image Generated Successfully!')
             ->success()
             ->body('Your image is ready to view and download.')
             ->send();
-    }
-
-    private function buildEnhancedPrompt(array $data): string
-    {
-        $prompt = $data['prompt'];
-
-        $styleModifiers = [
-            'photorealistic' => 'photorealistic, high detail, professional photography, 8k',
-            'digital-art' => 'digital art, clean lines, modern, vibrant colors',
-            'artistic' => 'artistic painting, expressive brushstrokes, gallery quality',
-            'illustration' => 'clean illustration, modern design, professional',
-            'watercolor' => 'watercolor painting, soft edges, traditional art',
-            'oil-painting' => 'oil painting, rich colors, textured canvas',
-            'biblical' => 'reverent, educational, Seventh-day Adventist style, biblical accuracy, hopeful',
-        ];
-
-        $qualityModifiers = [
-            'standard' => 'good quality',
-            'high' => 'high quality, detailed, sharp focus',
-            'ultra' => 'ultra high quality, 8k resolution, masterpiece',
-        ];
-
-        $enhancedPrompt = $prompt;
-
-        if (isset($styleModifiers[$data['style']])) {
-            $enhancedPrompt .= ', '.$styleModifiers[$data['style']];
-        }
-
-        if (isset($qualityModifiers[$data['quality']])) {
-            $enhancedPrompt .= ', '.$qualityModifiers[$data['quality']];
-        }
-
-        if (! empty($data['details'])) {
-            $enhancedPrompt .= ', '.$data['details'];
-        }
-
-        return $enhancedPrompt;
     }
 
     public function getMaxContentWidth(): Width|string|null
