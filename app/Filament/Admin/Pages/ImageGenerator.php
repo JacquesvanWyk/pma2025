@@ -160,6 +160,7 @@ class ImageGenerator extends Page implements HasForms
                                         ->imageCropAspectRatio(null)
                                         ->imageResizeTargetWidth(1024)
                                         ->imageResizeTargetHeight(1024)
+                                        ->disk('public')
                                         ->directory('temp/reference-images')
                                         ->visibility('public')
                                         ->columnSpanFull(),
