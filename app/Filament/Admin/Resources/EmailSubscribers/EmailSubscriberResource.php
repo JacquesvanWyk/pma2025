@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\EmailSubscribers\Pages\EditEmailSubscriber;
 use App\Filament\Admin\Resources\EmailSubscribers\Pages\ListEmailSubscribers;
 use App\Filament\Admin\Resources\EmailSubscribers\Schemas\EmailSubscriberForm;
 use App\Filament\Admin\Resources\EmailSubscribers\Tables\EmailSubscribersTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\EmailSubscriber;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use UnitEnum;
 
 class EmailSubscriberResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = EmailSubscriber::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;

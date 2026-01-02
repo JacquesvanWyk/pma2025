@@ -2,12 +2,15 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Services\PirschAnalyticsService;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 
 class WebsiteAnalytics extends Page
 {
+    use HasRoleAccess;
+
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::GlobeAlt;
 
     protected static \UnitEnum|string|null $navigationGroup = 'Reports';

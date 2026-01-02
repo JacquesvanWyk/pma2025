@@ -2,10 +2,13 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use Filament\Pages\Page;
 
 class AiGuidelines extends Page
 {
+    use HasRoleAccess;
+
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-light-bulb';
 
     protected static ?string $navigationLabel = 'AI Guidelines';

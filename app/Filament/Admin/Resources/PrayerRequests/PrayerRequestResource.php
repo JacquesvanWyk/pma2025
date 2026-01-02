@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\PrayerRequests\Pages\EditPrayerRequest;
 use App\Filament\Admin\Resources\PrayerRequests\Pages\ListPrayerRequests;
 use App\Filament\Admin\Resources\PrayerRequests\Schemas\PrayerRequestForm;
 use App\Filament\Admin\Resources\PrayerRequests\Tables\PrayerRequestsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\PrayerRequest;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 
 class PrayerRequestResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = PrayerRequest::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;

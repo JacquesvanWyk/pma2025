@@ -2,12 +2,15 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\ApiUsageStat;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 
 class ApiUsageStats extends Page
 {
+    use HasRoleAccess;
+
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-chart-bar';
 
     protected static \UnitEnum|string|null $navigationGroup = 'AI Tools';

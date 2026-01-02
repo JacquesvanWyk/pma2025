@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Fellowships\Pages\EditFellowship;
 use App\Filament\Admin\Resources\Fellowships\Pages\ListFellowships;
 use App\Filament\Admin\Resources\Fellowships\Schemas\FellowshipForm;
 use App\Filament\Admin\Resources\Fellowships\Tables\FellowshipsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\NetworkMember;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FellowshipResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = NetworkMember::class;
 
     protected static ?string $modelLabel = 'Fellowship';

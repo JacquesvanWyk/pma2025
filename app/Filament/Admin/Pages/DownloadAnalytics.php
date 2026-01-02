@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Album;
 use App\Models\Ebook;
 use App\Models\Note;
@@ -15,6 +16,8 @@ use Illuminate\Support\Collection;
 
 class DownloadAnalytics extends Page
 {
+    use HasRoleAccess;
+
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::ArrowDownTray;
 
     protected static \UnitEnum|string|null $navigationGroup = 'Reports';

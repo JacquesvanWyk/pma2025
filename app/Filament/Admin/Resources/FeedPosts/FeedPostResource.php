@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\FeedPosts\Pages\EditFeedPost;
 use App\Filament\Admin\Resources\FeedPosts\Pages\ListFeedPosts;
 use App\Filament\Admin\Resources\FeedPosts\Schemas\FeedPostForm;
 use App\Filament\Admin\Resources\FeedPosts\Tables\FeedPostsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\FeedPost;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FeedPostResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = FeedPost::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;

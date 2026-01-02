@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\SlidePresentations;
 use App\Filament\Admin\Resources\SlidePresentations\Pages\ListSlidePresentations;
 use App\Filament\Admin\Resources\SlidePresentations\Pages\ViewSlidePresentation;
 use App\Filament\Admin\Resources\SlidePresentations\Tables\SlidePresentationsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\SlidePresentation;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -14,6 +15,8 @@ use UnitEnum;
 
 class SlidePresentationResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = SlidePresentation::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

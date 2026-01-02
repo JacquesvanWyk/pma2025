@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Tags;
 
 use App\Filament\Admin\Resources\Tags\Pages\ManageTags;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Tag;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
@@ -19,6 +20,8 @@ use Filament\Tables\Table;
 
 class TagResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Tag::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;

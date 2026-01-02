@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Messages\Pages\EditMessage;
 use App\Filament\Admin\Resources\Messages\Pages\ListMessages;
 use App\Filament\Admin\Resources\Messages\Schemas\MessageForm;
 use App\Filament\Admin\Resources\Messages\Tables\MessagesTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Message;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MessageResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Message::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;

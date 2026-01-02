@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Jobs\GenerateLyricVideoJob;
 use App\Models\GeneratedMedia;
 use App\Models\LyricTimestamp;
@@ -32,6 +33,7 @@ use Illuminate\Support\Str;
  */
 class VideoGenerator extends Page implements HasForms
 {
+    use HasRoleAccess;
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-video-camera';

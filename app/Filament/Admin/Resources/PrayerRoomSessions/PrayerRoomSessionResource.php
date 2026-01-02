@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\PrayerRoomSessions\Pages\EditPrayerRoomSession;
 use App\Filament\Admin\Resources\PrayerRoomSessions\Pages\ListPrayerRoomSessions;
 use App\Filament\Admin\Resources\PrayerRoomSessions\Schemas\PrayerRoomSessionForm;
 use App\Filament\Admin\Resources\PrayerRoomSessions\Tables\PrayerRoomSessionsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\PrayerRoomSession;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use UnitEnum;
 
 class PrayerRoomSessionResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = PrayerRoomSession::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;

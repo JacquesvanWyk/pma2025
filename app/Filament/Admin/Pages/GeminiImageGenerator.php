@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Services\ApiUsageTracker;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -25,6 +26,7 @@ use Prism\Prism\Prism;
  */
 class GeminiImageGenerator extends Page implements HasForms
 {
+    use HasRoleAccess;
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-sparkles';

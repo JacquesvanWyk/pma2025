@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Jobs\PollKieMusicTaskJob;
 use App\Models\GeneratedMedia;
 use App\Models\MusicStylePreset;
@@ -30,6 +31,7 @@ use Prism\Prism\Prism;
  */
 class MusicGenerator extends Page implements HasForms
 {
+    use HasRoleAccess;
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-musical-note';

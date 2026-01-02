@@ -20,6 +20,20 @@ class User extends Authenticatable implements FilamentUser
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if ($user->role === null) {
+                $user->role = 'team_member';
+            }
+        });
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
     /**
      * The attributes that are mass assignable.
      *

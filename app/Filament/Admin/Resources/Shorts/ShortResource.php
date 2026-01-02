@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Shorts\Pages\EditShort;
 use App\Filament\Admin\Resources\Shorts\Pages\ListShorts;
 use App\Filament\Admin\Resources\Shorts\Schemas\ShortForm;
 use App\Filament\Admin\Resources\Shorts\Tables\ShortsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Short;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 
 class ShortResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Short::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;

@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\EmailLists\Pages\EditEmailList;
 use App\Filament\Admin\Resources\EmailLists\Pages\ListEmailLists;
 use App\Filament\Admin\Resources\EmailLists\Schemas\EmailListForm;
 use App\Filament\Admin\Resources\EmailLists\Tables\EmailListsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\EmailList;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,6 +18,8 @@ use UnitEnum;
 
 class EmailListResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = EmailList::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedEnvelope;

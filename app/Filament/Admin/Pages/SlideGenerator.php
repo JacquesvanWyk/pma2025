@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Jobs\GenerateKimiSlidesJob;
 use App\Models\SlidePresentation;
 use App\Services\SlideOutlineService;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SlideGenerator extends Page implements HasForms
 {
+    use HasRoleAccess;
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-presentation-chart-bar';

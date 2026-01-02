@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\LyricTimestamp;
 use App\Models\VideoProject;
 use Filament\Pages\Page;
@@ -10,6 +11,8 @@ use Livewire\Attributes\On;
 
 class VideoEditor extends Page
 {
+    use HasRoleAccess;
+
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-film';
 
     protected static \UnitEnum|string|null $navigationGroup = 'AI Tools';
@@ -171,10 +174,5 @@ class VideoEditor extends Page
                 'animation' => $lyric['animation'] ?? 'fade',
             ]);
         }
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return true;
     }
 }

@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\Galleries\Pages\ListGalleries;
 use App\Filament\Admin\Resources\Galleries\RelationManagers\ImagesRelationManager;
 use App\Filament\Admin\Resources\Galleries\Schemas\GalleryForm;
 use App\Filament\Admin\Resources\Galleries\Tables\GalleriesTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Gallery;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class GalleryResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Gallery::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;

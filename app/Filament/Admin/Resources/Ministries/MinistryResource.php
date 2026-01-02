@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Ministries\Pages\EditMinistry;
 use App\Filament\Admin\Resources\Ministries\Pages\ListMinistries;
 use App\Filament\Admin\Resources\Ministries\Schemas\MinistryForm;
 use App\Filament\Admin\Resources\Ministries\Tables\MinistriesTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Ministry;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MinistryResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Ministry::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;

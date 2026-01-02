@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\GeneratedMedia;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaLibrary extends Page
 {
+    use HasRoleAccess;
+
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-folder-open';
 
     protected static \UnitEnum|string|null $navigationGroup = 'AI Tools';

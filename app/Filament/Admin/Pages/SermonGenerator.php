@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Sermon;
 use App\Models\SermonSeries;
 use Filament\Actions\Action;
@@ -22,6 +23,7 @@ use Filament\Support\Enums\Width;
  */
 class SermonGenerator extends Page implements HasForms
 {
+    use HasRoleAccess;
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-megaphone';

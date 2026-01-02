@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\GeneratedMedia;
 use App\Services\ApiUsageTracker;
 use App\Services\KieAiService;
@@ -28,6 +29,7 @@ use Prism\Prism\Prism;
  */
 class ImageGenerator extends Page implements HasForms
 {
+    use HasRoleAccess;
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-photo';

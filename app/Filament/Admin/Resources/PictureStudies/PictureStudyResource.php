@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\PictureStudies\Pages\EditPictureStudy;
 use App\Filament\Admin\Resources\PictureStudies\Pages\ListPictureStudies;
 use App\Filament\Admin\Resources\PictureStudies\Schemas\PictureStudyForm;
 use App\Filament\Admin\Resources\PictureStudies\Tables\PictureStudiesTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\PictureStudy;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PictureStudyResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = PictureStudy::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartBar;

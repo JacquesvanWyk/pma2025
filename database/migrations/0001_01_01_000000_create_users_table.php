@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'senior_pastor', 'pastor', 'member'])->default('member');
+            $table->enum('role', ['admin', 'pastor', 'team_member'])->default('team_member');
             $table->string('language_preference', 10)->default('en');
             $table->string('timezone', 50)->default('Africa/Johannesburg');
             $table->string('avatar_url', 500)->nullable();

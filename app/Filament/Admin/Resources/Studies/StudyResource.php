@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Studies\Pages\EditStudy;
 use App\Filament\Admin\Resources\Studies\Pages\ListStudies;
 use App\Filament\Admin\Resources\Studies\Schemas\StudyForm;
 use App\Filament\Admin\Resources\Studies\Tables\StudiesTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Study;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class StudyResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Study::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;

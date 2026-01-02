@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\VideoProjects;
 use App\Filament\Admin\Resources\VideoProjects\Pages\CreateVideoProject;
 use App\Filament\Admin\Resources\VideoProjects\Pages\EditVideoProject;
 use App\Filament\Admin\Resources\VideoProjects\Pages\ManageVideoProjects;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\VideoProject;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -29,6 +30,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class VideoProjectResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = VideoProject::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFilm;

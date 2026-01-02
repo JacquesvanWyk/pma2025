@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\Albums\Pages\ListAlbums;
 use App\Filament\Admin\Resources\Albums\RelationManagers\SongsRelationManager;
 use App\Filament\Admin\Resources\Albums\Schemas\AlbumForm;
 use App\Filament\Admin\Resources\Albums\Tables\AlbumsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Album;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AlbumResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Album::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMusicalNote;

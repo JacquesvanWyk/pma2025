@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Tracts\Pages\EditTract;
 use App\Filament\Admin\Resources\Tracts\Pages\ListTracts;
 use App\Filament\Admin\Resources\Tracts\Schemas\TractForm;
 use App\Filament\Admin\Resources\Tracts\Tables\TractsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Tract;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TractResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Tract::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;

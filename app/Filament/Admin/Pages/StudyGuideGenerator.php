@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Study;
 use App\Models\Tag;
 use App\Models\Tract;
@@ -27,6 +28,7 @@ use Prism\Prism\Prism;
  */
 class StudyGuideGenerator extends Page implements HasForms
 {
+    use HasRoleAccess;
     use InteractsWithForms;
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-book-open';

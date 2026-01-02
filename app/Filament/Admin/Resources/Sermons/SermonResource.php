@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Sermons\Pages\EditSermon;
 use App\Filament\Admin\Resources\Sermons\Pages\ListSermons;
 use App\Filament\Admin\Resources\Sermons\Schemas\SermonForm;
 use App\Filament\Admin\Resources\Sermons\Tables\SermonsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\Sermon;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SermonResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = Sermon::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

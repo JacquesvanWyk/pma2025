@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Individuals\Pages\EditIndividual;
 use App\Filament\Admin\Resources\Individuals\Pages\ListIndividuals;
 use App\Filament\Admin\Resources\Individuals\Schemas\IndividualForm;
 use App\Filament\Admin\Resources\Individuals\Tables\IndividualsTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\NetworkMember;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class IndividualResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = NetworkMember::class;
 
     protected static ?string $modelLabel = 'Individual';

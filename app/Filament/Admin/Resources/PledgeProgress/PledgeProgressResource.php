@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\PledgeProgress\Pages\EditPledgeProgress;
 use App\Filament\Admin\Resources\PledgeProgress\Pages\ListPledgeProgress;
 use App\Filament\Admin\Resources\PledgeProgress\Schemas\PledgeProgressForm;
 use App\Filament\Admin\Resources\PledgeProgress\Tables\PledgeProgressTable;
+use App\Filament\Concerns\HasRoleAccess;
 use App\Models\PledgeProgress;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 
 class PledgeProgressResource extends Resource
 {
+    use HasRoleAccess;
+
     protected static ?string $model = PledgeProgress::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyDollar;
