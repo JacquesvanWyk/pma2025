@@ -80,6 +80,7 @@ Route::get('/donate', [DonateController::class, 'index'])->name('donate');
 Route::get('/donate/once', [DonateController::class, 'once'])->name('donate.once');
 Route::get('/donate/monthly', [DonateController::class, 'monthly'])->name('donate.monthly');
 Route::get('/pledge', [DonateController::class, 'pledge'])->name('pledge');
+Route::post('/donate/notify', [DonateController::class, 'notify'])->name('donate.notify');
 
 // Legal routes
 Route::view('/privacy', 'legal.privacy')->name('privacy');
