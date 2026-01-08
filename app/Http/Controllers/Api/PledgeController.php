@@ -30,15 +30,15 @@ class PledgeController extends Controller
             'current_amount' => $request->current_amount,
         ];
 
-        if ($request->has('month')) {
-            $data['month'] = $request->month;
-        }
-
         if ($request->has('goal_amount')) {
             $data['goal_amount'] = $request->goal_amount;
         }
 
-        $pledge = PledgeProgress::create($data);
+        // Update existing record for the month, or create if doesn't exist
+        $pledge = PledgeProgress::updateOrCreate(
+            ['month' => $request->month ?? 'January'],
+            $data
+        );
 
         return response()->json([
             'success' => true,

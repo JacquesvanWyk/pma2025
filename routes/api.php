@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/kie/callback', [KieCallbackController::class, 'handle'])->name('kie.callback');
 
+Route::post('/pledge/update', [PledgeController::class, 'update']);
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/pledge/update', [PledgeController::class, 'update']);
+    // Future authenticated routes here
 });
 
 Route::middleware('web')->group(function () {
