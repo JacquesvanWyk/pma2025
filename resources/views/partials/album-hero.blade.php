@@ -163,8 +163,16 @@
                            target="_blank"
                            rel="noopener"
                            class="group flex items-center gap-2 px-4 py-3 bg-[#FA243C]/10 hover:bg-[#FA243C]/20 border border-[#FA243C]/30 rounded-lg transition-all hover:-translate-y-1">
-                            <svg class="w-6 h-6 text-[#FA243C]" viewBox="0 0 50 50" fill="currentColor">
-                                <path d="M37,4H13c-4.962,0-9,4.038-9,9v24c0,4.962,4.038,9,9,9h24c4.962,0,9-4.038,9-9V13C46,8.038,41.962,4,37,4z M35,27v4v0.021 h-0.002C34.986,33.768,32.749,36,30,36h-0.5c-0.987,0-1.933-0.42-2.596-1.152c-0.662-0.731-0.985-1.718-0.887-2.705 C26.195,30.38,27.787,29,29.643,29H31v-2c0-2.206-1.794-4-4-4s-4,1.794-4,4v10h-2V17.5h2v2.242C23.75,18.746,25.254,18,27,18 c3.86,0,7,3.14,7,7V27z"/>
+                            <svg class="w-6 h-6" viewBox="0 0 512 512" fill="none">
+                                <rect width="512" height="512" rx="100" fill="url(#apple-gradient)"/>
+                                <path d="M368.5 278.5c-1.6-38.6 31.5-57.2 32.9-58.1-17.9-26.2-45.8-29.8-55.7-30.2-23.7-2.4-46.3 14-58.3 14-12.1 0-30.8-13.7-50.6-13.3-26 .4-50 15.1-63.4 38.4-27 48.7-6.9 120.9 19.4 160.4 12.9 19.4 28.2 41.1 48.4 40.4 19.6-.8 27-12.7 50.6-12.7s30.5 12.7 50.6 12.3c20.9-.3 34.5-19.9 47.4-39.4 14.9-22.5 21-44.3 21.3-45.4-.5-.2-40.8-15.6-42.6-62.4z" fill="white"/>
+                                <path d="M318.8 148.6c10.8-13.1 18.1-31.3 16.1-49.5-15.6.6-34.5 10.4-45.7 23.5-10 11.6-18.7 30.1-16.4 47.9 17.3 1.3 35-8.8 45.9-21.9z" fill="white"/>
+                                <defs>
+                                    <linearGradient id="apple-gradient" x1="256" y1="0" x2="256" y2="512">
+                                        <stop stop-color="#FA243C"/>
+                                        <stop offset="1" stop-color="#FA243C"/>
+                                    </linearGradient>
+                                </defs>
                             </svg>
                             <span class="text-white font-medium hidden sm:inline">Apple Music</span>
                         </a>
@@ -174,8 +182,9 @@
                            target="_blank"
                            rel="noopener"
                            class="group flex items-center gap-2 px-4 py-3 bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/30 rounded-lg transition-all hover:-translate-y-1">
-                            <svg class="w-6 h-6 text-[#FF0000]" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5v2l1.79-1z"/>
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" fill="#FF0000"/>
+                                <path d="M10 8.5v7l6-3.5-6-3.5z" fill="white"/>
                             </svg>
                             <span class="text-white font-medium hidden sm:inline">YouTube</span>
                         </a>
