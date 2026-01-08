@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\KieCallbackController;
 use App\Http\Controllers\Api\PledgeController;
 use App\Http\Controllers\Api\SongPlayController;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/kie/callback', [KieCallbackController::class, 'handle'])->name('kie.callback');
 
 Route::post('/pledge/update', [PledgeController::class, 'update']);
+Route::get('/analytics/downloads', [AnalyticsController::class, 'downloads']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Future authenticated routes here
