@@ -773,7 +773,7 @@
     <div id="donationModal"
          class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4"
          onclick="closeDonationModal(event)">
-        <div class="relative w-full max-w-lg bg-white rounded-lg shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+        <div class="relative w-full max-w-lg max-h-[90vh] bg-white rounded-lg shadow-2xl overflow-y-auto" onclick="event.stopPropagation()">
             <div class="bg-gradient-to-r from-[var(--color-pma-green)] to-[var(--color-pma-green-light)] p-6 text-white">
                 <button onclick="closeDonationModal()" class="absolute top-4 right-4 text-white/80 hover:text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
