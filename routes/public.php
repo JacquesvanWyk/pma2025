@@ -81,6 +81,9 @@ Route::get('/donate/once', [DonateController::class, 'once'])->name('donate.once
 Route::get('/donate/monthly', [DonateController::class, 'monthly'])->name('donate.monthly');
 Route::get('/pledge', [DonateController::class, 'pledge'])->name('pledge');
 Route::post('/donate/notify', [DonateController::class, 'notify'])->name('donate.notify');
+Route::post('/paypal_webhook', [DonateController::class, 'paypalWebhook'])->name('paypal.webhook');
+Route::post('/paypal/create-plan', [DonateController::class, 'createPayPalPlan'])->name('paypal.create-plan');
+Route::get('/api/exchange-rate', [DonateController::class, 'getExchangeRate'])->name('api.exchange-rate');
 
 // Legal routes
 Route::view('/privacy', 'legal.privacy')->name('privacy');

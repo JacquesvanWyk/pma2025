@@ -829,7 +829,9 @@
 
                 <div class="mb-4">
                     <h4 class="font-semibold text-[var(--color-indigo)] mb-3">Pay Online</h4>
-                    <form id="payfastForm" action="https://payment.payfast.io/eng/process" method="post">
+
+                    {{-- PayFast Button --}}
+                    <form id="payfastForm" action="https://payment.payfast.io/eng/process" method="post" class="mb-3">
                         <input type="hidden" name="cmd" value="_paynow">
                         <input type="hidden" name="receiver" value="13157150">
                         <input type="hidden" name="item_name" value="PMA Worship - {{ $album->title }} Donation">
@@ -845,6 +847,29 @@
                             <span id="donateBtnText">Donate R{{ $album->suggested_donation > 0 ? number_format($album->suggested_donation, 2) : '50.00' }} with PayFast</span>
                         </button>
                     </form>
+
+                    {{-- PayPal Button --}}
+                    <div class="mt-4 pt-4 border-t-2" style="border-color: var(--color-cream-dark);">
+                        <div class="mb-3 p-3 rounded-lg" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
+                            <p class="text-sm font-semibold mb-1" style="color: #92400e;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Alternative Payment Option
+                            </p>
+                            <p class="text-xs" style="color: #78350f;">
+                                PayFast accepts both South African and international cards. If you experience any issues with PayFast, PayPal (USD) is available as an alternative payment method.
+                            </p>
+                        </div>
+                        <p class="text-center text-sm mb-2" style="color: var(--color-olive);">Or pay with PayPal</p>
+                        <div class="text-center mb-3">
+                            <span class="inline-block px-4 py-2 rounded-lg text-lg font-bold" style="background: var(--color-cream); color: var(--color-indigo);" id="paypal-usd-amount">
+                                Loading...
+                            </span>
+                        </div>
+                        <div id="paypal-donate-button-container"></div>
+                        <p class="text-xs text-center mt-2 text-gray-500" id="paypal-usd-display"></p>
+                    </div>
                 </div>
 
                 <div class="mb-6">
@@ -876,12 +901,39 @@
 
 @push('scripts')
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD"></script>
 <script>
     // Audio Player State
     let audio = new Audio();
     let isPlaying = false;
     let currentSongIndex = -1;
     let currentPlayingSongId = null;
+
+    // Exchange Rate (ZAR to USD)
+    let exchangeRate = 18; // Default fallback
+
+    // Fetch live exchange rate on page load
+    fetch('/api/exchange-rate')
+        .then(response => response.json())
+        .then(data => {
+            exchangeRate = data.rate;
+            console.log('Exchange rate: 1 USD = ' + exchangeRate + ' ZAR');
+            // Update USD display if modal is open
+            updateUSDDisplay();
+        })
+        .catch(err => console.error('Failed to fetch exchange rate:', err));
+
+    function updateUSDDisplay() {
+        const amount = parseFloat(document.getElementById('customDonationAmount')?.value) || 50;
+        const usdAmountEl = document.getElementById('paypal-usd-amount');
+        const usdDisplayEl = document.getElementById('paypal-usd-display');
+
+        if (usdAmountEl && usdDisplayEl) {
+            const usd = (amount / exchangeRate).toFixed(2);
+            usdAmountEl.textContent = `$${usd} USD`;
+            usdDisplayEl.textContent = `(R${amount} at $${exchangeRate.toFixed(2)}/R)`;
+        }
+    }
 
     // Update song row playing state
     function updateSongRowStates() {
@@ -1227,6 +1279,76 @@
                 btn.classList.add('border-gray-200', 'text-gray-700');
             }
         });
+
+        // Update USD display
+        updateUSDDisplay();
+    }
+
+    // Render PayPal Button when modal opens
+    function renderPayPalButton() {
+        const container = document.getElementById('paypal-donate-button-container');
+        if (!container) {
+            console.error('PayPal container not found');
+            return;
+        }
+        if (container.hasChildNodes()) return;
+
+        // Check if PayPal is loaded
+        if (typeof paypal === 'undefined') {
+            console.error('PayPal SDK not loaded');
+            container.innerHTML = '<p class="text-sm text-red-500 text-center py-2">PayPal failed to load. Please refresh the page.</p>';
+            return;
+        }
+
+        // Convert ZAR to USD using live rate
+        const amountZAR = parseFloat(document.getElementById('customDonationAmount').value) || 50;
+        const amountUSD = (amountZAR / exchangeRate).toFixed(2);
+
+        paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                color: 'gold',
+                shape: 'rect',
+                label: 'paypal'
+            },
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: amountUSD,
+                            currency_code: 'USD'
+                        },
+                        description: 'PMA Worship - {{ $album->title }} Donation (R'+amountZAR+')'
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    alert('Thank you for your donation, ' + details.payer.name.given_name + '!');
+
+                    // If this was for a download, trigger it
+                    const storedIntent = localStorage.getItem('pma_download_intent');
+                    if (storedIntent) {
+                        const intent = JSON.parse(storedIntent);
+                        if (intent.albumId === {{ $album->id }}) {
+                            localStorage.removeItem('pma_download_intent');
+                            setTimeout(() => {
+                                triggerAlbumDownload(intent.type);
+                            }, 1000);
+                        }
+                    }
+
+                    closeDonationModal();
+                });
+            },
+            onError: function(err) {
+                console.error('PayPal error:', err);
+                container.innerHTML = '<p class="text-sm text-red-500 text-center py-2">PayPal error. Please try PayFast.</p>';
+            }
+        }).render('#paypal-donate-button-container').catch(function(err) {
+            console.error('PayPal render error:', err);
+            container.innerHTML = '<p class="text-sm text-red-500 text-center py-2">Could not load PayPal button.</p>';
+        });
     }
 
     function showDonationModal(downloadType, albumType) {
@@ -1265,6 +1387,9 @@
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+
+        // Render PayPal button
+        renderPayPalButton();
     }
 
     function closeDonationModal(event) {

@@ -3,6 +3,10 @@
 @section('title', 'One-Time Donation - Pioneer Missions Africa')
 @section('description', 'Make a one-time donation to support Pioneer Missions Africa ministry work across South Africa and Africa.')
 
+@push('scripts')
+<script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD"></script>
+@endpush
+
 @section('content')
 <div class="py-12">
     <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
@@ -133,7 +137,22 @@
                     </div>
 
                     <div>
-                        <h2 class="text-2xl font-semibold mb-6">Payment Information</h2>
+                        <h2 class="text-2xl font-semibold mb-6">Payment Method</h2>
+
+                        <div class="card bg-base-200 mb-6">
+                            <div class="card-body">
+                                <h3 class="card-title text-lg mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                    Pay with PayPal
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-4">
+                                    Quick, secure payment with PayPal. No account required.
+                                </p>
+                                <div id="paypal-button-container"></div>
+                            </div>
+                        </div>
 
                         <div class="card bg-base-200 mb-6">
                             <div class="card-body">
@@ -269,4 +288,61 @@
         </div>
     </div>
 </div>
+
+<script>
+let exchangeRate = 18; // Default fallback rate
+
+// Fetch live exchange rate on page load
+fetch('/api/exchange-rate')
+    .then(response => response.json())
+    .then(data => {
+        exchangeRate = data.rate;
+        console.log('Exchange rate: 1 USD = ' + exchangeRate + ' ZAR');
+    })
+    .catch(err => console.error('Failed to fetch exchange rate:', err));
+
+document.addEventListener('DOMContentLoaded', function() {
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            const amountRadios = document.getElementsByName('amount');
+            let amountZAR = 100;
+
+            for (const radio of amountRadios) {
+                if (radio.checked) {
+                    if (radio.value === 'custom') {
+                        const customInput = document.querySelector('input[name="custom_amount"]');
+                        amountZAR = parseFloat(customInput.value) || 100;
+                    } else {
+                        amountZAR = parseFloat(radio.value);
+                    }
+                    break;
+                }
+            }
+
+            // Convert ZAR to USD using live rate
+            const amountUSD = (amountZAR / exchangeRate).toFixed(2);
+
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: amountUSD,
+                        currency_code: 'USD'
+                    },
+                    description: 'Donation to Pioneer Missions Africa (R' + amountZAR + ')'
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                alert('Thank you for your donation, ' + details.payer.name.given_name + '!');
+                window.location.href = '{{ route('donate') }}';
+            });
+        },
+        onError: function(err) {
+            console.error('PayPal error:', err);
+            alert('An error occurred with your payment. Please try again or contact us.');
+        }
+    }).render('#paypal-button-container');
+});
+</script>
 @endsection

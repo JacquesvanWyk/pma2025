@@ -3,6 +3,10 @@
 @section('title', 'Support - Pioneer Missions Africa')
 @section('description', 'Support Pioneer Missions Africa through one-time donations or monthly contributions. Your support helps spread the Everlasting Gospel across Africa.')
 
+@push('scripts')
+<script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD"></script>
+@endpush
+
 @section('content')
 <!-- Hero Section -->
 <section class="relative py-20 lg:py-32 overflow-hidden" style="background: var(--gradient-hero);">
@@ -59,7 +63,25 @@
                             <label class="block pma-heading-light text-sm mb-2 text-center" style="color: var(--color-indigo);">
                                 Amount (ZAR)
                             </label>
+
+                            {{-- Quick Amount Buttons --}}
+                            <div class="grid grid-cols-4 gap-2 mb-3">
+                                <button type="button" onclick="setDonationAmount(50)" class="donation-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold" style="color: var(--color-indigo);">R50</span>
+                                </button>
+                                <button type="button" onclick="setDonationAmount(100)" class="donation-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold" style="color: var(--color-indigo);">R100</span>
+                                </button>
+                                <button type="button" onclick="setDonationAmount(200)" class="donation-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold" style="color: var(--color-indigo);">R200</span>
+                                </button>
+                                <button type="button" onclick="setDonationAmount(500)" class="donation-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold" style="color: var(--color-indigo);">R500</span>
+                                </button>
+                            </div>
+
                             <input required id="PayFastAmount" type="number" step=".01" name="amount" min="5.00" placeholder="5.00" value="10"
+                                   onchange="updateDonationDisplay()"
                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:border-transparent pma-body text-center text-xl"
                                    style="focus:ring-color: var(--color-pma-green);">
                         </div>
@@ -71,6 +93,29 @@
                             <input type="image" src="https://my.payfast.io/images/buttons/DonateNow/Dark-Large-DonateNow.png" alt="Donate Now" title="Donate Now with Payfast" class="mx-auto">
                         </div>
                     </form>
+
+                    <!-- PayPal One-Time -->
+                    <div class="mt-6 pt-6 border-t-2" style="border-color: var(--color-cream-dark);">
+                        <div class="mb-4 p-3 rounded-lg" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
+                            <p class="text-sm font-semibold mb-1" style="color: #92400e;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Alternative Payment Option
+                            </p>
+                            <p class="text-xs" style="color: #78350f;">
+                                PayFast accepts both South African and international cards. If you experience any issues with PayFast, PayPal (USD) is available as an alternative payment method.
+                            </p>
+                        </div>
+                        <p class="text-center text-sm mb-2" style="color: var(--color-olive);">Or pay with PayPal</p>
+                        <div class="text-center mb-3">
+                            <span class="inline-block px-4 py-2 rounded-lg text-lg font-bold" style="background: var(--color-cream); color: var(--color-indigo);" id="paypal-onetime-amount">
+                                Loading...
+                            </span>
+                        </div>
+                        <div id="paypal-onetime-button-container"></div>
+                        <p class="text-xs text-center mt-2 text-gray-500" id="paypal-onetime-usd"></p>
+                    </div>
 
                     <div class="mt-6 p-4 rounded-lg" style="background: var(--color-cream);">
                         <div class="flex items-start gap-3">
@@ -117,7 +162,25 @@
                             <label class="block pma-heading-light text-sm mb-2 text-center" style="color: var(--color-indigo);">
                                 Monthly Amount (ZAR)
                             </label>
+
+                            {{-- Quick Amount Buttons --}}
+                            <div class="grid grid-cols-4 gap-2 mb-3">
+                                <button type="button" onclick="setMonthlyAmount(50)" class="monthly-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold text-sm" style="color: var(--color-indigo);">R50</span>
+                                </button>
+                                <button type="button" onclick="setMonthlyAmount(100)" class="monthly-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold text-sm" style="color: var(--color-indigo);">R100</span>
+                                </button>
+                                <button type="button" onclick="setMonthlyAmount(250)" class="monthly-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold text-sm" style="color: var(--color-indigo);">R250</span>
+                                </button>
+                                <button type="button" onclick="setMonthlyAmount(500)" class="monthly-amount-btn px-3 py-2 border-2 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors" style="border-color: var(--color-cream-dark);">
+                                    <span class="block font-semibold text-sm" style="color: var(--color-indigo);">R500</span>
+                                </button>
+                            </div>
+
                             <input required id="PayFastAmount" type="number" step=".01" name="amount" min="5.00" placeholder="5.00" value="10"
+                                   onchange="updateDonationDisplay()"
                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:border-transparent pma-body text-center text-xl"
                                    style="focus:ring-color: var(--color-pma-green);">
                         </div>
@@ -133,6 +196,29 @@
                             <input type="image" src="https://my.payfast.io/images/buttons/Subscribe/Primary-Large-Subscribe.png" alt="Subscribe" title="Subscribe with Payfast" class="mx-auto">
                         </div>
                     </form>
+
+                    <!-- PayPal Monthly -->
+                    <div class="mt-6 pt-6 border-t-2" style="border-color: var(--color-cream-dark);">
+                        <div class="mb-4 p-3 rounded-lg" style="background: #fef3c9; border-left: 4px solid #10b981;">
+                            <p class="text-sm font-semibold mb-1" style="color: #065f46;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Alternative Payment Option
+                            </p>
+                            <p class="text-xs" style="color: #064e3b;">
+                                PayFast accepts both South African and international cards. If you experience any issues with PayFast, PayPal (USD) is available as an alternative payment method.
+                            </p>
+                        </div>
+                        <p class="text-center text-sm mb-2" style="color: var(--color-olive);">Or subscribe with PayPal</p>
+                        <div class="text-center mb-3">
+                            <span class="inline-block px-4 py-2 rounded-lg text-lg font-bold" style="background: var(--color-cream); color: var(--color-indigo);" id="paypal-monthly-amount">
+                                Loading...
+                            </span>
+                        </div>
+                        <div id="paypal-monthly-button-container"></div>
+                        <p class="text-xs text-center mt-2 text-gray-500" id="paypal-monthly-usd"></p>
+                    </div>
 
                     <div class="mt-6 p-4 rounded-lg" style="background: var(--color-cream);">
                         <div class="flex items-start gap-3">
@@ -239,6 +325,159 @@
 
 @push('scripts')
 <script>
+let exchangeRate = 18;
+
+// Fetch exchange rate
+fetch('/api/exchange-rate')
+    .then(response => response.json())
+    .then(data => {
+        exchangeRate = data.rate;
+        updateUSDDisplay();
+        renderPayPalButtons();
+    })
+    .catch(err => {
+        console.error('Failed to fetch exchange rate:', err);
+        updateUSDDisplay();
+        renderPayPalButtons();
+    });
+
+function updateUSDDisplay() {
+    const onetimeInput = document.getElementById('PayFastAmount');
+    if (onetimeInput && onetimeInput.value) {
+        const zar = parseFloat(onetimeInput.value);
+        const usd = (zar / exchangeRate).toFixed(2);
+        document.getElementById('paypal-onetime-amount').textContent = `$${usd} USD`;
+        document.getElementById('paypal-onetime-usd').textContent = `(R${zar} at $${exchangeRate.toFixed(2)}/R)`;
+    }
+
+    const monthlyInput = document.querySelectorAll('#PayFastAmount')[1];
+    if (monthlyInput && monthlyInput.value) {
+        const zar = parseFloat(monthlyInput.value);
+        const usd = (zar / exchangeRate).toFixed(2);
+        document.getElementById('paypal-monthly-amount').textContent = `$${usd} USD /month`;
+        document.getElementById('paypal-monthly-usd').textContent = `(R${zar}/month at $${exchangeRate.toFixed(2)}/R)`;
+    }
+}
+
+// Set one-time donation amount from quick buttons
+function setDonationAmount(amount) {
+    const input = document.getElementById('PayFastAmount');
+    if (input) {
+        input.value = amount;
+        updateUSDDisplay();
+
+        // Highlight selected button
+        document.querySelectorAll('.donation-amount-btn').forEach(btn => {
+            const btnAmount = parseInt(btn.textContent.replace('R', ''));
+            if (btnAmount === amount) {
+                btn.classList.remove('border-gray-300');
+                btn.classList.add('border-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+            } else {
+                btn.classList.add('border-gray-300');
+                btn.classList.remove('border-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+            }
+        });
+    }
+}
+
+// Set monthly donation amount from quick buttons
+function setMonthlyAmount(amount) {
+    const inputs = document.querySelectorAll('#PayFastAmount');
+    if (inputs[1]) {
+        inputs[1].value = amount;
+        updateUSDDisplay();
+
+        // Highlight selected button
+        document.querySelectorAll('.monthly-amount-btn').forEach(btn => {
+            const btnAmount = parseInt(btn.textContent.replace('R', ''));
+            if (btnAmount === amount) {
+                btn.classList.remove('border-gray-300');
+                btn.classList.add('border-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+            } else {
+                btn.classList.add('border-gray-300');
+                btn.classList.remove('border-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+            }
+        });
+    }
+}
+
+// Update donation display when input changes
+function updateDonationDisplay() {
+    updateUSDDisplay();
+
+    // Clear button highlights when using custom input
+    document.querySelectorAll('.donation-amount-btn, .monthly-amount-btn').forEach(btn => {
+        btn.classList.add('border-gray-300');
+        btn.classList.remove('border-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+    });
+}
+
+function renderPayPalButtons() {
+    // One-Time PayPal Button
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            const input = document.getElementById('PayFastAmount');
+            const amountZAR = parseFloat(input?.value) || 10;
+            const amountUSD = (amountZAR / exchangeRate).toFixed(2);
+
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: amountUSD,
+                        currency_code: 'USD'
+                    },
+                    description: 'One-Time Donation to Pioneer Missions Africa (R' + amountZAR + ')'
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                alert('Thank you for your donation, ' + details.payer.name.given_name + '!');
+                window.location.href = 'https://pioneermissionsafrica.co.za/donate/thank-you';
+            });
+        },
+        onError: function(err) {
+            console.error('PayPal error:', err);
+        }
+    }).render('#paypal-onetime-button-container');
+
+    // Monthly PayPal Button (subscription)
+    const monthlyInput = document.querySelectorAll('#PayFastAmount')[1];
+    const monthlyAmount = parseFloat(monthlyInput?.value) || 10;
+
+    // Create plan via backend for subscription
+    fetch('/paypal/create-plan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+        },
+        body: JSON.stringify({ amount: monthlyAmount })
+    })
+    .then(response => response.json())
+    .then(planData => {
+        if (planData.plan_id) {
+            paypal.Buttons({
+                createSubscription: function(data, actions) {
+                    return actions.subscription.create({
+                        'plan_id': planData.plan_id
+                    });
+                },
+                onApprove: function(data, actions) {
+                    alert('Thank you for your monthly pledge!');
+                    window.location.href = 'https://pioneermissionsafrica.co.za/pledge';
+                },
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                }
+            }).render('#paypal-monthly-button-container');
+        }
+    })
+    .catch(err => {
+        console.error('Failed to create PayPal plan:', err);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const observerOptions = {
         threshold: 0.1,
@@ -256,6 +495,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.pma-animate-on-scroll').forEach(el => {
         observer.observe(el);
+    });
+
+    // Update USD display when amounts change
+    const inputs = document.querySelectorAll('#PayFastAmount');
+    inputs.forEach(input => {
+        input.addEventListener('change', updateDonationDisplay);
+        input.addEventListener('input', updateDonationDisplay);
     });
 });
 </script>

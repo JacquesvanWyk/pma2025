@@ -21,6 +21,7 @@
         "league/flysystem-aws-s3-v3": "^3.30",
         "livewire/flux": "^2.1.1",
         "livewire/volt": "^1.7.0",
+        "paypal/rest-api-sdk-php": "^1.6",
         "phpoffice/phppresentation": "^1.2",
         "prism-php/prism": "^0.96.1",
         "ritechoice23/laravel-fluent-ffmpeg": "^1.3",

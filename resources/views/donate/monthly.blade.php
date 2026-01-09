@@ -3,6 +3,10 @@
 @section('title', 'Monthly Pledge - Pioneer Missions Africa')
 @section('description', 'Become a monthly partner with Pioneer Missions Africa. Provide sustained support for spreading the Everlasting Gospel across Africa.')
 
+@push('scripts')
+<script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD&vault=true"></script>
+@endpush
+
 @section('content')
 <!-- Hero Section -->
 <section class="relative py-20 lg:py-32 overflow-hidden" style="background: var(--gradient-hero);">
@@ -277,6 +281,51 @@
 
             <!-- Right Column - Benefits -->
             <div class="lg:col-span-2 space-y-8">
+                <!-- PayPal Monthly Option -->
+                <div class="pma-card-elevated pma-animate-on-scroll pma-stagger-1">
+                    <div class="p-8">
+                        <h3 class="pma-heading text-xl mb-4" style="color: var(--color-indigo);">Quick Monthly Setup with PayPal</h3>
+                        <p class="pma-body text-sm mb-6" style="color: var(--color-olive);">
+                            Set up your monthly pledge quickly and securely with PayPal. Easy cancellation anytime.
+                        </p>
+
+                        {{-- Quick Amount Suggestions --}}
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <button type="button" onclick="setMonthlyAmount(50)" class="monthly-amount-btn p-3 border-2 border-gray-200 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors">
+                                <span class="pma-heading text-lg" style="color: var(--color-indigo);">R50</span>
+                                <p class="pma-body text-xs" style="color: var(--color-olive);">per month</p>
+                            </button>
+                            <button type="button" onclick="setMonthlyAmount(100)" class="monthly-amount-btn p-3 border-2 border-[var(--color-pma-green)] bg-[var(--color-pma-green)]/10 rounded-lg text-center">
+                                <span class="pma-heading text-lg" style="color: var(--color-indigo);">R100</span>
+                                <p class="pma-body text-xs" style="color: var(--color-olive);">per month</p>
+                            </button>
+                            <button type="button" onclick="setMonthlyAmount(250)" class="monthly-amount-btn p-3 border-2 border-gray-200 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors">
+                                <span class="pma-heading text-lg" style="color: var(--color-indigo);">R250</span>
+                                <p class="pma-body text-xs" style="color: var(--color-olive);">per month</p>
+                            </button>
+                            <button type="button" onclick="setMonthlyAmount(500)" class="monthly-amount-btn p-3 border-2 border-gray-200 rounded-lg text-center hover:border-[var(--color-pma-green)] transition-colors">
+                                <span class="pma-heading text-lg" style="color: var(--color-indigo);">R500</span>
+                                <p class="pma-body text-xs" style="color: var(--color-olive);">per month</p>
+                            </button>
+                        </div>
+
+                        {{-- Custom Amount Input --}}
+                        <div class="mb-4">
+                            <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">Or enter custom monthly amount:</label>
+                            <div class="flex items-center rounded-lg border border-gray-300">
+                                <span class="px-3 py-2 pma-heading-light text-sm" style="color: var(--color-indigo);">R</span>
+                                <input type="number" id="customMonthlyAmount" placeholder="100" class="flex-1 px-2 py-2 border-0 focus:outline-none pma-body" min="10" step="1" value="100" onchange="updateMonthlyAmount(this.value)">
+                                <span class="px-3 py-2 pma-body text-sm" style="color: var(--color-olive);">/month</span>
+                            </div>
+                        </div>
+
+                        <div id="paypal-subscription-button-container" class="mb-4"></div>
+                        <p class="pma-body text-xs" style="color: var(--color-olive);">
+                            You can manage or cancel your subscription anytime from your PayPal account.
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Why Monthly Giving -->
                 <div class="pma-card-elevated pma-animate-on-scroll pma-stagger-1" style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-pma-green-dark));">
                     <div class="p-8 text-white">
@@ -470,6 +519,80 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.pma-animate-on-scroll').forEach(el => {
         observer.observe(el);
     });
+
+    // Amount selection functions
+    window.setMonthlyAmount = function(amount) {
+        document.getElementById('customMonthlyAmount').value = amount;
+        updateMonthlyAmount(amount);
+    };
+
+    window.updateMonthlyAmount = function(amount) {
+        amount = parseFloat(amount) || 100;
+        if (amount < 10) amount = 10;
+
+        // Update button styles
+        document.querySelectorAll('.monthly-amount-btn').forEach(btn => {
+            btn.classList.remove('border-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
+            btn.classList.add('border-gray-200');
+        });
+
+        // Re-render PayPal button with new amount
+        renderPayPalButton(amount);
+    };
+
+    // Render PayPal subscription button
+    async function renderPayPalButton(amount) {
+        const container = document.getElementById('paypal-subscription-button-container');
+
+        // Clear existing button
+        container.innerHTML = '<p class="text-sm text-gray-500 text-center">Loading PayPal...</p>';
+
+        // Create plan via backend
+        try {
+            const response = await fetch('/paypal/create-plan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify({ amount: amount })
+            });
+
+            const data = await response.json();
+
+            if (!data.plan_id) {
+                container.innerHTML = '<p class="text-sm text-red-500 text-center">Failed to load PayPal. Please refresh.</p>';
+                return;
+            }
+
+            // Clear loading message
+            container.innerHTML = '';
+
+            // Render PayPal button with the plan
+            paypal.Buttons({
+                createSubscription: function(data, actions) {
+                    return actions.subscription.create({
+                        'plan_id': data.plan_id
+                    });
+                },
+                onApprove: function(data, actions) {
+                    alert('Thank you for your monthly pledge! Subscription ID: ' + data.subscriptionID);
+                    window.location.href = '{{ route('pledge') }}';
+                },
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                    alert('An error occurred. Please try again.');
+                }
+            }).render('#paypal-subscription-button-container');
+
+        } catch (error) {
+            console.error('Failed to create PayPal plan:', error);
+            container.innerHTML = '<p class="text-sm text-red-500 text-center">Failed to load PayPal. Please try again.</p>';
+        }
+    }
+
+    // Initial render with default amount
+    renderPayPalButton(100);
 });
 </script>
 @endpush
