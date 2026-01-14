@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class DonationResource extends Resource
 {
@@ -22,7 +23,7 @@ class DonationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static ?string $navigationGroup = 'Finances';
+    protected static UnitEnum|string|null $navigationGroup = 'Finances';
 
     protected static ?string $navigationLabel = 'Donations';
 
