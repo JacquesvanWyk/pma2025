@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Donation;
 use App\Models\PledgeProgress;
+use App\Notifications\DonationThankYouNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 
 class DonateController extends Controller
 {
@@ -79,6 +81,12 @@ class DonateController extends Controller
         ]);
 
         Log::info('PayFast donation stored', ['id' => $donation->id]);
+
+        // Send thank you email
+        if ($donation->donor_email) {
+            Notification::route('mail', $donation->donor_email)
+                ->notify(new DonationThankYouNotification($donation));
+        }
 
         // Ping Clawdbot webhook on Tailscale
         try {
@@ -272,6 +280,12 @@ class DonateController extends Controller
 
             Log::info('PayPal donation stored', ['id' => $donation->id]);
 
+            // Send thank you email
+            if ($donation->donor_email) {
+                Notification::route('mail', $donation->donor_email)
+                    ->notify(new DonationThankYouNotification($donation));
+            }
+
             try {
                 $clawdbotUrl = env('CLAWDBOT_WEBHOOK_URL', 'http://100.96.236.55:3333/webhook/donation');
 
@@ -327,6 +341,12 @@ class DonateController extends Controller
             ]);
 
             Log::info('Paystack donation stored', ['id' => $donation->id]);
+
+            // Send thank you email
+            if ($donation->donor_email) {
+                Notification::route('mail', $donation->donor_email)
+                    ->notify(new DonationThankYouNotification($donation));
+            }
 
             try {
                 $clawdbotUrl = env('CLAWDBOT_WEBHOOK_URL', 'http://100.96.236.55:3333/webhook/donation');
