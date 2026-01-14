@@ -789,6 +789,13 @@
                     All our music is free to download. If you'd like to support our ministry, consider making a donation.
                 </p>
 
+                {{-- Email for Receipt --}}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email (for receipt)</label>
+                    <input type="email" id="donorEmailAlbum" placeholder="your@email.com"
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[var(--color-pma-green)] focus:ring-2 focus:ring-[var(--color-pma-green)]/20 focus:outline-none transition-colors">
+                </div>
+
                 {{-- Custom Amount Selection --}}
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-3">Choose your donation amount</label>
@@ -830,7 +837,7 @@
                 <div class="mb-4">
                     <h4 class="font-semibold text-[var(--color-indigo)] mb-3">Pay Online</h4>
 
-                    {{-- PayFast Button --}}
+                    {{-- Side-by-side Payment Buttons --}}
                     <form id="payfastForm" action="https://payment.payfast.io/eng/process" method="post" class="mb-3">
                         <input type="hidden" name="cmd" value="_paynow">
                         <input type="hidden" name="receiver" value="13157150">
@@ -838,14 +845,34 @@
                         <input type="hidden" name="amount" id="payfastAmount" value="{{ $album->suggested_donation > 0 ? $album->suggested_donation : 50 }}">
                         <input type="hidden" name="return_url" value="{{ url()->current() }}?donated=true">
                         <input type="hidden" name="cancel_url" value="{{ url()->current() }}">
-                        <button type="submit"
-                                id="donateBtn"
-                                class="w-full px-6 py-3 bg-[#0B79BF] hover:bg-[#0967a3] text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                            <span id="donateBtnText">Donate R{{ $album->suggested_donation > 0 ? number_format($album->suggested_donation, 2) : '50.00' }} with PayFast</span>
-                        </button>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            {{-- PayFast Button --}}
+                            <button type="submit"
+                                    id="donateBtn"
+                                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white transition-all hover:opacity-90"
+                                    style="background: #0B79BF;">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                                <span>PayFast</span>
+                            </button>
+
+                            {{-- Paystack Button --}}
+                            <button type="button"
+                                    onclick="payWithPaystackAlbum()"
+                                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white transition-all hover:opacity-90"
+                                    style="background: #0AA5DB;">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                                <span>Paystack</span>
+                            </button>
+                        </div>
+
+                        <p class="text-xs text-center mt-2 text-gray-500" id="donateBtnText">
+                            Donate R{{ $album->suggested_donation > 0 ? number_format($album->suggested_donation, 2) : '50.00' }}
+                        </p>
                     </form>
 
                     {{-- PayPal Button --}}
@@ -855,10 +882,10 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Alternative Payment Option
+                                International Payment Option
                             </p>
                             <p class="text-xs" style="color: #78350f;">
-                                PayFast accepts both South African and international cards. If you experience any issues with PayFast, PayPal (USD) is available as an alternative payment method.
+                                PayFast and Paystack accept SA and international cards. PayPal (USD) is available as an alternative for international donors.
                             </p>
                         </div>
                         <p class="text-center text-sm mb-2" style="color: var(--color-olive);">Or pay with PayPal</p>
@@ -902,6 +929,7 @@
 @push('scripts')
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD"></script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
     // Audio Player State
     let audio = new Audio();
@@ -1266,7 +1294,7 @@
         if (amount < 10) amount = 10;
 
         document.getElementById('payfastAmount').value = amount.toFixed(2);
-        document.getElementById('donateBtnText').textContent = `Donate R${amount.toFixed(2)} with PayFast`;
+        document.getElementById('donateBtnText').textContent = `Donate R${amount.toFixed(2)}`;
 
         // Clear button highlights when typing custom amount
         document.querySelectorAll('.donation-amount-btn').forEach(btn => {
@@ -1282,6 +1310,50 @@
 
         // Update USD display
         updateUSDDisplay();
+    }
+
+    // Paystack Payment Handler for Album Donation
+    function payWithPaystackAlbum() {
+        const amount = parseFloat(document.getElementById('customDonationAmount').value) || 50;
+        const amountInKobo = Math.round(amount * 100);
+
+        const emailInput = document.getElementById('donorEmailAlbum');
+        const email = emailInput?.value?.trim();
+
+        if (!email || !email.includes('@')) {
+            alert('Please enter a valid email address for your receipt.');
+            emailInput?.focus();
+            return;
+        }
+
+        const handler = PaystackPop.setup({
+            key: '{{ env('PAYSTACK_PUBLIC_KEY') }}',
+            email: email,
+            amount: amountInKobo,
+            currency: 'ZAR',
+            channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer', 'eft'],
+            metadata: {
+                custom_fields: [
+                    {
+                        display_name: "Album",
+                        variable_name: "album",
+                        value: "{{ $album->title }}"
+                    },
+                    {
+                        display_name: "Donation Type",
+                        variable_name: "donation_type",
+                        value: "Album Donation"
+                    }
+                ]
+            },
+            callback: function(response) {
+                window.location.href = '{{ url()->current() }}?donated=true&ref=' + response.reference;
+            },
+            onClose: function() {
+                console.log('Payment window closed');
+            }
+        });
+        handler.openIframe();
     }
 
     // Render PayPal Button when modal opens

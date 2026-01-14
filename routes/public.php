@@ -77,12 +77,14 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
 // Donation routes
 Route::get('/donate', [DonateController::class, 'index'])->name('donate');
+Route::get('/donate/thank-you', [DonateController::class, 'thankYou'])->name('donate.thank-you');
 Route::get('/donate/once', [DonateController::class, 'once'])->name('donate.once');
 Route::get('/donate/monthly', [DonateController::class, 'monthly'])->name('donate.monthly');
 Route::get('/pledge', [DonateController::class, 'pledge'])->name('pledge');
 Route::post('/donate/notify', [DonateController::class, 'notify'])->name('donate.notify');
 Route::post('/paypal_webhook', [DonateController::class, 'paypalWebhook'])->name('paypal.webhook');
 Route::post('/paypal/create-plan', [DonateController::class, 'createPayPalPlan'])->name('paypal.create-plan');
+Route::post('/paystack/webhook', [DonateController::class, 'paystackWebhook'])->name('paystack.webhook');
 Route::get('/api/exchange-rate', [DonateController::class, 'getExchangeRate'])->name('api.exchange-rate');
 
 // Legal routes

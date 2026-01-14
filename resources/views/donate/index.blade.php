@@ -5,6 +5,7 @@
 
 @push('scripts')
 <script src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&currency=USD"></script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
 @endpush
 
 @section('content')
@@ -59,6 +60,15 @@
                         <input type="hidden" name="cancel_url" value="https://pioneermissionsafrica.co.za/donate">
                         <input type="hidden" name="notify_url" value="https://pioneermissionsafrica.co.za/donate/notify">
 
+                        <div class="mb-4">
+                            <label class="block pma-heading-light text-sm mb-2 text-center" style="color: var(--color-indigo);">
+                                Email (for receipt)
+                            </label>
+                            <input type="email" id="donorEmail" name="email_address" placeholder="your@email.com"
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:border-transparent pma-body text-center"
+                                   style="focus:ring-color: var(--color-pma-green);">
+                        </div>
+
                         <div>
                             <label class="block pma-heading-light text-sm mb-2 text-center" style="color: var(--color-indigo);">
                                 Amount (ZAR)
@@ -89,9 +99,33 @@
                         <input required type="hidden" name="item_name" maxlength="255" value="One-Time Donation">
                         <input type="hidden" name="item_description" maxlength="255" value="Support Pioneer Missions Africa ministry work">
 
-                        <div class="text-center">
-                            <input type="image" src="https://my.payfast.io/images/buttons/DonateNow/Dark-Large-DonateNow.png" alt="Donate Now" title="Donate Now with Payfast" class="mx-auto">
+                        {{-- Side-by-side Payment Buttons --}}
+                        <div class="grid grid-cols-2 gap-3">
+                            {{-- PayFast Button --}}
+                            <button type="submit"
+                                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90"
+                                    style="background: #0B79BF;">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                                <span>PayFast</span>
+                            </button>
+
+                            {{-- Paystack Button --}}
+                            <button type="button"
+                                    onclick="payWithPaystack('onetime')"
+                                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90"
+                                    style="background: #0AA5DB;">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                                <span>Paystack</span>
+                            </button>
                         </div>
+
+                        <p class="text-xs text-center mt-3" style="color: var(--color-olive);">
+                            Both gateways accept SA cards, Mastercard, Visa & more
+                        </p>
                     </form>
 
                     <!-- PayPal One-Time -->
@@ -104,7 +138,7 @@
                                 Alternative Payment Option
                             </p>
                             <p class="text-xs" style="color: #78350f;">
-                                PayFast accepts both South African and international cards. If you experience any issues with PayFast, PayPal (USD) is available as an alternative payment method.
+                                PayFast and Paystack accept SA and international cards. PayPal (USD) is available as an alternative for international donors.
                             </p>
                         </div>
                         <p class="text-center text-sm mb-2" style="color: var(--color-olive);">Or pay with PayPal</p>
@@ -123,7 +157,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                             <span class="pma-body text-sm" style="color: var(--color-olive);">
-                                You will be redirected to PayFast secure payment page
+                                Secure payments via PayFast or Paystack
                             </span>
                         </div>
                     </div>
@@ -157,6 +191,15 @@
                         <input type="hidden" name="return_url" value="https://pioneermissionsafrica.co.za/donate/thank-you">
                         <input type="hidden" name="cancel_url" value="https://pioneermissionsafrica.co.za/donate">
                         <input type="hidden" name="notify_url" value="https://pioneermissionsafrica.co.za/donate/notify">
+
+                        <div class="mb-4">
+                            <label class="block pma-heading-light text-sm mb-2 text-center" style="color: var(--color-indigo);">
+                                Email (for receipt)
+                            </label>
+                            <input type="email" id="donorEmailMonthly" name="email_address" placeholder="your@email.com"
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:border-transparent pma-body text-center"
+                                   style="focus:ring-color: var(--color-pma-green);">
+                        </div>
 
                         <div>
                             <label class="block pma-heading-light text-sm mb-2 text-center" style="color: var(--color-indigo);">
@@ -192,9 +235,33 @@
                         <input required type="hidden" name="cycles" pattern="[0-9]" value="0">
                         <input required type="hidden" name="frequency" pattern="[0-9]" value="3">
 
-                        <div class="text-center">
-                            <input type="image" src="https://my.payfast.io/images/buttons/Subscribe/Primary-Large-Subscribe.png" alt="Subscribe" title="Subscribe with Payfast" class="mx-auto">
+                        {{-- Side-by-side Payment Buttons --}}
+                        <div class="grid grid-cols-2 gap-3">
+                            {{-- PayFast Button --}}
+                            <button type="submit"
+                                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90"
+                                    style="background: #0B79BF;">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                                <span>PayFast</span>
+                            </button>
+
+                            {{-- Paystack Button --}}
+                            <button type="button"
+                                    onclick="payWithPaystack('monthly')"
+                                    class="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90"
+                                    style="background: #0AA5DB;">
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                                <span>Paystack</span>
+                            </button>
                         </div>
+
+                        <p class="text-xs text-center mt-3" style="color: var(--color-olive);">
+                            Both gateways accept SA cards, Mastercard, Visa & more
+                        </p>
                     </form>
 
                     <!-- PayPal Monthly -->
@@ -207,7 +274,7 @@
                                 Alternative Payment Option
                             </p>
                             <p class="text-xs" style="color: #064e3b;">
-                                PayFast accepts both South African and international cards. If you experience any issues with PayFast, PayPal (USD) is available as an alternative payment method.
+                                PayFast and Paystack accept SA and international cards. PayPal (USD) is available as an alternative for international donors.
                             </p>
                         </div>
                         <p class="text-center text-sm mb-2" style="color: var(--color-olive);">Or subscribe with PayPal</p>
@@ -226,7 +293,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <span class="pma-body text-sm" style="color: var(--color-olive);">
-                                Set up automatic monthly donations via PayFast
+                                Set up automatic monthly donations via PayFast or Paystack
                             </span>
                         </div>
                     </div>
@@ -410,6 +477,46 @@ function updateDonationDisplay() {
         btn.classList.add('border-gray-300');
         btn.classList.remove('border-[var(--color-pma-green)]', 'bg-[var(--color-pma-green)]/10');
     });
+}
+
+// Paystack Payment Handler
+function payWithPaystack(type) {
+    const inputs = document.querySelectorAll('#PayFastAmount');
+    const amount = type === 'onetime' ? parseFloat(inputs[0]?.value) || 10 : parseFloat(inputs[1]?.value) || 10;
+    const amountInKobo = Math.round(amount * 100);
+
+    const emailInput = type === 'onetime' ? document.getElementById('donorEmail') : document.getElementById('donorEmailMonthly');
+    const email = emailInput?.value?.trim();
+
+    if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address for your receipt.');
+        emailInput?.focus();
+        return;
+    }
+
+    const handler = PaystackPop.setup({
+        key: '{{ env('PAYSTACK_PUBLIC_KEY') }}',
+        email: email,
+        amount: amountInKobo,
+        currency: 'ZAR',
+        channels: ['card', 'bank', 'ussd', 'qr', 'mobile_money', 'bank_transfer', 'eft'],
+        metadata: {
+            custom_fields: [
+                {
+                    display_name: "Donation Type",
+                    variable_name: "donation_type",
+                    value: type === 'onetime' ? 'One-Time Donation' : 'Monthly Recurring'
+                }
+            ]
+        },
+        callback: function(response) {
+            window.location.href = 'https://pioneermissionsafrica.co.za/donate/thank-you?ref=' + response.reference;
+        },
+        onClose: function() {
+            console.log('Payment window closed');
+        }
+    });
+    handler.openIframe();
 }
 
 function renderPayPalButtons() {

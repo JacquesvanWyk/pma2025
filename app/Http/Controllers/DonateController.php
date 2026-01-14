@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Donation;
 use App\Models\PledgeProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +18,13 @@ class DonateController extends Controller
     public function once()
     {
         return view('donate.once');
+    }
+
+    public function thankYou(Request $request)
+    {
+        return view('donate.thank-you', [
+            'reference' => $request->query('ref'),
+        ]);
     }
 
     public function monthly()
@@ -56,24 +64,36 @@ class DonateController extends Controller
             return response('OK');
         }
 
-        // Extract donation details
-        $donationData = [
+        // Store donation in database
+        $donation = Donation::create([
+            'gateway' => 'payfast',
+            'transaction_reference' => $request->input('pf_payment_id'),
             'amount' => floatval($request->input('amount_gross')),
-            'donor_name' => trim($request->input('name_first', '').' '.$request->input('name_last', '')),
+            'currency' => 'ZAR',
             'donor_email' => $request->input('email_address'),
-            'transaction_id' => $request->input('pf_payment_id'),
-            'is_monthly' => $request->input('subscription_type') == '1',
+            'donor_name' => trim($request->input('name_first', '').' '.$request->input('name_last', '')),
+            'status' => 'successful',
+            'is_recurring' => $request->input('subscription_type') == '1',
             'item_name' => $request->input('item_name', 'Donation'),
-            'timestamp' => now()->toIso8601String(),
-        ];
+            'metadata' => $request->all(),
+        ]);
+
+        Log::info('PayFast donation stored', ['id' => $donation->id]);
 
         // Ping Clawdbot webhook on Tailscale
         try {
             $clawdbotUrl = env('CLAWDBOT_WEBHOOK_URL', 'http://100.96.236.55:3333/webhook/donation');
 
-            Http::timeout(5)->post($clawdbotUrl, $donationData);
-
-            Log::info('Donation forwarded to Clawdbot', $donationData);
+            Http::timeout(5)->post($clawdbotUrl, [
+                'amount' => $donation->amount,
+                'donor_name' => $donation->donor_name,
+                'donor_email' => $donation->donor_email,
+                'transaction_id' => $donation->transaction_reference,
+                'is_monthly' => $donation->is_recurring,
+                'item_name' => $donation->item_name,
+                'gateway' => 'payfast',
+                'timestamp' => now()->toIso8601String(),
+            ]);
         } catch (\Exception $e) {
             Log::error('Failed to notify Clawdbot: '.$e->getMessage());
         }
@@ -234,22 +254,93 @@ class DonateController extends Controller
         if ($eventType === 'PAYMENT.CAPTURE.COMPLETED' || $eventType === 'PAYMENT.SALE.COMPLETED') {
             $paymentData = $request->input('resource');
 
-            $donationData = [
+            // Store donation in database
+            $donation = Donation::create([
+                'gateway' => 'paypal',
+                'transaction_reference' => $paymentData['id'],
                 'amount' => floatval($paymentData['amount']['value']),
-                'donor_name' => $paymentData['payer']['name']['given_name'].' '.$paymentData['payer']['name']['surname'],
-                'donor_email' => $paymentData['payer']['email_address'],
-                'transaction_id' => $paymentData['id'],
-                'is_monthly' => false,
+                'currency' => $paymentData['amount']['currency_code'] ?? 'USD',
+                'donor_email' => $paymentData['payer']['email_address'] ?? null,
+                'donor_name' => isset($paymentData['payer']['name'])
+                    ? $paymentData['payer']['name']['given_name'].' '.$paymentData['payer']['name']['surname']
+                    : null,
+                'status' => 'successful',
+                'is_recurring' => $eventType === 'BILLING.SUBSCRIPTION.ACTIVATED',
                 'item_name' => 'Donation',
-                'timestamp' => now()->toIso8601String(),
-            ];
+                'metadata' => $request->all(),
+            ]);
+
+            Log::info('PayPal donation stored', ['id' => $donation->id]);
 
             try {
                 $clawdbotUrl = env('CLAWDBOT_WEBHOOK_URL', 'http://100.96.236.55:3333/webhook/donation');
 
-                Http::timeout(5)->post($clawdbotUrl, $donationData);
+                Http::timeout(5)->post($clawdbotUrl, [
+                    'amount' => $donation->amount,
+                    'donor_name' => $donation->donor_name,
+                    'donor_email' => $donation->donor_email,
+                    'transaction_id' => $donation->transaction_reference,
+                    'is_monthly' => $donation->is_recurring,
+                    'item_name' => $donation->item_name,
+                    'gateway' => 'paypal',
+                    'timestamp' => now()->toIso8601String(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Failed to notify Clawdbot: '.$e->getMessage());
+            }
+        }
 
-                Log::info('PayPal donation forwarded to Clawdbot', $donationData);
+        return response('OK');
+    }
+
+    public function paystackWebhook(Request $request)
+    {
+        Log::info('Paystack webhook received', $request->all());
+
+        // Verify webhook signature
+        $signature = $request->header('x-paystack-signature');
+        $payload = $request->getContent();
+        $secret = env('PAYSTACK_SECRET_KEY');
+
+        if ($secret && $signature !== hash_hmac('sha512', $payload, $secret)) {
+            Log::error('Paystack signature verification failed');
+
+            return response('Invalid signature', 400);
+        }
+
+        $event = $request->input('event');
+        $data = $request->input('data');
+
+        if ($event === 'charge.success') {
+            // Store donation in database
+            $donation = Donation::create([
+                'gateway' => 'paystack',
+                'transaction_reference' => $data['reference'],
+                'amount' => $data['amount'] / 100, // Paystack sends amount in kobo
+                'currency' => $data['currency'] ?? 'ZAR',
+                'donor_email' => $data['customer']['email'] ?? null,
+                'donor_name' => $data['customer']['first_name'] ?? null,
+                'status' => 'successful',
+                'is_recurring' => false,
+                'item_name' => $data['metadata']['custom_fields'][0]['value'] ?? 'Donation',
+                'metadata' => $request->all(),
+            ]);
+
+            Log::info('Paystack donation stored', ['id' => $donation->id]);
+
+            try {
+                $clawdbotUrl = env('CLAWDBOT_WEBHOOK_URL', 'http://100.96.236.55:3333/webhook/donation');
+
+                Http::timeout(5)->post($clawdbotUrl, [
+                    'amount' => $donation->amount,
+                    'donor_name' => $donation->donor_name,
+                    'donor_email' => $donation->donor_email,
+                    'transaction_id' => $donation->transaction_reference,
+                    'is_monthly' => $donation->is_recurring,
+                    'item_name' => $donation->item_name,
+                    'gateway' => 'paystack',
+                    'timestamp' => now()->toIso8601String(),
+                ]);
             } catch (\Exception $e) {
                 Log::error('Failed to notify Clawdbot: '.$e->getMessage());
             }
