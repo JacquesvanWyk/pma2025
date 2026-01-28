@@ -2,16 +2,21 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class LocationPicker extends Component
 {
     public $city;
+
     public $province;
+
     public $country;
+
     public $latitude;
+
     public $longitude;
+
     public $locationType = 'individual';
 
     public function mount(): void

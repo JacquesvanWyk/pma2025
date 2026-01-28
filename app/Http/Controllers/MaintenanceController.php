@@ -29,6 +29,7 @@ class MaintenanceController extends Controller
 
         if ($request->password === $password) {
             session()->put('maintenance_bypass', true);
+
             return redirect()->intended('/');
         }
 
@@ -40,6 +41,7 @@ class MaintenanceController extends Controller
     public function logout()
     {
         session()->forget('maintenance_bypass');
+
         return redirect()->route('maintenance.login');
     }
 }

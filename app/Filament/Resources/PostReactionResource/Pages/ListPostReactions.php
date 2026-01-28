@@ -4,8 +4,8 @@ namespace App\Filament\Resources\PostReactionResource\Pages;
 
 use App\Filament\Resources\PostReactionResource;
 use App\Models\PostReaction;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListPostReactions extends ListRecords

@@ -37,7 +37,7 @@ class MediaProcessingService
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);
-            throw new \Exception('Transcription failed: ' . $response->body());
+            throw new \Exception('Transcription failed: '.$response->body());
         }
 
         return $response->json();
@@ -54,7 +54,7 @@ class MediaProcessingService
             ]);
 
         if (! $response->successful()) {
-            throw new \Exception('Async transcription failed: ' . $response->body());
+            throw new \Exception('Async transcription failed: '.$response->body());
         }
 
         return $response->json();
@@ -85,7 +85,7 @@ class MediaProcessingService
             ]);
 
         if (! $response->successful()) {
-            throw new \Exception('Lyric video render failed: ' . $response->body());
+            throw new \Exception('Lyric video render failed: '.$response->body());
         }
 
         return $response->json();
@@ -111,7 +111,7 @@ class MediaProcessingService
             ]);
 
         if (! $response->successful()) {
-            throw new \Exception('Scripture video render failed: ' . $response->body());
+            throw new \Exception('Scripture video render failed: '.$response->body());
         }
 
         return $response->json();
@@ -140,7 +140,7 @@ class MediaProcessingService
             ]);
 
         if (! $response->successful()) {
-            throw new \Exception('Promo video render failed: ' . $response->body());
+            throw new \Exception('Promo video render failed: '.$response->body());
         }
 
         return $response->json();
@@ -153,7 +153,7 @@ class MediaProcessingService
             ->get("{$this->apiUrl}/api/v1/render/status/{$taskId}");
 
         if (! $response->successful()) {
-            throw new \Exception('Failed to get render status: ' . $response->body());
+            throw new \Exception('Failed to get render status: '.$response->body());
         }
 
         return $response->json();
@@ -171,7 +171,7 @@ class MediaProcessingService
             ->get("{$this->apiUrl}/api/v1/templates");
 
         if (! $response->successful()) {
-            throw new \Exception('Failed to get templates: ' . $response->body());
+            throw new \Exception('Failed to get templates: '.$response->body());
         }
 
         return $response->json();

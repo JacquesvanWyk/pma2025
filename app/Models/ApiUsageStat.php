@@ -35,37 +35,44 @@ class ApiUsageStat extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeForProvider($query, string $provider)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function forProvider($query, string $provider)
     {
         return $query->where('provider', $provider);
     }
 
-    public function scopeForService($query, string $service)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function forService($query, string $service)
     {
         return $query->where('service', $service);
     }
 
-    public function scopeSuccessful($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function successful($query)
     {
         return $query->where('status', 'success');
     }
 
-    public function scopeRateLimited($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function rateLimited($query)
     {
         return $query->where('status', 'rate_limited');
     }
 
-    public function scopeFailed($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function failed($query)
     {
         return $query->where('status', 'error');
     }
 
-    public function scopeToday($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function today($query)
     {
         return $query->whereDate('created_at', today());
     }
 
-    public function scopeThisHour($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function thisHour($query)
     {
         return $query->where('created_at', '>=', now()->subHour());
     }

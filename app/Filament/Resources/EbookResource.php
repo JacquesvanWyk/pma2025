@@ -2,20 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\Resource;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Tables;
-use Filament\Tables;
-use Filament\Tables;
-use Filament\Forms;
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Forms;
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms;
-use Filament\Forms;
 use Illuminate\Database\Eloquent\Builder;
 
 class EbookResource extends Resource
@@ -36,7 +24,7 @@ class EbookResource extends Resource
                     ->label('Author')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('edition')
-                    ->label('Edition'),
+                    ->label('Edition')
                     ->maxLength(255),
                 Forms\Components\Select::make('language')
                     ->label('Language')

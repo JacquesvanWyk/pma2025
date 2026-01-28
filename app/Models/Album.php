@@ -81,17 +81,20 @@ class Album extends Model
         return $this->hasMany(Song::class)->orderBy('track_number');
     }
 
-    public function scopePublished($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published($query)
     {
         return $query->where('is_published', true);
     }
 
-    public function scopeFeatured($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function featured($query)
     {
         return $query->where('is_featured', true);
     }
 
-    public function scopeReleased($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function released($query)
     {
         return $query->where('release_date', '<=', now());
     }

@@ -48,12 +48,14 @@ class Short extends Model
         });
     }
 
-    public function scopePublished($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published($query)
     {
         return $query->where('is_published', true);
     }
 
-    public function scopeOrdered($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function ordered($query)
     {
         return $query->orderBy('sort_order')->orderByDesc('published_at');
     }

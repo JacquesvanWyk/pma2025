@@ -65,14 +65,16 @@ class PictureStudy extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
-    public function scopePublished($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published($query)
     {
         return $query->where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
     }
 
-    public function scopeLanguage($query, string $language)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function language($query, string $language)
     {
         return $query->where('language', $language);
     }

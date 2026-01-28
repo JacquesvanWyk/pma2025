@@ -31,12 +31,14 @@ class Ebook extends Model
         ];
     }
 
-    public function scopePublished($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published($query)
     {
         return $query->whereNotNull('created_at');
     }
 
-    public function scopeFeatured($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function featured($query)
     {
         return $query->where('is_featured', true);
     }

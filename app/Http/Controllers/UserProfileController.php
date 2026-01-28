@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\FeedPost;
+use App\Models\User;
 
 class UserProfileController extends Controller
 {
@@ -21,8 +21,8 @@ class UserProfileController extends Controller
                 ->where('author_id', $user->id)
                 ->where('is_approved', true)
                 ->count(),
-            'total_reactions' => $posts->sum(fn($post) => $post->reactions->count()),
-            'total_comments' => $posts->sum(fn($post) => $post->comments->count()),
+            'total_reactions' => $posts->sum(fn ($post) => $post->reactions->count()),
+            'total_comments' => $posts->sum(fn ($post) => $post->comments->count()),
         ];
 
         return view('users.show', compact('user', 'posts', 'stats'));

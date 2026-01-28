@@ -28,3 +28,14 @@ storage/app/public/albums/songs/wav/
 *.mov
 *.avi
 *.mkv
+
+# AI folders (local planning/docs)
+/.ai/planning
+/.ai/docs
+
+# AgentOS (transient - can be reinstalled from ~/agent-os/)
+/agent-os/specs
+/agent-os/product
+/.claude/commands/agent-os
+/.auto-claude/
+/storage/debugbar/

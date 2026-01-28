@@ -21,12 +21,14 @@ class PrayerRoomSession extends Model
         ];
     }
 
-    public function scopeUpcoming(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function upcoming(Builder $query): Builder
     {
         return $query->where('session_date', '>=', now());
     }
 
-    public function scopePast(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function past(Builder $query): Builder
     {
         return $query->where('session_date', '<', now());
     }

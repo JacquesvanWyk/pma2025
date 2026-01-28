@@ -76,7 +76,8 @@ class Gallery extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
-    public function scopePublished($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published($query)
     {
         return $query->where('status', 'published')
             ->whereNotNull('published_at')

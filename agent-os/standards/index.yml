@@ -1,0 +1,24 @@
+# Agent OS Standards Index
+
+filament:
+  panel-setup:
+    description: Needs description - run /index-standards
+
+global:
+  project-structure:
+    description: Needs description - run /index-standards
+
+laravel:
+  concerns-traits:
+    description: Needs description - run /index-standards
+
+livewire:
+  blade-views:
+    description: Needs description - run /index-standards
+  components:
+    description: Needs description - run /index-standards
+
+testing:
+  pest-conventions:
+    description: Needs description - run /index-standards
+

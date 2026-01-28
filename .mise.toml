@@ -1,0 +1,57 @@
+[tools]
+bun = "latest"
+
+[tasks.precommit]
+description = "Run before committing - fix style, test, and check code"
+run = """
+  ./vendor/bin/pint
+  php artisan test --compact
+  ./vendor/bin/phpstan analyse
+"""
+
+[tasks.style]
+description = "Fix code style with Pint"
+run = "./vendor/bin/pint"
+
+[tasks.analyze]
+description = "Run static analysis with PHPStan"
+run = "./vendor/bin/phpstan analyse"
+
+[tasks.ide-helper]
+description = "Generate IDE helpers (after model changes)"
+run = "php artisan ide-helper:generate && php artisan ide-helper:models -RW"
+
+[tasks.refactor-dry]
+description = "Preview refactors with Rector"
+run = "vendor/bin/rector process --dry-run"
+
+[tasks.refactor]
+description = "Apply refactors with Rector"
+run = "vendor/bin/rector process"
+
+[tasks.dev]
+description = "Run frontend dev server with bun"
+run = "bun run dev"
+
+[tasks.build]
+description = "Build frontend assets for production"
+run = "bun run build"
+
+[tasks.install]
+description = "Install dependencies (composer + bun)"
+run = """
+  composer install
+  bun install
+"""
+
+[tasks.test]
+description = "Run all tests with Pest"
+run = "php artisan test --compact"
+
+[tasks.test-coverage]
+description = "Run tests with coverage report"
+run = "php artisan test --coverage"
+
+[tasks.test-filter]
+description = "Run specific test by name (usage: mise run test-filter testName)"
+run = "php artisan test --compact --filter={{CLI_ARGS}}"

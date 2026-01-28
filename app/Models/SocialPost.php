@@ -29,17 +29,20 @@ class SocialPost extends Model
         return $this->morphTo();
     }
 
-    public function scopeFacebook($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function facebook($query)
     {
         return $query->where('platform', 'facebook');
     }
 
-    public function scopePosted($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function posted($query)
     {
         return $query->where('status', 'posted');
     }
 
-    public function scopeFailed($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function failed($query)
     {
         return $query->where('status', 'failed');
     }

@@ -57,7 +57,8 @@ class Song extends Model
         ];
     }
 
-    public function scopePreview($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function preview($query)
     {
         return $query->where('is_preview', true);
     }
@@ -78,7 +79,8 @@ class Song extends Model
         return $this->belongsTo(Album::class);
     }
 
-    public function scopePublished($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published($query)
     {
         return $query->where('is_published', true);
     }
@@ -152,16 +154,16 @@ class Song extends Model
     protected function formatFileSize(int $bytes): string
     {
         if ($bytes >= 1073741824) {
-            return number_format($bytes / 1073741824, 1) . ' GB';
+            return number_format($bytes / 1073741824, 1).' GB';
         }
         if ($bytes >= 1048576) {
-            return number_format($bytes / 1048576, 1) . ' MB';
+            return number_format($bytes / 1048576, 1).' MB';
         }
         if ($bytes >= 1024) {
-            return number_format($bytes / 1024, 1) . ' KB';
+            return number_format($bytes / 1024, 1).' KB';
         }
 
-        return $bytes . ' B';
+        return $bytes.' B';
     }
 
     public function getMp4VideoUrlAttribute(): ?string

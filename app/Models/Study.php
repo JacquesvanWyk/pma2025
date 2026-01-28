@@ -57,14 +57,16 @@ class Study extends Model
         return $this->morphToMany(Tag::class, 'taggable');
     }
 
-    public function scopePublished($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function published($query)
     {
         return $query->where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
     }
 
-    public function scopeLanguage($query, string $language)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function language($query, string $language)
     {
         return $query->where('language', $language);
     }
@@ -82,11 +84,12 @@ class Study extends Model
             $text = '';
             foreach ($this->content as $block) {
                 if ($block['type'] === 'text') {
-                    $text .= ' ' . strip_tags($block['data']['content']);
+                    $text .= ' '.strip_tags($block['data']['content']);
                 } elseif ($block['type'] === 'image') {
-                    $text .= ' ' . ($block['data']['caption'] ?? '') . ' ' . ($block['data']['alt'] ?? '');
+                    $text .= ' '.($block['data']['caption'] ?? '').' '.($block['data']['alt'] ?? '');
                 }
             }
+
             return trim($text);
         }
 

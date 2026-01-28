@@ -76,27 +76,32 @@ class VideoProject extends Model
         return $this->hasMany(VideoExport::class)->orderByDesc('created_at');
     }
 
-    public function scopeDraft($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function draft($query)
     {
         return $query->where('status', 'draft');
     }
 
-    public function scopeProcessing($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function processing($query)
     {
         return $query->where('status', 'processing');
     }
 
-    public function scopeCompleted($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function completed($query)
     {
         return $query->where('status', 'completed');
     }
 
-    public function scopeFailed($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function failed($query)
     {
         return $query->where('status', 'failed');
     }
 
-    public function scopeLyricVideos($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function lyricVideos($query)
     {
         return $query->where('type', 'lyric_video');
     }

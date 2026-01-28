@@ -41,13 +41,13 @@ class NetworkMemberFactory extends Factory
         return [
             'user_id' => \App\Models\User::factory(),
             'type' => $type,
-            'name' => $type === 'individual' ? fake()->name() : fake()->company() . ' Fellowship',
+            'name' => $type === 'individual' ? fake()->name() : fake()->company().' Fellowship',
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->optional(0.7)->phoneNumber(),
             'bio' => fake()->paragraphs(2, true),
             'latitude' => $lat,
             'longitude' => $lng,
-            'address' => fake()->address() . ', ' . $location['city'] . ', South Africa',
+            'address' => fake()->address().', '.$location['city'].', South Africa',
             'meeting_times' => $type === 'group' ? 'Sundays 10:00 AM' : null,
             'show_email' => fake()->boolean(70),
             'show_phone' => fake()->boolean(30),
@@ -88,7 +88,7 @@ class NetworkMemberFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'group',
-            'name' => fake()->company() . ' Fellowship',
+            'name' => fake()->company().' Fellowship',
             'meeting_times' => fake()->randomElement([
                 'Sundays 10:00 AM',
                 'Saturdays 9:00 AM',

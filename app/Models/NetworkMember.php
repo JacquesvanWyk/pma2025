@@ -93,22 +93,26 @@ class NetworkMember extends Model
         return $this->belongsToMany(Language::class, 'network_member_language');
     }
 
-    public function scopeApproved($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function approved($query)
     {
         return $query->where('status', 'approved');
     }
 
-    public function scopePending($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function pending($query)
     {
         return $query->where('status', 'pending');
     }
 
-    public function scopeIndividuals($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function individuals($query)
     {
         return $query->where('type', 'individual');
     }
 
-    public function scopeGroups($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function groups($query)
     {
         return $query->where('type', 'group');
     }

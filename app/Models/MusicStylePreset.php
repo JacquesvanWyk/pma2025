@@ -33,7 +33,8 @@ class MusicStylePreset extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeForUser(Builder $query, ?int $userId = null): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function forUser(Builder $query, ?int $userId = null): Builder
     {
         return $query->where(function ($q) use ($userId) {
             $q->where('is_global', true);
@@ -43,7 +44,8 @@ class MusicStylePreset extends Model
         });
     }
 
-    public function scopeGlobal(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function global(Builder $query): Builder
     {
         return $query->where('is_global', true);
     }

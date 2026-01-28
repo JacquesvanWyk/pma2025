@@ -54,42 +54,50 @@ class GeneratedMedia extends Model
         return $this->belongsTo(MusicStylePreset::class);
     }
 
-    public function scopeForType($query, string $type)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function forType($query, string $type)
     {
         return $query->where('type', $type);
     }
 
-    public function scopeImages($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function images($query)
     {
         return $query->where('type', 'image');
     }
 
-    public function scopeVideos($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function videos($query)
     {
         return $query->where('type', 'video');
     }
 
-    public function scopeMusic($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function music($query)
     {
         return $query->where('type', 'music');
     }
 
-    public function scopeCompleted($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function completed($query)
     {
         return $query->where('status', 'completed');
     }
 
-    public function scopePending($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function pending($query)
     {
         return $query->whereIn('status', ['pending', 'processing']);
     }
 
-    public function scopeFailed($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function failed($query)
     {
         return $query->where('status', 'failed');
     }
 
-    public function scopeByProvider($query, string $provider)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function byProvider($query, string $provider)
     {
         return $query->where('provider', $provider);
     }

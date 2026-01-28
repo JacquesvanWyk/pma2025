@@ -108,17 +108,20 @@ class Ministry extends Model
         return $this->morphMany(Event::class, 'organizer');
     }
 
-    public function scopeApproved(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function approved(Builder $query): Builder
     {
         return $query->where('status', 'approved');
     }
 
-    public function scopePending(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function pending(Builder $query): Builder
     {
         return $query->where('status', 'pending');
     }
 
-    public function scopeRejected(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function rejected(Builder $query): Builder
     {
         return $query->where('status', 'rejected');
     }

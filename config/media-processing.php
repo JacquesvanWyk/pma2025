@@ -19,5 +19,5 @@ return [
         'render' => env('MEDIA_RENDER_TIMEOUT', 600),
     ],
 
-    'callback_url' => env('MEDIA_CALLBACK_URL', env('APP_URL') . '/api/media/callback'),
+    'callback_url' => env('MEDIA_CALLBACK_URL', env('APP_URL').'/api/media/callback'),
 ];

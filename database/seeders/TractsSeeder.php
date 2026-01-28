@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Tract;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TractsSeeder extends Seeder
@@ -15,8 +14,9 @@ class TractsSeeder extends Seeder
     {
         $metadataPath = storage_path('app/public/tracts/tracts-metadata.json');
 
-        if (!file_exists($metadataPath)) {
-            $this->command->warn('Tracts metadata file not found: ' . $metadataPath);
+        if (! file_exists($metadataPath)) {
+            $this->command->warn('Tracts metadata file not found: '.$metadataPath);
+
             return;
         }
 
@@ -38,6 +38,6 @@ class TractsSeeder extends Seeder
             ]);
         }
 
-        $this->command->info(count($metadata) . ' tracts imported successfully.');
+        $this->command->info(count($metadata).' tracts imported successfully.');
     }
 }
