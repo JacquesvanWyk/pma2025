@@ -36,7 +36,7 @@
                             <div class="text-xs text-gray-500 mt-0.5">Who we are & what we do</div>
                         </a>
                         <a href="{{ route('about.principles') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
-                            <div class="font-semibold">Fundamental Principles</div>
+                            <div class="font-semibold">Declaration of Core Beliefs</div>
                             <div class="text-xs text-gray-500 mt-0.5">What we believe</div>
                         </a>
                         <a href="{{ route('about.support') }}" class="block px-4 py-3 rounded-lg hover:bg-gray-50 text-[var(--color-indigo)] hover:text-[var(--color-pma-green)] transition-colors">
@@ -155,7 +155,7 @@
                     </button>
                     <div x-show="open" class="pl-4 mt-2 flex flex-col gap-3">
                         <a href="{{ route('about') }}" class="text-gray-600">Our Mission</a>
-                        <a href="{{ route('about.principles') }}" class="text-gray-600">Principles</a>
+                        <a href="{{ route('about.principles') }}" class="text-gray-600">Declaration of Core Beliefs</a>
                         <a href="{{ route('about.support') }}" class="text-gray-600">Support</a>
                     </div>
                 </div>

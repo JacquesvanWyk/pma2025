@@ -50,7 +50,9 @@ Route::get('network/approve/{networkMember}', [\App\Http\Controllers\NetworkCont
 
 // Prayer Room Routes
 Route::get('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'index'])->name('prayer-room.index');
-Route::post('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'store'])->name('prayer-room.store');
+Route::post('prayer-room', [\App\Http\Controllers\PrayerRoomController::class, 'store'])
+    ->name('prayer-room.store')
+    ->middleware('throttle:3,10');
 
 // Kingdom Kids
 Route::get('kingdom-kids', [\App\Http\Controllers\KingdomKidsController::class, 'index'])->name('kingdom-kids');

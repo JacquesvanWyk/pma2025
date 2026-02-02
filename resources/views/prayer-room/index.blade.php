@@ -270,6 +270,17 @@
                         </div>
                     </div>
 
+                    <!-- Honeypot field for spam prevention (hidden from users) -->
+                    <div class="hidden" aria-hidden="true">
+                        <label for="website">Website</label>
+                        <input type="text"
+                               id="website"
+                               name="website"
+                               value="{{ old('website') }}"
+                               tabindex="-1"
+                               autocomplete="off">
+                    </div>
+
                     <!-- Submit Button -->
                     <div class="pt-4">
                         <button type="submit" class="pma-btn pma-btn-primary w-full flex items-center justify-center">

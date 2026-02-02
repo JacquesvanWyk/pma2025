@@ -51,7 +51,7 @@
                 <h4 class="text-white font-bold text-lg mb-6">Discover</h4>
                 <ul class="space-y-4">
                     <li><a href="{{ route('about') }}" class="hover:text-[var(--color-ochre)] transition-colors">About Us</a></li>
-                    <li><a href="{{ route('about.principles') }}" class="hover:text-[var(--color-ochre)] transition-colors">Our Principles</a></li>
+                    <li><a href="{{ route('about.principles') }}" class="hover:text-[var(--color-ochre)] transition-colors">Declaration of Core Beliefs</a></li>
                     <li><a href="{{ route('network.index') }}" class="hover:text-[var(--color-ochre)] transition-colors">The Network</a></li>
                     <li><a href="{{ route('prayer-room.index') }}" class="hover:text-[var(--color-ochre)] transition-colors">Prayer Room</a></li>
                     <li><a href="{{ route('kingdom-kids') }}" class="hover:text-[var(--color-ochre)] transition-colors">Kingdom Kids</a></li>

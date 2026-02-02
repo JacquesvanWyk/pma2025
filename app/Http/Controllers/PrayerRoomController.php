@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PrayerRequest;
 use App\Models\PrayerRoomSession;
 use App\Notifications\NewPrayerRequestNotification;
+use App\Rules\ValidEmailDomain;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
@@ -25,12 +26,18 @@ class PrayerRoomController extends Controller
 
     public function store(Request $request)
     {
+        // Silent rejection if honeypot is filled (spam bot detected)
+        if ($request->filled('website')) {
+            return redirect()->route('prayer-room.index')
+                ->with('success', 'Your prayer request has been submitted. We will be praying for you!');
+        }
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'request' => 'required|string|min:10',
-            'is_private' => 'nullable|boolean',
+            'name' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[\p{L}\s\'\-]+$/u'],
+            'email' => ['nullable', 'email', 'max:255', new ValidEmailDomain],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'request' => ['required', 'string', 'min:10'],
+            'is_private' => ['nullable', 'boolean'],
         ]);
 
         $prayerRequest = PrayerRequest::create([

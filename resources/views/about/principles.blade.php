@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
-@section('title', 'Fundamental Principles - Pioneer Missions Africa')
-@section('description', 'The 1872 Fundamental Principles of Seventh-day Adventists that guide our ministry.')
+@section('title', 'Declaration of Core Beliefs - Pioneer Missions Africa')
+@section('description', 'Our Declaration of Core Beliefs - Bible-based Christian doctrines that guide our ministry and teaching.')
 
 @section('content')
 <div class="py-12 bg-gray-50">
@@ -9,206 +9,216 @@
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-8 text-gray-900">
 
-                <h1 class="text-4xl font-bold mb-6 text-center text-blue-900">1872 Fundamental Principles</h1>
-                <h2 class="text-2xl font-semibold mb-8 text-center text-gray-600">Of Seventh-day Adventists</h2>
+                <h1 class="text-4xl font-bold mb-6 text-center text-blue-900">Declaration of Core Beliefs</h1>
 
                 <div class="prose prose-lg max-w-none">
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
-                        <p class="text-gray-700 leading-relaxed italic">
-                            Seventh-day Adventists have no articles of faith, creed, or discipline, aside from the Bible. These principles aim to explain our beliefs, correct misconceptions, and distinguish our theology from other Adventist groups.
+                    <!-- Introduction -->
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-10">
+                        <p class="text-gray-700 leading-relaxed">
+                            We are a Bible-believing Christian ministry, teaching the complete gospel of Jesus Christ from the timeless and immutable King James Bible. We hold to the faith once delivered to the saints, which includes the foundational truths of God's Word, the sanctuary message, the Three Angels' Messages of Revelation 14, the solemnity of the seventh-day Sabbath, and the blessed hope of Christ's soon return.
                         </p>
                     </div>
 
-                    <div class="space-y-8">
-                        <!-- Principle 1 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">1. God's Nature</h3>
+                    <div class="space-y-6">
+                        <!-- Belief 1 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">1. The Holy Scriptures</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                We believe in one God as a personal, spiritual being, the creator of all things, omnipotent, omniscient, and eternal. God is unchangeable and present everywhere through the Holy Spirit.
+                                We believe the Holy Bible, comprised of the Old and New Testaments, is the inspired, infallible, and authoritative Word of God. It is the supreme rule of faith and practice, containing all things necessary for salvation and holy living. We affirm the King James Bible as a faithful and trustworthy translation of God's Word.
                             </p>
                         </section>
 
-                        <!-- Principle 2 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">2. Jesus Christ</h3>
+                        <!-- Belief 2 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">2. The One True God</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Christ is the eternal Father's Son and creator of all things. We emphasize His incarnation, exemplary life, sacrificial death, resurrection, and ongoing priestly ministry in heaven's sanctuary where He makes atonement for sins.
+                                We believe in one God, the Creator of heaven and earth, eternally existent in three persons: Father, Son, and Holy Spirit. This mystery of the Godhead, while transcending full human comprehension, is clearly revealed in Scripture. God is omnipotent, omniscient, and omnipresent.
                             </p>
                         </section>
 
-                        <!-- Principle 3 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">3. Biblical Authority</h3>
+                        <!-- Belief 3 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">3. God the Father</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The Old and New Testaments are inspired Scripture containing God's full revelation and the only infallible rule of faith and practice.
+                                We believe in God the Father, the source of all creation, the Author of salvation, and the loving Sovereign of the universe. He is merciful, just, and holy, desiring all to come to repentance and live in fellowship with Him.
                             </p>
                         </section>
 
-                        <!-- Principle 4 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">4. Baptism</h3>
+                        <!-- Belief 4 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">4. Jesus Christ the Son</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Baptism is a Christian ordinance following faith and repentance, commemorating Christ's resurrection through immersion—the only mode properly representing these theological truths.
+                                We believe in Jesus Christ, the eternal Son of God, who became incarnate by the Holy Spirit and was born of the virgin Mary. He lived a sinless life, performed mighty miracles, taught the way of salvation, died on the cross as the atoning sacrifice for our sins, was buried, and rose again the third day. He ascended to heaven and now ministers as our High Priest and Mediator in the heavenly sanctuary.
                             </p>
                         </section>
 
-                        <!-- Principle 5 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">5. New Birth</h3>
+                        <!-- Belief 5 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">5. The Holy Spirit</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Regeneration comprises moral transformation through conversion and physical transformation at Christ's return, involving resurrection or translation to immortality.
+                                We believe in the Holy Spirit, the third person of the Godhead, who proceeds from the Father and the Son. He convicts of sin, draws souls to Christ, regenerates the heart, indwells the believer, empowers for holy living, and distributes spiritual gifts for the edification of the church.
                             </p>
                         </section>
 
-                        <!-- Principle 6-7 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">6-7. Prophecy and History</h3>
+                        <!-- Belief 6 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">6. Creation</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Prophecy is essential revelation designed for believers' understanding. World history and empires are outlined in prophetic chains, now all fulfilled except the closing scenes.
+                                We believe in the literal, six-day creation of the heavens and the earth by the Word of God. We reject theistic evolution and affirm that all life was designed and created by God in six literal days, with God resting on the seventh day and instituting the Sabbath as a memorial of creation.
                             </p>
                         </section>
 
-                        <!-- Principle 8 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">8. Millennium Doctrine</h3>
+                        <!-- Belief 7 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">7. The Nature of Man</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                We reject the "world's conversion and temporal millennium" as false doctrine promoting complacency. Christ's second coming precedes the millennium, not follows it.
+                                We believe man was created in the image of God, holy and upright. Through the fall of Adam, sin entered the world, and all have sinned and come short of the glory of God. Human nature is fallen, and apart from Christ, we are hopelessly lost.
                             </p>
                         </section>
 
-                        <!-- Principle 9 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">9. 1844 and the Sanctuary</h3>
+                        <!-- Belief 8 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">8. The Great Controversy</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The 1844 mistake involved the nature of the expected event, not its timing. The 2,300-day prophecy (Daniel 8:14) terminated that year, pointing to sanctuary cleansing.
+                                We believe in the great controversy between Christ and Satan, between good and evil, which began in heaven and will culminate at the end of time. This conflict involves the whole universe and centers on the character of God, His law, and His government.
                             </p>
                         </section>
 
-                        <!-- Principle 10 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">10. The Heavenly Sanctuary</h3>
+                        <!-- Belief 9 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">9. Salvation by Grace Through Faith</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The sanctuary of the new covenant is the heavenly tabernacle where Christ serves as High Priest. His work parallels the Jewish priestly system, with cleansing occurring post-1844 through sin removal.
+                                We believe salvation is the free gift of God's grace, received by faith in Jesus Christ. It involves repentance, confession, and conversion. Christ's righteousness is imputed to the believer, and through the indwelling Spirit, the believer is enabled to live a holy life.
                             </p>
                         </section>
 
-                        <!-- Principle 11 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">11. God's Moral Law</h3>
+                        <!-- Belief 10 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">10. Justification and Sanctification</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                God's moral requirements remain constant across dispensations, summarily contained in the commandments spoken by Jehovah from Sinai. These laws are immutable and eternal.
+                                We believe in justification by faith, wherein the penitent sinner is pardoned and accepted before God. We also believe in sanctification, the lifelong process of being conformed to the image of Christ through the work of the Holy Spirit.
                             </p>
                         </section>
 
-                        <!-- Principle 12 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">12. The Seventh-day Sabbath</h3>
+                        <!-- Belief 11 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">11. Baptism</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Saturday is the only weekly Sabbath known to the Bible, established before sin entered and continuing in the restored paradise. Human terminology like "Jewish Sabbath" is unscriptural.
+                                We believe in baptism by immersion as a symbol of repentance, forgiveness of sins, and the death, burial, and resurrection of Christ. It is an ordinance for those who have believed and accepted Christ as their Savior.
                             </p>
                         </section>
 
-                        <!-- Principle 13 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">13. Sabbath Reform</h3>
+                        <!-- Belief 12 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">12. The Lord's Supper</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Reform regarding the fourth commandment will occur among believers before Christ's advent, countering papal attempts to alter God's law.
+                                We believe in the ordinance of the Lord's Supper, consisting of the unleavened bread and the unfermented wine of the grape, symbolizing the body and blood of Christ. It is a memorial of His death and a prophecy of His coming.
                             </p>
                         </section>
 
-                        <!-- Principle 14 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">14. Spiritual Transformation</h3>
+                        <!-- Belief 13 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">13. The Ten Commandments</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The carnal heart is hostile to God, requiring radical transformation of affections and holy principles through repentance and faith via the Holy Spirit's work.
+                                We believe the moral law, the Ten Commandments, is the unchangeable standard of God's righteousness. It was kept by Christ, is binding upon all people in all ages, and reveals the duty of man to God and to his fellow man.
                             </p>
                         </section>
 
-                        <!-- Principle 15 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">15. Justification and Grace</h3>
+                        <!-- Belief 14 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">14. The Seventh-day Sabbath</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                We depend on Christ for justification from past transgressions and for grace enabling acceptable obedience to His law going forward.
+                                We believe the seventh day of the week (Saturday) is the holy Sabbath of the Lord, a memorial of creation and a sign of sanctification. It was instituted at creation, reaffirmed in the Ten Commandments, and observed by Christ and the apostles. The true Sabbath has never been changed to Sunday.
                             </p>
                         </section>
 
-                        <!-- Principle 16 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">16. Holy Spirit's Gifts</h3>
+                        <!-- Belief 15 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">15. The Church</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The Spirit manifests through specific gifts enumerated in 1 Corinthians 12 and Ephesians 4, neither superseding Scripture nor replaceable by it. These gifts enable ongoing spiritual understanding and conviction.
+                                We believe the church is the body of Christ, composed of those who accept Christ as their personal Savior. The church is called to preach the gospel, minister to human needs, and live as a royal priesthood and holy nation.
                             </p>
                         </section>
 
-                        <!-- Principle 17 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">17. Three Messages of Revelation</h3>
+                        <!-- Belief 16 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">16. The Remnant Church</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                God's proclamation of Christ's second advent is symbolized by Revelation 14's three messages, with the final message emphasizing law reformation and preparedness.
+                                We believe in the remnant church of Bible prophecy, called to keep the commandments of God and have the faith of Jesus. This movement arises at the end of time to proclaim the everlasting gospel and the Three Angels' Messages.
                             </p>
                         </section>
 
-                        <!-- Principle 18 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">18. Investigative Judgment</h3>
+                        <!-- Belief 17 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">17. The Heavenly Sanctuary</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The sanctuary cleansing period coincides with the third message—a time of investigative judgment determining worthiness for resurrection or translation before Christ's appearance.
+                                We believe there is a sanctuary in heaven, the true tabernacle which the Lord pitched and not man. Christ, our great High Priest, ministers in this sanctuary, making atonement for sin and interceding for His people.
                             </p>
                         </section>
 
-                        <!-- Principle 19-20 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">19-20. The State of the Dead</h3>
+                        <!-- Belief 18 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">18. The 2300 Days and 1844</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The grave (Sheol/Hades) is a place of silence, inactivity, and complete unconsciousness with no mental activity or awareness.
+                                We believe the prophecy of the 2300 days (Daniel 8:14) reached its fulfillment in 1844, marking the beginning of the antitypical Day of Atonement and the cleansing of the heavenly sanctuary. This is the time of the investigative judgment and the final phase of Christ's high-priestly ministry.
                             </p>
                         </section>
 
-                        <!-- Principle 21 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">21. Two Resurrections</h3>
+                        <!-- Belief 19 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">19. The Investigative Judgment</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                We affirm bodily resurrection of the righteous at Christ's second advent and the wicked after the millennium, separated by one thousand years.
+                                We believe in the pre-advent investigative judgment, wherein the cases of all who have professed faith in Christ are reviewed. This judgment declares who is worthy of eternal life and confirms God's justice before the universe.
                             </p>
                         </section>
 
-                        <!-- Principle 22 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">22. Translation of the Living</h3>
+                        <!-- Belief 20 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">20. The Three Angels' Messages</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                The living righteous will be "changed in a moment, in the twinkling of an eye" and caught up with resurrected saints to meet the Lord in the air.
+                                We believe the Three Angels' Messages of Revelation 14 are God's final warning and invitation to the world. They call for worship of the Creator, proclaim the fall of Babylon, and warn against receiving the mark of the beast.
                             </p>
                         </section>
 
-                        <!-- Principle 23 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">23. The Millennium</h3>
+                        <!-- Belief 21 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">21. The State of the Dead</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                Immortalized saints will dwell in heaven's New Jerusalem for one thousand years, judging the world and fallen angels. Meanwhile, earth remains desolate, Satan is imprisoned there, and eventually destroyed.
+                                We believe the dead are in an unconscious state, knowing nothing. The wicked do not suffer in eternal torment, but rather face the final, annihilation by fire at the end of the age. The righteous sleep in Christ until the resurrection.
                             </p>
                         </section>
 
-                        <!-- Principle 24 -->
-                        <section class="border-b border-gray-200 pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">24. Final Destruction of the Wicked</h3>
+                        <!-- Belief 22 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">22. The Second Coming of Christ</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                After the millennium, resurrected wicked are consumed by divine fire, becoming "as though they had not been"—experiencing everlasting destruction from God's presence, constituting eternal punishment.
+                                We believe in the personal, visible, and glorious return of Christ to this earth. He will come in the clouds of heaven with power and great glory, accompanied by all the holy angels. This is the blessed hope of the church.
                             </p>
                         </section>
 
-                        <!-- Principle 25 -->
-                        <section class="pb-6">
-                            <h3 class="text-xl font-bold text-blue-800 mb-3">25. Restoration</h3>
+                        <!-- Belief 23 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">23. The Millennium</h3>
                             <p class="text-gray-700 leading-relaxed">
-                                New heavens and earth will arise from the old, featuring the New Jerusalem as capital and eternal inheritance for the righteous to dwell forever.
+                                We believe in the millennial reign of Christ with His saints in heaven for a thousand years. During this time, the earth lies desolate and Satan is bound. At the end of the millennium, the holy city descends and the wicked are resurrected for final judgment.
                             </p>
                         </section>
-                    </div>
 
-                    <div class="mt-12 bg-gray-100 p-6 rounded-lg">
-                        <p class="text-sm text-gray-600 italic">
-                            Note: This presents content from a historical 1872 document reflecting early Seventh-day Adventist theology.
-                        </p>
+                        <!-- Belief 24 -->
+                        <section class="border-b border-gray-200 pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">24. The New Earth</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                We believe in the final destruction of sin and sinners in the lake of fire. Afterward, God will create new heavens and a new earth, wherein dwelleth righteousness. The redeemed will inherit the earth and live with God forever.
+                            </p>
+                        </section>
+
+                        <!-- Belief 25 -->
+                        <section class="pb-5">
+                            <h3 class="text-lg font-bold text-blue-800 mb-2">25. Christian Living and Evangelism</h3>
+                            <p class="text-gray-700 leading-relaxed">
+                                We believe in holy living, temperance, and the careful stewardship of our bodies as the temple of God. We are called to preach the gospel to every nation, kindred, tongue, and people, making disciples and preparing the world for Christ's soon return.
+                            </p>
+                        </section>
                     </div>
 
                     <div class="mt-12 text-center space-x-4">
