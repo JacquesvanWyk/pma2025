@@ -21,6 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+/.worktrees
 storage/app/public/albums/songs/wav/
 
 # Large video files
