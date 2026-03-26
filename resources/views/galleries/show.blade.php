@@ -93,7 +93,8 @@
                             class="group relative aspect-square overflow-hidden rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-[var(--color-pma-green)] bg-gray-100">
                         <img src="{{ asset('storage/' . $image->image_path) }}"
                              alt="{{ $image->alt_text ?? $image->title ?? $gallery->title }}"
-                             class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
+                             class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                             loading="lazy">
                         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />

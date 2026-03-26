@@ -47,7 +47,8 @@
                         @if($featuredEbook->thumbnail)
                         <img src="{{ asset('storage/ebooks/' . $featuredEbook->thumbnail) }}"
                              alt="{{ $featuredEbook->title }}"
-                             class="w-full max-w-sm rounded-lg shadow-2xl">
+                             class="w-full max-w-sm rounded-lg shadow-2xl"
+                             loading="lazy">
                         @else
                         <div class="w-full max-w-sm h-96 rounded-lg flex items-center justify-center"
                              style="background: linear-gradient(135deg, var(--color-pma-green), var(--color-pma-green-dark));">
@@ -108,7 +109,8 @@
                     @if($ebook->thumbnail)
                     <img src="{{ asset('storage/ebooks/' . $ebook->thumbnail) }}"
                          alt="{{ $ebook->title }}"
-                         class="w-full h-full object-cover">
+                         class="w-full h-full object-cover"
+                         loading="lazy">
                     @else
                     <div class="w-full h-full flex items-center justify-center"
                          style="background: linear-gradient(135deg, var(--color-pma-green-light), var(--color-pma-green));">
@@ -167,7 +169,8 @@
                     @if($ebook->thumbnail)
                     <img src="{{ asset('storage/ebooks/' . $ebook->thumbnail) }}"
                          alt="{{ $ebook->title }}"
-                         class="w-full h-full object-cover">
+                         class="w-full h-full object-cover"
+                         loading="lazy">
                     @else
                     <div class="w-full h-full flex items-center justify-center"
                          style="background: linear-gradient(135deg, var(--color-olive-light), var(--color-olive));">

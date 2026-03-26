@@ -112,7 +112,8 @@
                         @if($album->cover_image)
                             <img src="{{ $album->cover_image_url }}"
                                  alt="{{ $album->title }}"
-                                 class="relative w-full aspect-square object-cover rounded-2xl shadow-2xl border border-white/10">
+                                 class="relative w-full aspect-square object-cover rounded-2xl shadow-2xl border border-white/10"
+                                 loading="lazy">
                         @else
                             <div class="relative w-full aspect-square bg-gradient-to-br from-[var(--color-pma-green)] to-[var(--color-indigo)] rounded-2xl shadow-2xl flex items-center justify-center border border-white/10">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -252,7 +253,7 @@
                                    target="_blank"
                                    rel="noopener"
                                    class="group flex items-center gap-2 px-4 py-3 bg-[#FA243C]/10 hover:bg-[#FA243C]/20 border border-[#FA243C]/30 rounded-lg transition-all hover:-translate-y-1">
-                                    <img src="{{ asset('images/apple-music-icon.png') }}" alt="Apple Music" class="w-5 h-5">
+                                    <img src="{{ asset('images/apple-music-icon.png') }}" alt="Apple Music" class="w-5 h-5" loading="lazy">
                                     <span class="text-white font-medium text-sm">Apple Music</span>
                                 </a>
 
@@ -261,7 +262,7 @@
                                    target="_blank"
                                    rel="noopener"
                                    class="group flex items-center gap-2 px-4 py-3 bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/30 rounded-lg transition-all hover:-translate-y-1">
-                                    <img src="{{ asset('images/youtube-music-icon.png') }}" alt="YouTube Music" class="w-5 h-5">
+                                    <img src="{{ asset('images/youtube-music-icon.png') }}" alt="YouTube Music" class="w-5 h-5" loading="lazy">
                                     <span class="text-white font-medium text-sm">YouTube</span>
                                 </a>
                             </div>
@@ -659,7 +660,8 @@
                             @if($relatedAlbum->cover_image)
                                 <img src="{{ $relatedAlbum->cover_image_url }}"
                                      alt="{{ $relatedAlbum->title }}"
-                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                     loading="lazy">
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-[var(--color-pma-green)] to-[var(--color-indigo)] flex items-center justify-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -687,7 +689,7 @@
             <div class="flex items-center gap-4">
                 {{-- Album Art --}}
                 <div id="playerAlbumArt" class="w-14 h-14 rounded-lg bg-white/10 overflow-hidden shrink-0">
-                    <img src="{{ $album->cover_image_url }}" alt="" class="w-full h-full object-cover">
+                    <img src="{{ $album->cover_image_url }}" alt="" class="w-full h-full object-cover" loading="lazy">
                 </div>
 
                 {{-- Song Info --}}

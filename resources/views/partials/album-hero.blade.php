@@ -163,7 +163,7 @@
                            target="_blank"
                            rel="noopener"
                            class="group flex items-center gap-2 px-4 py-3 bg-[#FA243C]/10 hover:bg-[#FA243C]/20 border border-[#FA243C]/30 rounded-lg transition-all hover:-translate-y-1">
-                            <img src="{{ asset('images/apple-music-icon.png') }}" alt="Apple Music" class="w-6 h-6">
+                            <img src="{{ asset('images/apple-music-icon.png') }}" alt="Apple Music" class="w-6 h-6" loading="lazy">
                             <span class="text-white font-medium hidden sm:inline">Apple Music</span>
                         </a>
 
@@ -172,7 +172,7 @@
                            target="_blank"
                            rel="noopener"
                            class="group flex items-center gap-2 px-4 py-3 bg-[#FF0000]/10 hover:bg-[#FF0000]/20 border border-[#FF0000]/30 rounded-lg transition-all hover:-translate-y-1">
-                            <img src="{{ asset('images/youtube-music-icon.png') }}" alt="YouTube Music" class="w-6 h-6">
+                            <img src="{{ asset('images/youtube-music-icon.png') }}" alt="YouTube Music" class="w-6 h-6" loading="lazy">
                             <span class="text-white font-medium hidden sm:inline">YouTube</span>
                         </a>
                     </div>

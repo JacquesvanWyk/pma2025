@@ -61,7 +61,7 @@
                     </span>
                     @if($upcomingSession->image)
                     <div class="mb-6">
-                        <img src="{{ asset('storage/' . $upcomingSession->image) }}" alt="{{ $upcomingSession->title }}" class="w-full max-w-md mx-auto rounded-lg shadow-lg">
+                        <img src="{{ asset('storage/' . $upcomingSession->image) }}" alt="{{ $upcomingSession->title }}" class="w-full max-w-md mx-auto rounded-lg shadow-lg" loading="lazy">
                     </div>
                     @endif
                     <h2 class="text-3xl lg:text-4xl font-bold mb-2" style="color: var(--color-indigo);">
@@ -153,7 +153,7 @@
             <div class="pma-card-elevated p-6 lg:p-8">
                 @if($previousSession->image)
                 <div class="mb-6">
-                    <img src="{{ asset('storage/' . $previousSession->image) }}" alt="{{ $previousSession->title }}" class="w-full max-w-2xl mx-auto rounded-lg shadow-lg">
+                    <img src="{{ asset('storage/' . $previousSession->image) }}" alt="{{ $previousSession->title }}" class="w-full max-w-2xl mx-auto rounded-lg shadow-lg" loading="lazy">
                 </div>
                 @endif
                 <div class="text-center">

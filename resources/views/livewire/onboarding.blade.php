@@ -53,7 +53,7 @@
         <div class="text-center">
             <div class="mb-8">
                 <div class="w-24 h-24 flex items-center justify-center mx-auto mb-6">
-                    <img src="{{ url('images/PMALogoDarkText.png') }}" alt="Pioneer Missions Africa" class="w-full h-full object-contain">
+                    <img src="{{ url('images/PMALogoDarkText.png') }}" alt="Pioneer Missions Africa" class="w-full h-full object-contain" loading="lazy">
                 </div>
                 <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome to Pioneer Missions Africa!</h1>
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">

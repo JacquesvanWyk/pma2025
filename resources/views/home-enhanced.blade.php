@@ -170,7 +170,7 @@
                     <!-- Image with fallback -->
                     <div class="relative rounded-3xl overflow-hidden" style="box-shadow: var(--shadow-xl);">
                         @if(file_exists(public_path('images/ministry-team.jpg')))
-                            <img src="/images/ministry-team.jpg" alt="Ministry Team" class="w-full h-full object-cover aspect-[4/3]">
+                            <img src="/images/ministry-team.jpg" alt="Ministry Team" class="w-full h-full object-cover aspect-[4/3]" loading="lazy">
                         @else
                             <div class="w-full aspect-[4/3] flex items-center justify-center text-white p-8"
                                  style="background: var(--gradient-warm);">

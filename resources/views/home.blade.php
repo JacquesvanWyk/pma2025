@@ -57,7 +57,7 @@
                 @if($featuredStudy)
                     <div class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300">
                         @if($featuredStudy->featured_image)
-                            <img src="{{ asset('storage/' . $featuredStudy->featured_image) }}" alt="{{ $featuredStudy->title }}" class="absolute inset-0 w-full h-full object-cover z-0 group-hover:scale-105 transition-transform duration-500">
+                            <img src="{{ asset('storage/' . $featuredStudy->featured_image) }}" alt="{{ $featuredStudy->title }}" class="absolute inset-0 w-full h-full object-cover z-0 group-hover:scale-105 transition-transform duration-500" loading="lazy">
                         @else
                             <div class="absolute inset-0 bg-[var(--color-indigo)] z-0">
                                 <div class="w-full h-full opacity-40 mix-blend-overlay bg-[url('/images/pattern-bg.png')] bg-cover"></div>
@@ -113,7 +113,7 @@
                 <!-- Latest Sermon with Thumbnail -->
                 <div class="md:col-span-1 md:row-span-1 bg-[var(--color-indigo)] rounded-3xl shadow-lg relative overflow-hidden group">
                     @if($latestSermon && $latestSermon['thumbnail'])
-                        <img src="{{ $latestSermon['thumbnail'] }}" alt="{{ $latestSermon['title'] }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity">
+                        <img src="{{ $latestSermon['thumbnail'] }}" alt="{{ $latestSermon['title'] }}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity" loading="lazy">
                     @endif
                     <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-indigo)] via-[var(--color-indigo)]/70 to-transparent"></div>
                     <div class="relative z-10 p-6 h-full flex flex-col justify-between">
@@ -185,7 +185,7 @@
                 @if($randomGallery)
                 <div class="md:col-span-1 md:row-span-1 rounded-3xl shadow-lg relative overflow-hidden group">
                     @if($randomGallery->cover_image)
-                        <img src="{{ asset('storage/' . $randomGallery->cover_image) }}" alt="{{ $randomGallery->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="{{ asset('storage/' . $randomGallery->cover_image) }}" alt="{{ $randomGallery->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                     @else
                         <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-pma-green)] to-[var(--color-pma-green-dark)]"></div>
                     @endif
@@ -208,7 +208,7 @@
                 @if($randomPictureStudy)
                 <div class="md:col-span-1 md:row-span-1 rounded-3xl shadow-lg relative overflow-hidden group">
                     @if($randomPictureStudy->thumbnail_path ?? $randomPictureStudy->image_path)
-                        <img src="{{ asset('storage/' . ($randomPictureStudy->thumbnail_path ?? $randomPictureStudy->image_path)) }}" alt="{{ $randomPictureStudy->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="{{ asset('storage/' . ($randomPictureStudy->thumbnail_path ?? $randomPictureStudy->image_path)) }}" alt="{{ $randomPictureStudy->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                     @else
                         <div class="absolute inset-0 bg-gradient-to-br from-[var(--color-ochre)] to-[var(--color-terracotta)]"></div>
                     @endif

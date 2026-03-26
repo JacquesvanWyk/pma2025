@@ -80,11 +80,13 @@
                         @if($short->thumbnail_url)
                             <img src="{{ $short->thumbnail_url }}"
                                  alt="{{ $short->title }}"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 loading="lazy">
                         @elseif($short->youtube_id)
                             <img src="https://img.youtube.com/vi/{{ $short->youtube_id }}/maxresdefault.jpg"
                                  alt="{{ $short->title }}"
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                 loading="lazy"
                                  onerror="this.src='https://img.youtube.com/vi/{{ $short->youtube_id }}/hqdefault.jpg'">
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">

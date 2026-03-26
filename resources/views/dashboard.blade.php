@@ -44,7 +44,7 @@
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
                     @if($profile->image_path)
-                        <img src="{{ asset('storage/' . $profile->image_path) }}" alt="Profile Picture" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 shadow-sm">
+                        <img src="{{ asset('storage/' . $profile->image_path) }}" alt="Profile Picture" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 shadow-sm" loading="lazy">
                     @else
                         <div class="w-16 h-16 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 text-2xl font-bold">
                             {{ mb_substr($profile->name, 0, 1) }}
@@ -194,7 +194,7 @@
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
                     @if($ministry->logo)
-                        <img src="{{ asset('storage/' . $ministry->logo) }}" alt="Ministry Logo" class="w-16 h-16 rounded-lg object-contain border-2 border-purple-200 shadow-sm bg-white p-1">
+                        <img src="{{ asset('storage/' . $ministry->logo) }}" alt="Ministry Logo" class="w-16 h-16 rounded-lg object-contain border-2 border-purple-200 shadow-sm bg-white p-1" loading="lazy">
                     @else
                         <div class="w-16 h-16 rounded-lg flex items-center justify-center bg-purple-100 text-purple-600">
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">

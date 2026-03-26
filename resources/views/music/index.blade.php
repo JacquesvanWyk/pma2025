@@ -42,7 +42,8 @@
                     @if($featuredAlbum->cover_image)
                         <img src="{{ $featuredAlbum->cover_image_url }}"
                              alt="{{ $featuredAlbum->title }}"
-                             class="relative w-full aspect-square object-cover rounded-2xl shadow-2xl">
+                             class="relative w-full aspect-square object-cover rounded-2xl shadow-2xl"
+                             loading="lazy">
                     @else
                         <div class="relative w-full aspect-square bg-gradient-to-br from-[var(--color-pma-green)] to-[var(--color-indigo)] rounded-2xl shadow-2xl flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,7 +165,8 @@
                                 @if($album->cover_image)
                                     <img src="{{ $album->cover_image_url }}"
                                          alt="{{ $album->title }}"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                         loading="lazy">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-[var(--color-pma-green)] to-[var(--color-indigo)] flex items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">

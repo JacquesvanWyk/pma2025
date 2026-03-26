@@ -37,6 +37,8 @@
       gtag('config', 'G-K57CRL1C22');
     </script>
 
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://api.pirsch.io" crossorigin>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
 

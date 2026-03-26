@@ -120,7 +120,8 @@
                                     @if($study->featured_image)
                                         <img src="{{ Storage::url($study->featured_image) }}"
                                              alt="{{ $study->title }}"
-                                             class="w-full h-full object-cover">
+                                             class="w-full h-full object-cover"
+                                             loading="lazy">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">

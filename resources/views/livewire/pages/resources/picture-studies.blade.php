@@ -214,7 +214,8 @@ new class extends Component {
                              onclick="openLightbox('{{ asset('storage/' . $study->image_path) }}', '{{ addslashes($study->title) }}')">
                             <img src="{{ asset('storage/' . $study->image_path) }}"
                                  alt="{{ $study->title }}"
-                                 class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
+                                 class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                                 loading="lazy">
                         </div>
                         <div class="p-4">
                             <div class="flex justify-between items-start mb-2">

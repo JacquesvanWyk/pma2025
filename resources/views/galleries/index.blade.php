@@ -48,11 +48,13 @@
                         @if($gallery->cover_image)
                             <img src="{{ asset('storage/' . $gallery->cover_image) }}"
                                  alt="{{ $gallery->title }}"
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                 loading="lazy">
                         @elseif($gallery->images->first())
                             <img src="{{ asset('storage/' . $gallery->images->first()->image_path) }}"
                                  alt="{{ $gallery->title }}"
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                 loading="lazy">
                         @else
                             <div class="w-full h-full flex items-center justify-center" style="background: var(--color-cream);">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" style="color: var(--color-olive);" fill="none" viewBox="0 0 24 24" stroke="currentColor">

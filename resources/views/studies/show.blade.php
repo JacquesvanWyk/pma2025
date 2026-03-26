@@ -90,6 +90,7 @@
                                 <img src="{{ Storage::url($study->featured_image) }}"
                                      alt="{{ $study->title }}"
                                      class="w-full h-auto object-cover shadow-sm"
+                                     loading="lazy"
                                      style="max-height: 500px;">
                             </div>
                         @endif
@@ -113,7 +114,8 @@
                                         <figure class="my-8">
                                             <img src="{{ Storage::url($block['data']['url']) }}"
                                                  alt="{{ $block['data']['alt'] }}"
-                                                 class="w-full rounded-lg shadow-md">
+                                                 class="w-full rounded-lg shadow-md"
+                                                 loading="lazy">
                                             @if(!empty($block['data']['caption']))
                                                 <figcaption class="text-center text-gray-500 text-sm mt-2 italic">{{ $block['data']['caption'] }}</figcaption>
                                             @endif

@@ -12,9 +12,10 @@
     <div class="container mx-auto px-6 relative z-10">
         <div class="max-w-4xl mx-auto text-center pma-animate-on-scroll">
             <div class="mx-auto mb-8 flex items-center justify-center">
-                <img src="{{ url('images/kingdomKids.png') }}" 
-                     alt="Kingdom Kids" 
+                <img src="{{ url('images/kingdomKids.png') }}"
+                     alt="Kingdom Kids"
                      class="h-32 w-auto object-contain"
+                     loading="lazy"
                      style="filter: brightness(0) invert(1) drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
             </div>
             <h1 class="pma-hero-title pma-display text-white mb-6">

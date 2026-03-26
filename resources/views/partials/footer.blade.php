@@ -11,7 +11,7 @@
             <div class="lg:col-span-3">
                 <div class="relative inline-block mb-6 group">
                     <a href="{{ route('home') }}">
-                        <img src="{{ url('images/PMALogoWhiteText.png') }}" alt="Pioneer Missions Africa" class="h-12 brightness-0 invert opacity-90">
+                        <img src="{{ url('images/PMALogoWhiteText.png') }}" alt="Pioneer Missions Africa" class="h-12 brightness-0 invert opacity-90" loading="lazy">
                     </a>
                     <a href="{{ route('filament.admin.auth.login') }}" class="absolute -bottom-5 left-0 text-[10px] text-white/0 group-hover:text-white/30 transition-all duration-300">
                         Admin

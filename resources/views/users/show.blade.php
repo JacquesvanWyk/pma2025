@@ -92,7 +92,8 @@
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                                 @foreach($post->images as $image)
                                 <img src="{{ Storage::url($image) }}" alt="Post image"
-                                     class="rounded-lg w-full h-48 object-cover">
+                                     class="rounded-lg w-full h-48 object-cover"
+                                     loading="lazy">
                                 @endforeach
                             </div>
                             @endif
