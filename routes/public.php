@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonateController;
 use App\Http\Controllers\EbookController;
@@ -95,3 +96,5 @@ Route::view('/partner', 'home')->name('partner');
 Route::post('/newsletter/subscribe', function () {
     return redirect()->route('home')->with('success', 'Thank you for subscribing!');
 })->name('newsletter.subscribe');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

@@ -1,6 +1,6 @@
 <div class="fixed top-0 left-0 right-0 z-50 px-4 pt-8 pb-4 pointer-events-none" x-data="{ mobileMenuOpen: false }">
     <div class="pointer-events-auto mx-auto max-w-7xl relative">
-    <nav class="w-full rounded-2xl bg-white/90 backdrop-blur-xl shadow-lg border border-white/20 transition-all duration-300">
+    <nav aria-label="Main navigation" role="navigation" class="w-full rounded-2xl bg-white/90 backdrop-blur-xl shadow-lg border border-white/20 transition-all duration-300">
         <div class="px-6 h-20 flex items-center justify-between">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
@@ -125,7 +125,7 @@
 
             <!-- Mobile Menu Button -->
             <div class="lg:hidden">
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-[var(--color-indigo)] focus:outline-none p-2">
+                <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu" :aria-expanded="mobileMenuOpen.toString()" class="text-[var(--color-indigo)] focus:outline-none p-2">
                     <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>

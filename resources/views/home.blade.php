@@ -320,6 +320,32 @@
 @endpush
 
 @push('scripts')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "name": "Pioneer Missions Africa",
+            "url": "https://pioneermissionsafrica.co.za",
+            "logo": "https://pioneermissionsafrica.co.za/images/PMALogoDarkText.png",
+            "sameAs": [
+                "https://www.facebook.com/pioneermissionsafrica"
+            ]
+        },
+        {
+            "@type": "WebSite",
+            "name": "Pioneer Missions Africa",
+            "url": "https://pioneermissionsafrica.co.za",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://pioneermissionsafrica.co.za/studies?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+    ]
+}
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Animate pledge progress bar

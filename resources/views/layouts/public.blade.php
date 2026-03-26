@@ -8,6 +8,20 @@
     <title>@yield('title', 'Pioneer Missions Africa - Proclaiming the Everlasting Gospel')</title>
     <meta name="description" content="@yield('description', 'Pioneer Missions Africa is a ministry determined to proclaim the Everlasting Gospel and spread knowledge of God across Africa.')">
 
+    <link rel="canonical" href="@yield('canonical', url()->current())">
+
+    <meta property="og:title" content="@yield('title', 'Pioneer Missions Africa - Proclaiming the Everlasting Gospel')">
+    <meta property="og:description" content="@yield('description', 'Pioneer Missions Africa is a ministry determined to proclaim the Everlasting Gospel and spread knowledge of God across Africa.')">
+    <meta property="og:image" content="@yield('og_image', asset('images/PMALogoDarkText.png'))">
+    <meta property="og:url" content="@yield('canonical', url()->current())">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="Pioneer Missions Africa">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'Pioneer Missions Africa - Proclaiming the Everlasting Gospel')">
+    <meta name="twitter:description" content="@yield('description', 'Pioneer Missions Africa is a ministry determined to proclaim the Everlasting Gospel and spread knowledge of God across Africa.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('images/PMALogoDarkText.png'))">
+
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
