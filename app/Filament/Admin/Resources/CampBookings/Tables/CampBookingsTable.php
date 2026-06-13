@@ -91,6 +91,26 @@ class CampBookingsTable
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('copy_banking_details')
+                    ->label('Copy Banking Details')
+                    ->icon('heroicon-o-clipboard-document')
+                    ->color('gray')
+                    ->extraAttributes(fn ($record) => [
+                        'x-data' => '',
+                        'x-on:click' => 'navigator.clipboard.writeText('.json_encode(
+                            implode("\n", array_filter([
+                                'CAMP MEETING 2026 — BANKING DETAILS',
+                                '',
+                                'Account Name: '.config('camp.eft.account_name'),
+                                'Bank: '.config('camp.eft.bank'),
+                                config('camp.eft.account_number') ? 'Account Number: '.config('camp.eft.account_number') : null,
+                                config('camp.eft.branch_code') ? 'Branch Code: '.config('camp.eft.branch_code') : null,
+                                'Reference: '.$record->eftReference(),
+                                'Amount: R '.number_format($record->deposit_amount, 2),
+                            ]))
+                        ).').then(() => $dispatch(\'open-notification\', { title: \'Copied!\', color: \'success\' }))',
+                    ])
+                    ->action(fn () => null),
                 Action::make('mark_deposit_paid')
                     ->label('Mark Deposit Paid')
                     ->icon('heroicon-o-check-badge')

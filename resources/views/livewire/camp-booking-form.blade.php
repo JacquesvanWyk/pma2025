@@ -1,8 +1,11 @@
 <?php
 
+use App\Mail\CampBookingAdminNotificationMail;
+use App\Mail\CampBookingConfirmationMail;
 use App\Models\AccommodationType;
 use App\Models\CampBooking;
 use App\Rules\ValidEmailDomain;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -130,6 +133,12 @@ new class extends Component {
         $this->bookingId = $booking->id;
         $this->eftReference = $booking->eftReference();
         $this->submitted = true;
+
+        if ($booking->email) {
+            Mail::to($booking->email)->send(new CampBookingConfirmationMail($booking, $this->eftReference));
+        }
+
+        Mail::to(['jvw679@gmail.com', 'virgilcarolus@gmail.com'])->send(new CampBookingAdminNotificationMail($booking, $this->eftReference));
     }
 }; ?>
 
