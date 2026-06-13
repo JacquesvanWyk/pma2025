@@ -152,64 +152,7 @@
     {{-- ─── ACCOMMODATION ────────────────────────────────────────────── --}}
     <section class="py-16 px-6" style="background: white;">
         <div class="max-w-5xl mx-auto">
-            <div class="text-center mb-10">
-                <h2 class="pma-heading text-3xl md:text-4xl mb-3" style="color: var(--color-indigo);">Accommodation Options</h2>
-                <p class="pma-body text-gray-500 max-w-xl mx-auto text-sm">
-                    Choose your accommodation below, then register your spot. You book &amp; pay directly with Wilderness Ebb &amp; Flow — we coordinate numbers and collect the 50% deposit reference.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-                @foreach($accommodationTypes as $type)
-                <div class="rounded-2xl overflow-hidden flex flex-col" style="background: var(--color-cream); border: 1px solid #e5e7eb;">
-                    @if($type->image)
-                    <img src="{{ asset('images/'.$type->image) }}" alt="{{ $type->name }}"
-                         class="w-full h-36 object-cover">
-                    @endif
-                    <div class="p-5 flex flex-col flex-1">
-                        <div class="flex items-start justify-between gap-2 mb-2">
-                            <h3 class="pma-heading text-sm leading-snug" style="color: var(--color-indigo);">{{ $type->name }}</h3>
-                            @if($type->total_units !== null)
-                                @if($type->isFull())
-                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap" style="background: #fee2e2; color: #dc2626;">FULL</span>
-                                @else
-                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap" style="background: #dcfce7; color: #15803d;">{{ $type->availableUnits() }} left</span>
-                                @endif
-                            @endif
-                        </div>
-                        <p class="text-xs pma-body text-gray-400 mb-3 flex-1">{{ $type->description }}</p>
-                        <div class="text-sm pma-body space-y-1 border-t border-gray-200 pt-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-500">{{ $type->base_adults }} adults / night</span>
-                                <span class="font-bold" style="color: var(--color-pma-green);">R{{ number_format($type->base_price, 0) }}</span>
-                            </div>
-                            @if($type->extra_adult_price)
-                            <div class="flex justify-between text-xs">
-                                <span class="text-gray-400">+ extra adult</span>
-                                <span class="text-gray-600">R{{ number_format($type->extra_adult_price, 0) }}/night</span>
-                            </div>
-                            @endif
-                            @if($type->extra_child_price)
-                            <div class="flex justify-between text-xs">
-                                <span class="text-gray-400">+ child (2–11)</span>
-                                <span class="text-gray-600">R{{ number_format($type->extra_child_price, 0) }}/night</span>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-
-            {{-- Booking form --}}
-            <div class="rounded-2xl p-6 md:p-10" style="background: var(--color-cream); border: 1px solid #e5e7eb;">
-                <h3 class="pma-heading text-2xl mb-1" style="color: var(--color-indigo);">Register Your Spot</h3>
-                <p class="pma-body text-gray-500 mb-8 text-sm">
-                    Fill in your details below. We'll give you your personal EFT reference for the 50% deposit.
-                    You then contact Wilderness Ebb &amp; Flow directly to book.
-                </p>
-                <livewire:camp-booking-form />
-            </div>
+            <livewire:camp-booking-form />
         </div>
     </section>
 

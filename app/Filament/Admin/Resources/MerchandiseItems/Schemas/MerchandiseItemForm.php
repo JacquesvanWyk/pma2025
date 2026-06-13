@@ -38,7 +38,7 @@ class MerchandiseItemForm
                     Forms\Components\FileUpload::make('image')
                         ->label('Product image')
                         ->image()
-                        ->disk('public')
+                        ->disk('public_images')
                         ->directory('camp')
                         ->columnSpanFull(),
                 ]),

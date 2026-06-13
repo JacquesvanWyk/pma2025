@@ -30,6 +30,11 @@ new class extends Component {
 
     public function mount(): void
     {
+        $this->refreshAccommodationTypes();
+    }
+
+    public function refreshAccommodationTypes(): void
+    {
         $this->accommodationTypes = AccommodationType::active()
             ->get()
             ->map(fn ($t) => [
@@ -45,6 +50,8 @@ new class extends Component {
                 'available_units' => $t->availableUnits(),
                 'is_full' => $t->isFull(),
                 'is_day_visitor' => $t->is_day_visitor,
+                'image' => $t->image,
+                'description' => $t->description,
             ])
             ->toArray();
     }
@@ -135,6 +142,7 @@ new class extends Component {
         $this->bookingId = $booking->id;
         $this->eftReference = $booking->eftReference();
         $this->submitted = true;
+        $this->refreshAccommodationTypes();
 
         if ($booking->email) {
             Mail::to($booking->email)->send(new CampBookingConfirmationMail($booking, $this->eftReference));
@@ -144,7 +152,70 @@ new class extends Component {
     }
 }; ?>
 
-<div>
+<div class="space-y-10">
+
+    {{-- Accommodation cards (reactive — updates after booking) --}}
+    <div>
+        <div class="text-center mb-8">
+            <h2 class="pma-heading text-3xl md:text-4xl mb-3" style="color: var(--color-indigo);">Accommodation Options</h2>
+            <p class="pma-body text-gray-500 max-w-xl mx-auto text-sm">Choose your accommodation below, then register your spot.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            @foreach($accommodationTypes as $type)
+            <div class="rounded-2xl overflow-hidden flex flex-col" style="background: var(--color-cream); border: 1px solid #e5e7eb;">
+                @if(!empty($type['image']))
+                <img src="{{ asset('images/'.$type['image']) }}" alt="{{ $type['name'] }}"
+                     class="w-full h-36 object-cover">
+                @endif
+                <div class="p-5 flex flex-col flex-1">
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <h3 class="pma-heading text-sm leading-snug" style="color: var(--color-indigo);">{{ $type['name'] }}</h3>
+                        @if($type['total_units'] !== null)
+                            @if($type['is_full'])
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap" style="background: #fee2e2; color: #dc2626;">FULL</span>
+                            @else
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap" style="background: #dcfce7; color: #15803d;">{{ $type['available_units'] }} left</span>
+                            @endif
+                        @endif
+                    </div>
+                    <p class="text-xs pma-body text-gray-400 mb-3 flex-1">{{ $type['description'] ?? '' }}</p>
+                    <div class="text-sm pma-body space-y-1 border-t border-gray-200 pt-3">
+                        @if($type['is_day_visitor'])
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">per person / day</span>
+                            <span class="font-bold" style="color: var(--color-pma-green);">R{{ number_format($type['base_price'], 0) }}</span>
+                        </div>
+                        @else
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">{{ $type['base_adults'] }} adults / night</span>
+                            <span class="font-bold" style="color: var(--color-pma-green);">R{{ number_format($type['base_price'], 0) }}</span>
+                        </div>
+                        @if($type['extra_adult_price'])
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">+ extra adult</span>
+                            <span class="text-gray-600">R{{ number_format($type['extra_adult_price'], 0) }}/night</span>
+                        </div>
+                        @endif
+                        @if($type['extra_child_price'])
+                        <div class="flex justify-between text-xs">
+                            <span class="text-gray-400">+ child (2–11)</span>
+                            <span class="text-gray-600">R{{ number_format($type['extra_child_price'], 0) }}/night</span>
+                        </div>
+                        @endif
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- Booking form / confirmation --}}
+    <div class="rounded-2xl p-6 md:p-10" style="background: var(--color-cream); border: 1px solid #e5e7eb;">
+        @if(!$submitted)
+        <h3 class="pma-heading text-2xl mb-1" style="color: var(--color-indigo);">Register Your Spot</h3>
+        <p class="pma-body text-gray-500 mb-8 text-sm">Fill in your details below. We'll give you your personal EFT reference for the 50% deposit.</p>
+        @endif
     @if($submitted && $bookingId)
         {{-- Success: show EFT details --}}
         <div class="rounded-2xl p-6 md:p-8 space-y-6" style="background: var(--color-cream); border: 2px solid var(--color-pma-green);">
@@ -208,7 +279,7 @@ new class extends Component {
                     <option value="">— Select accommodation —</option>
                     @foreach($accommodationTypes as $type)
                         <option value="{{ $type['id'] }}" {{ $type['is_full'] ? 'disabled' : '' }}>
-                            {{ $type['name'] }} — R{{ number_format($type['base_price'], 0) }}/night
+                            {{ $type['name'] }} — R{{ number_format($type['base_price'], 0) }}/{{ $type['is_day_visitor'] ? 'person/day' : 'night' }}
                             @if($type['total_units'] !== null)
                                 ({{ $type['is_full'] ? 'FULL' : $type['available_units'].' available' }})
                             @endif
@@ -223,7 +294,7 @@ new class extends Component {
             {{-- Guests — always visible --}}
             @php $isDayVisitor = $selectedType && $selectedType['is_day_visitor']; @endphp
             <div class="grid grid-cols-3 gap-4">
-                <div class="{{ $isDayVisitor ? 'col-span-3' : '' }}">
+                <div class="{{ $isDayVisitor ? 'col-span-2' : '' }}">
                     <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">
                         {{ $isDayVisitor ? 'Number of Visitors' : 'Adults' }}
                         @if($selectedType && ! $isDayVisitor) <span class="text-xs text-gray-400">(max {{ $selectedType['max_adults'] }})</span> @endif
@@ -233,7 +304,14 @@ new class extends Component {
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body @error('adults') border-red-500 @enderror">
                     @error('adults')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
-                @if(! $isDayVisitor)
+                @if($isDayVisitor)
+                <div>
+                    <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">Days</label>
+                    <input type="number" wire:model.live="nights" min="1" max="3"
+                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body @error('nights') border-red-500 @enderror">
+                    @error('nights')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+                @else
                 <div>
                     <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">
                         Children
@@ -258,7 +336,7 @@ new class extends Component {
             @if($selectedType && $estimatedTotal > 0)
             <div class="rounded-xl p-4 grid grid-cols-2 gap-2 text-sm pma-body" style="background: var(--color-cream);">
                 @if($isDayVisitor)
-                <span class="text-gray-600">{{ $adults }} visitor{{ $adults > 1 ? 's' : '' }} × R{{ number_format($selectedType['base_price'], 0) }}/person</span>
+                <span class="text-gray-600">{{ $adults }} visitor{{ $adults > 1 ? 's' : '' }} × {{ $nights }} day{{ $nights > 1 ? 's' : '' }} × R{{ number_format($selectedType['base_price'], 0) }}/person/day</span>
                 <span class="font-semibold text-right">R {{ number_format($estimatedTotal, 2) }}</span>
                 <span class="text-gray-600 col-span-2 text-xs">Paid at the gate on arrival</span>
                 @else
@@ -313,4 +391,5 @@ new class extends Component {
             </button>
         </form>
     @endif
+    </div>
 </div>
