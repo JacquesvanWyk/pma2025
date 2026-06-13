@@ -49,9 +49,7 @@
                     <div>
                         <h2 class="pma-heading text-3xl mb-3" style="color: var(--color-indigo);">Believe — A Better Covenant</h2>
                         <p class="pma-body text-gray-600 leading-relaxed">
-                            Pioneer Missions Africa invites all believers to our 2026 Camp Meeting — three days of worship,
-                            fellowship, and the Word in the heart of the Garden Route. Whether you camp riverside
-                            or sleep in a cabin, we gather as one body.
+                            Three days by the riverside — worship, the Word, and fellowship in the heart of the Garden Route.
                         </p>
                     </div>
 
