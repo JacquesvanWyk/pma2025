@@ -165,7 +165,7 @@
             <span class="inline-block text-xs font-semibold uppercase tracking-widest mb-4 px-3 py-1.5 rounded-full" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);">Make it possible</span>
             <h2 class="pma-heading text-3xl md:text-4xl text-white mb-4">Support the Camp</h2>
             <p class="pma-body text-white/70 text-lg mb-4 max-w-xl mx-auto">
-                Running camp involves real costs — conference room hire (R{{ number_format(config('camp.conference_room_rate'), 0) }}/day),
+                Running camp involves real costs conference room hire (R{{ number_format(config('camp.conference_room_rate'), 0) }}/day),
                 speaker travel from across the country, sound equipment, and more.
                 Your gift helps make it possible for everyone.
             </p>
