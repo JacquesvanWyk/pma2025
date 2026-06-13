@@ -20,6 +20,7 @@ class FellowshipsTable
         return $table
             ->columns([
                 ImageColumn::make('image_path')
+                    ->disk('public')
                     ->label('Photo')
                     ->circular()
                     ->defaultImageUrl(url('/images/default-fellowship.png')),

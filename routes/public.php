@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\AboutController;
-use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\CampMeetingController;
+use App\Http\Controllers\CampPaymentController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DonateController;
 use App\Http\Controllers\EbookController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\PictureStudyController;
 use App\Http\Controllers\ResourcesController;
 use App\Http\Controllers\SermonController;
 use App\Http\Controllers\ShortController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StudiesController;
 use App\Http\Controllers\TractController;
 use Illuminate\Support\Facades\Route;
@@ -87,6 +89,12 @@ Route::post('/paypal_webhook', [DonateController::class, 'paypalWebhook'])->name
 Route::post('/paypal/create-plan', [DonateController::class, 'createPayPalPlan'])->name('paypal.create-plan');
 Route::post('/paystack/webhook', [DonateController::class, 'paystackWebhook'])->name('paystack.webhook');
 Route::get('/api/exchange-rate', [DonateController::class, 'getExchangeRate'])->name('api.exchange-rate');
+
+// Camp meeting routes
+Route::get('/camp-meeting', [CampMeetingController::class, 'index'])->name('camp-meeting');
+Route::post('/camp-meeting/unlock', [CampMeetingController::class, 'unlock'])->name('camp-meeting.unlock');
+Route::get('/camp-meeting/thank-you', [CampMeetingController::class, 'thankYou'])->name('camp-meeting.thank-you');
+Route::post('/camp-meeting/payfast/notify', [CampPaymentController::class, 'notify'])->name('camp-meeting.payfast.notify');
 
 // Legal routes
 Route::view('/privacy', 'legal.privacy')->name('privacy');

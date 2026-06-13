@@ -103,6 +103,19 @@ return [
     |
     */
 
+    'serializable_classes' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Serializable Classes
+    |--------------------------------------------------------------------------
+    |
+    | To harden cache unserialization, Laravel 13 disables unserializing
+    | arbitrary PHP objects by default. If this application intentionally
+    | caches objects, replace `false` with an explicit allow-list of classes.
+    |
+    */
+
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
 
 ];

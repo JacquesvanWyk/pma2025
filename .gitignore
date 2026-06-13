@@ -29,3 +29,9 @@ storage/app/public/albums/songs/wav/
 *.mov
 *.avi
 *.mkv
+.ai/
+.claude/hooks/
+.claude/agent-memory/
+.claude/agent-memory-local/
+.claude/settings.local.json
+.claude/project.env

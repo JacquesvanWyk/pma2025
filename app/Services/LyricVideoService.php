@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use App\Models\VideoProject;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Ritechoice23\FluentFFmpeg\Facades\FFmpeg;
+use Symfony\Component\Process\Process;
 
 class LyricVideoService
 {
@@ -14,10 +15,21 @@ class LyricVideoService
 
     protected string $outputDisk;
 
+    protected string $ffmpegPath;
+
+    protected string $ffprobePath;
+
+    protected ?float $processTimeout;
+
     public function __construct()
     {
         $this->tempDir = storage_path('app/temp/video');
         $this->outputDisk = config('kie.storage.disk', 'public');
+        $this->ffmpegPath = (string) config('fluent-ffmpeg.ffmpeg_path', 'ffmpeg');
+        $this->ffprobePath = (string) config('fluent-ffmpeg.ffprobe_path', 'ffprobe');
+        $this->processTimeout = config('fluent-ffmpeg.timeout')
+            ? (float) config('fluent-ffmpeg.timeout')
+            : null;
 
         if (! is_dir($this->tempDir)) {
             mkdir($this->tempDir, 0755, true);
@@ -131,7 +143,7 @@ class LyricVideoService
 
     protected function createVideoWithLyrics(
         string $audioPath,
-        \Illuminate\Support\Collection $lyrics,
+        Collection $lyrics,
         VideoProject $project,
         string $outputPath,
         int $width,
@@ -153,36 +165,53 @@ class LyricVideoService
         if ($bgType === 'color') {
             $colorBg = ltrim($bgValue, '#');
 
-            $ffmpeg = FFmpeg::fromPath("color=c=0x{$colorBg}:s={$width}x{$height}:d={$duration}:r={$project->fps}")
-                ->addInputOption('-f', 'lavfi');
+            $inputPath = "color=c=0x{$colorBg}:s={$width}x{$height}:d={$duration}:r={$project->fps}";
         } elseif ($bgType === 'image' && $bgValue) {
             $bgImagePath = Storage::disk($this->outputDisk)->path($bgValue);
 
-            $ffmpeg = FFmpeg::fromPath("movie={$bgImagePath},scale={$width}:{$height},loop=loop=-1:size=1:start=0")
-                ->addInputOption('-f', 'lavfi');
+            $inputPath = "movie={$bgImagePath},scale={$width}:{$height},loop=loop=-1:size=1:start=0";
         } else {
-            $ffmpeg = FFmpeg::fromPath("color=c=0x000000:s={$width}x{$height}:d={$duration}:r={$project->fps}")
-                ->addInputOption('-f', 'lavfi');
+            $inputPath = "color=c=0x000000:s={$width}x{$height}:d={$duration}:r={$project->fps}";
         }
 
-        $ffmpeg->addInput($audioPath)
-            ->videoCodec('libx264')
-            ->audioCodec('aac')
-            ->audioBitrate('192k')
-            ->videoBitrate('5000k')
-            ->encodingPreset('medium')
-            ->pixelFormat('yuv420p')
-            ->frameRate($project->fps)
-            ->addOption('-filter_complex', $filterComplex)
-            ->addOption('-map', '[outv]')
-            ->addOption('-map', '1:a')
-            ->addOption('-shortest')
-            ->addOption('-movflags', '+faststart')
-            ->save($outputPath);
+        $this->runProcess([
+            $this->ffmpegPath,
+            '-y',
+            '-f',
+            'lavfi',
+            '-i',
+            $inputPath,
+            '-i',
+            $audioPath,
+            '-c:v',
+            'libx264',
+            '-c:a',
+            'aac',
+            '-b:a',
+            '192k',
+            '-b:v',
+            '5000k',
+            '-preset',
+            'medium',
+            '-pix_fmt',
+            'yuv420p',
+            '-r',
+            (string) $project->fps,
+            '-filter_complex',
+            $filterComplex,
+            '-map',
+            '[outv]',
+            '-map',
+            '1:a',
+            '-shortest',
+            '-movflags',
+            '+faststart',
+            $outputPath,
+        ]);
     }
 
     protected function buildFilterComplex(
-        \Illuminate\Support\Collection $lyrics,
+        Collection $lyrics,
         array $style,
         int $width,
         int $height
@@ -288,10 +317,17 @@ class LyricVideoService
 
             $midpoint = ($project->audio_duration_ms / 1000) / 2;
 
-            FFmpeg::fromPath($videoPath)
-                ->seek(sprintf('%02d:%02d:%02d', floor($midpoint / 3600), floor(($midpoint % 3600) / 60), $midpoint % 60))
-                ->addOutputOption('vframes', 1)
-                ->save($tempThumbnail);
+            $this->runProcess([
+                $this->ffmpegPath,
+                '-y',
+                '-ss',
+                sprintf('%02d:%02d:%02d', floor($midpoint / 3600), floor(($midpoint % 3600) / 60), $midpoint % 60),
+                '-i',
+                $videoPath,
+                '-vframes',
+                '1',
+                $tempThumbnail,
+            ]);
 
             if (file_exists($tempThumbnail)) {
                 Storage::disk($this->outputDisk)->put(
@@ -315,8 +351,20 @@ class LyricVideoService
     public function getAudioDuration(string $path): ?int
     {
         try {
-            $mediaInfo = FFmpeg::probe($path);
-            $duration = $mediaInfo->duration();
+            $process = $this->runProcess([
+                $this->ffprobePath,
+                '-v',
+                'error',
+                '-show_entries',
+                'format=duration',
+                '-of',
+                'json',
+                $path,
+            ]);
+
+            /** @var array{format?: array{duration?: numeric-string|int|float}} $mediaInfo */
+            $mediaInfo = json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR);
+            $duration = $mediaInfo['format']['duration'] ?? null;
 
             if ($duration) {
                 return (int) ($duration * 1000);
@@ -329,6 +377,18 @@ class LyricVideoService
         }
 
         return null;
+    }
+
+    /**
+     * @param  list<string>  $command
+     */
+    protected function runProcess(array $command): Process
+    {
+        $process = new Process($command);
+        $process->setTimeout($this->processTimeout);
+        $process->mustRun();
+
+        return $process;
     }
 
     public function parseLyricsWithTimestamps(string $lrcContent): array

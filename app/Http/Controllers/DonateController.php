@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Donation;
 use App\Models\PledgeProgress;
 use App\Notifications\DonationThankYouNotification;
+use App\Services\PayFastService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Notification;
 
 class DonateController extends Controller
 {
+    public function __construct(private readonly PayFastService $payFast) {}
+
     public function index()
     {
         return view('donate.index');
@@ -51,7 +54,7 @@ class DonateController extends Controller
         Log::info('PayFast ITN received', $request->all());
 
         // Validate PayFast signature
-        if (! $this->validatePayFast($request)) {
+        if (! $this->payFast->verifySignature($request)) {
             Log::error('PayFast validation failed');
 
             return response('Invalid signature', 400);
@@ -107,28 +110,6 @@ class DonateController extends Controller
         }
 
         return response('OK');
-    }
-
-    private function validatePayFast(Request $request)
-    {
-        $pfData = [];
-        foreach ($request->all() as $key => $val) {
-            if ($key !== 'signature') {
-                $pfData[$key] = $val;
-            }
-        }
-
-        ksort($pfData);
-        $pfParamString = http_build_query($pfData);
-
-        $passphrase = env('PAYFAST_PASSPHRASE', '');
-        if (! empty($passphrase)) {
-            $pfParamString .= '&passphrase='.urlencode($passphrase);
-        }
-
-        $signature = md5($pfParamString);
-
-        return $signature === $request->input('signature');
     }
 
     public function createPayPalPlan(Request $request)

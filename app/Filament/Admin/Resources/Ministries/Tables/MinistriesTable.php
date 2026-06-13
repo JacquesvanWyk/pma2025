@@ -27,6 +27,7 @@ class MinistriesTable
         return $table
             ->columns([
                 ImageColumn::make('logo')
+                    ->disk('public')
                     ->circular()
                     ->defaultImageUrl(url('/images/default-ministry.png')),
 
