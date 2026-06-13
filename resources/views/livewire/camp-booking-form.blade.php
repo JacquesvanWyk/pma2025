@@ -338,7 +338,6 @@ new class extends Component {
                 @if($isDayVisitor)
                 <span class="text-gray-600">{{ $adults }} visitor{{ $adults > 1 ? 's' : '' }} × {{ $nights }} day{{ $nights > 1 ? 's' : '' }} × R{{ number_format($selectedType['base_price'], 0) }}/person/day</span>
                 <span class="font-semibold text-right">R {{ number_format($estimatedTotal, 2) }}</span>
-                <span class="text-gray-600 col-span-2 text-xs">Paid at the gate on arrival</span>
                 @else
                 <span class="text-gray-600">Estimated total ({{ $nights }} night{{ $nights > 1 ? 's' : '' }}, {{ $adults }} adult{{ $adults > 1 ? 's' : '' }}{{ $children > 0 ? ', '.$children.' child'.($children > 1 ? 'ren' : '') : '' }})</span>
                 <span class="font-semibold text-right">R {{ number_format($estimatedTotal, 2) }}</span>
