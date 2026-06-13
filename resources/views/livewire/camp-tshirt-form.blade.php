@@ -15,34 +15,39 @@ new class extends Component {
     public bool $submitted = false;
     public ?int $orderId = null;
 
-    // Lines: [{size, quantity}]
+    // Lines: [{item_id, size, quantity}]
     public array $lines = [
-        ['size' => '', 'quantity' => 1],
+        ['item_id' => '', 'size' => '', 'quantity' => 1],
     ];
 
-    public float $unitPrice = 0;
+    public array $items = []; // [{id, name, price, sizes}]
     public float $deliveryFee = 0;
     public float $subtotal = 0;
     public float $total = 0;
     public int $totalQuantity = 0;
-    public array $availableSizes = [];
-    public string $payFastMerchantId = '';
     public array $payFastFields = [];
     public bool $readyToPayFast = false;
 
     const PUDO_FEE = 60.00;
 
-    public function mount(MerchandiseItem $item): void
+    public function mount(): void
     {
-        $this->unitPrice = (float) $item->price;
-        $this->availableSizes = $item->sizes ?? [];
-        $this->payFastMerchantId = config('camp.payfast_merchant_id', '13157150');
+        $this->items = MerchandiseItem::active()
+            ->get()
+            ->map(fn ($i) => [
+                'id' => $i->id,
+                'name' => $i->name,
+                'price' => (float) $i->price,
+                'sizes' => $i->sizes ?? [],
+            ])
+            ->toArray();
+
         $this->recalculate();
     }
 
     public function addLine(): void
     {
-        $this->lines[] = ['size' => '', 'quantity' => 1];
+        $this->lines[] = ['item_id' => '', 'size' => '', 'quantity' => 1];
     }
 
     public function removeLine(int $index): void
@@ -58,10 +63,27 @@ new class extends Component {
     public function updatedDonationAmount(): void { $this->recalculate(); }
     public function updatedDelivery(): void { $this->recalculate(); }
 
+    private function itemById(int|string $id): ?array
+    {
+        return collect($this->items)->firstWhere('id', (int) $id);
+    }
+
     private function recalculate(): void
     {
-        $this->totalQuantity = array_sum(array_column($this->lines, 'quantity'));
-        $this->subtotal = round($this->totalQuantity * $this->unitPrice, 2);
+        $this->totalQuantity = 0;
+        $this->subtotal = 0;
+
+        foreach ($this->lines as $line) {
+            if (! empty($line['item_id'])) {
+                $item = $this->itemById($line['item_id']);
+                if ($item) {
+                    $qty = max(1, (int) ($line['quantity'] ?? 1));
+                    $this->totalQuantity += $qty;
+                    $this->subtotal += round($qty * $item['price'], 2);
+                }
+            }
+        }
+
         $this->deliveryFee = $this->delivery === 'pudo' ? self::PUDO_FEE : 0;
         $this->total = round($this->subtotal + $this->deliveryFee + max(0, (float) $this->donationAmount), 2);
     }
@@ -80,14 +102,20 @@ new class extends Component {
             'delivery' => ['required', 'in:collect,pudo'],
             'donationAmount' => ['numeric', 'min:0', 'max:10000'],
             'lines' => ['required', 'array', 'min:1'],
+            'lines.*.item_id' => ['required', 'exists:merchandise_items,id'],
             'lines.*.size' => ['required', 'string'],
             'lines.*.quantity' => ['required', 'integer', 'min:1', 'max:10'],
         ]);
 
-        $totalQty = $this->totalQuantity;
         $sizeSummary = collect($this->lines)
-            ->map(fn ($l) => $l['size'].' ×'.$l['quantity'])
+            ->map(function ($l) {
+                $item = $this->itemById($l['item_id']);
+                return ($item ? $item['name'].' ' : '').$l['size'].' ×'.$l['quantity'];
+            })
             ->join(', ');
+
+        $firstItem = $this->itemById($this->lines[0]['item_id'] ?? 0);
+        $unitPrice = $firstItem ? $firstItem['price'] : 0;
 
         $order = CampTshirtOrder::create([
             'name' => $validated['name'],
@@ -96,8 +124,8 @@ new class extends Component {
             'delivery' => $this->delivery,
             'delivery_fee' => $this->deliveryFee,
             'size' => $sizeSummary,
-            'quantity' => $totalQty,
-            'unit_price' => $this->unitPrice,
+            'quantity' => $this->totalQuantity,
+            'unit_price' => $unitPrice,
             'donation_amount' => max(0, (float) $this->donationAmount),
             'total' => $this->total,
             'payment_status' => 'pending',
@@ -106,9 +134,11 @@ new class extends Component {
 
         $this->orderId = $order->id;
 
+        $payFastKey = env('PAYFAST_MERCHANT_KEY', '');
+
         $this->payFastFields = [
-            'merchant_id' => $this->payFastMerchantId,
-            'merchant_key' => env('PAYFAST_MERCHANT_KEY', ''),
+            'merchant_id' => config('camp.payfast_merchant_id', '13157150'),
+            'merchant_key' => $payFastKey,
             'return_url' => route('camp-meeting.thank-you', ['type' => 'tshirt', 'ref' => $order->id]),
             'cancel_url' => route('camp-meeting'),
             'notify_url' => route('camp-meeting.payfast.notify'),
@@ -117,7 +147,7 @@ new class extends Component {
             'email_address' => $validated['email'] ?? '',
             'm_payment_id' => (string) $order->id,
             'amount' => number_format($this->total, 2, '.', ''),
-            'item_name' => 'Camp T-Shirt Order',
+            'item_name' => 'Camp Merchandise Order',
             'item_description' => $sizeSummary.($this->delivery === 'pudo' ? ' (Pudo delivery)' : ' (Collect at camp)'),
         ];
 
@@ -150,44 +180,66 @@ new class extends Component {
                 <input type="text" wire:model="website" tabindex="-1" autocomplete="off">
             </div>
 
-            {{-- Size lines --}}
+            {{-- Item lines --}}
             <div class="space-y-3">
                 <label class="block pma-heading-light text-sm" style="color: var(--color-indigo);">
-                    Sizes & Quantities <span class="text-red-500">*</span>
+                    Items <span class="text-red-500">*</span>
                 </label>
 
                 @foreach($lines as $i => $line)
-                <div class="flex items-center gap-3">
-                    <select wire:model.live="lines.{{ $i }}.size"
-                            class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body text-sm @error('lines.'.$i.'.size') border-red-500 @enderror">
-                        <option value="">— Size —</option>
-                        @foreach($availableSizes as $s)
-                            <option value="{{ $s }}">{{ $s }}</option>
+                @php
+                    $selectedItem = !empty($line['item_id']) ? collect($items)->firstWhere('id', (int)$line['item_id']) : null;
+                    $availableSizes = $selectedItem ? $selectedItem['sizes'] : [];
+                @endphp
+                <div class="grid grid-cols-12 gap-2 items-start">
+                    {{-- Product --}}
+                    <div class="col-span-5">
+                        <select wire:model.live="lines.{{ $i }}.item_id"
+                                class="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body text-sm @error('lines.'.$i.'.item_id') border-red-500 @enderror">
+                            <option value="">— Product —</option>
+                            @foreach($items as $item)
+                                <option value="{{ $item['id'] }}">{{ $item['name'] }} (R{{ number_format($item['price'], 0) }})</option>
+                            @endforeach
+                        </select>
+                        @foreach($errors->get('lines.'.$i.'.item_id') as $err)
+                            <p class="text-xs text-red-600 mt-1">{{ $err }}</p>
                         @endforeach
-                    </select>
+                    </div>
 
-                    <input type="number" wire:model.live="lines.{{ $i }}.quantity"
-                           min="1" max="10" placeholder="Qty"
-                           class="w-20 px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body text-sm text-center @error('lines.'.$i.'.quantity') border-red-500 @enderror">
+                    {{-- Size --}}
+                    <div class="col-span-4">
+                        <select wire:model.live="lines.{{ $i }}.size"
+                                class="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body text-sm @error('lines.'.$i.'.size') border-red-500 @enderror"
+                                {{ empty($availableSizes) ? 'disabled' : '' }}>
+                            <option value="">— Size —</option>
+                            @foreach($availableSizes as $s)
+                                <option value="{{ $s }}">{{ $s }}</option>
+                            @endforeach
+                        </select>
+                        @foreach($errors->get('lines.'.$i.'.size') as $err)
+                            <p class="text-xs text-red-600 mt-1">{{ $err }}</p>
+                        @endforeach
+                    </div>
 
-                    <span class="text-sm pma-body text-gray-500 w-24 text-right flex-shrink-0">
-                        R{{ number_format(($line['quantity'] ?? 1) * $unitPrice, 0) }}
-                    </span>
+                    {{-- Qty --}}
+                    <div class="col-span-2">
+                        <input type="number" wire:model.live="lines.{{ $i }}.quantity"
+                               min="1" max="10" placeholder="Qty"
+                               class="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body text-sm text-center @error('lines.'.$i.'.quantity') border-red-500 @enderror">
+                    </div>
 
-                    @if(count($lines) > 1)
-                    <button type="button" wire:click="removeLine({{ $i }})"
-                            class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                    @else
-                    <div class="w-8 flex-shrink-0"></div>
-                    @endif
+                    {{-- Remove --}}
+                    <div class="col-span-1 flex items-center justify-center pt-1">
+                        @if(count($lines) > 1)
+                        <button type="button" wire:click="removeLine({{ $i }})"
+                                class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        @endif
+                    </div>
                 </div>
-                @foreach($errors->get('lines.'.$i.'.size') as $err)
-                    <p class="text-sm text-red-600 -mt-2">{{ $err }}</p>
-                @endforeach
                 @endforeach
 
                 <button type="button" wire:click="addLine"
@@ -196,7 +248,7 @@ new class extends Component {
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Add another size
+                    Add another item
                 </button>
             </div>
 
@@ -206,23 +258,23 @@ new class extends Component {
                     Delivery <span class="text-red-500">*</span>
                 </label>
                 <div class="grid grid-cols-2 gap-3">
-                    <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all {{ $delivery === 'collect' ? 'border-pma-green bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300' }}"
-                           style="{{ $delivery === 'collect' ? 'border-color: var(--color-pma-green); background: #f0fdf4;' : '' }}">
+                    <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
+                           style="{{ $delivery === 'collect' ? 'border-color: var(--color-pma-green); background: #f0fdf4;' : 'border-color: #e5e7eb; background: white;' }}">
                         <input type="radio" wire:model.live="delivery" value="collect" class="sr-only">
-                        <div>
+                        <div class="flex-1">
                             <div class="pma-heading-light text-sm font-semibold" style="color: var(--color-indigo);">Collect at camp</div>
-                            <div class="text-xs pma-body text-gray-400 mt-0.5">Free · Pick up at camp in October</div>
+                            <div class="text-xs pma-body text-gray-400 mt-0.5">Pick up in October · Free</div>
                         </div>
-                        <div class="ml-auto text-sm font-bold" style="color: var(--color-pma-green);">Free</div>
+                        <div class="text-sm font-bold" style="color: var(--color-pma-green);">Free</div>
                     </label>
-                    <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all {{ $delivery === 'pudo' ? 'border-pma-green bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300' }}"
-                           style="{{ $delivery === 'pudo' ? 'border-color: var(--color-pma-green); background: #f0fdf4;' : '' }}">
+                    <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
+                           style="{{ $delivery === 'pudo' ? 'border-color: var(--color-pma-green); background: #f0fdf4;' : 'border-color: #e5e7eb; background: white;' }}">
                         <input type="radio" wire:model.live="delivery" value="pudo" class="sr-only">
-                        <div>
+                        <div class="flex-1">
                             <div class="pma-heading-light text-sm font-semibold" style="color: var(--color-indigo);">Pudo delivery</div>
                             <div class="text-xs pma-body text-gray-400 mt-0.5">Courier to your door</div>
                         </div>
-                        <div class="ml-auto text-sm font-bold" style="color: var(--color-indigo);">+R60</div>
+                        <div class="text-sm font-bold" style="color: var(--color-indigo);">+R60</div>
                     </label>
                 </div>
             </div>
@@ -262,13 +314,15 @@ new class extends Component {
                 </div>
             </div>
 
-            {{-- Total --}}
+            {{-- Order summary --}}
+            @if($subtotal > 0)
             <div class="rounded-xl p-4 text-sm pma-body space-y-2" style="background: var(--color-cream);">
                 @foreach($lines as $line)
-                @if(!empty($line['size']))
+                @php $lineItem = !empty($line['item_id']) ? collect($items)->firstWhere('id', (int)$line['item_id']) : null; @endphp
+                @if($lineItem && !empty($line['size']))
                 <div class="flex justify-between text-gray-600">
-                    <span>{{ $line['size'] }} × {{ $line['quantity'] }} shirt{{ $line['quantity'] > 1 ? 's' : '' }}</span>
-                    <span>R{{ number_format(($line['quantity'] ?? 1) * $unitPrice, 0) }}</span>
+                    <span>{{ $lineItem['name'] }} · {{ $line['size'] }} × {{ $line['quantity'] }}</span>
+                    <span>R{{ number_format(($line['quantity'] ?? 1) * $lineItem['price'], 0) }}</span>
                 </div>
                 @endif
                 @endforeach
@@ -285,13 +339,14 @@ new class extends Component {
                 </div>
                 @endif
                 <div class="flex justify-between font-bold border-t border-gray-200 pt-2" style="color: var(--color-pma-green);">
-                    <span>Total ({{ $totalQuantity }} shirt{{ $totalQuantity > 1 ? 's' : '' }})</span>
+                    <span>Total</span>
                     <span>R{{ number_format($total, 2) }}</span>
                 </div>
             </div>
+            @endif
 
             <button type="submit" class="pma-btn pma-btn-primary w-full inline-flex items-center justify-center" wire:loading.attr="disabled">
-                <span wire:loading.remove>Pay via PayFast — R{{ number_format($total, 2) }}</span>
+                <span wire:loading.remove>Pay via PayFast{{ $total > 0 ? ' — R'.number_format($total, 2) : '' }}</span>
                 <span wire:loading class="inline-flex items-center">
                     <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

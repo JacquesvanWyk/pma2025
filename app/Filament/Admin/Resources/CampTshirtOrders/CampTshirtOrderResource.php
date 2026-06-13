@@ -21,9 +21,9 @@ class CampTshirtOrderResource extends Resource
 
     protected static ?string $model = CampTshirtOrder::class;
 
-    protected static ?string $modelLabel = 'T-Shirt Order';
+    protected static ?string $modelLabel = 'Merchandise Order';
 
-    protected static ?string $pluralModelLabel = 'T-Shirt Orders';
+    protected static ?string $pluralModelLabel = 'Merchandise Orders';
 
     protected static ?string $slug = 'camp-tshirt-orders';
 

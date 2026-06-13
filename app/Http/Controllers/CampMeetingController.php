@@ -19,9 +19,9 @@ class CampMeetingController extends Controller
         }
 
         $accommodationTypes = AccommodationType::active()->get();
-        $tshirt = MerchandiseItem::active()->first();
+        $merchandiseItems = MerchandiseItem::active()->get();
 
-        return view('camp-meeting.index', compact('accommodationTypes', 'tshirt'));
+        return view('camp-meeting.index', compact('accommodationTypes', 'merchandiseItems'));
     }
 
     public function unlock(Request $request)

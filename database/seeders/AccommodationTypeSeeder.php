@@ -111,15 +111,25 @@ class AccommodationTypeSeeder extends Seeder
             );
         }
 
-        // T-shirt placeholder (inactive until price confirmed)
         MerchandiseItem::firstOrCreate(
             ['name' => 'Camp T-Shirt 2026'],
             [
                 'name' => 'Camp T-Shirt 2026',
-                'price' => 250.00,
-                'image' => 'camp/tshirt.jpeg',
+                'price' => 350.00,
+                'image' => 'camp/tshirt.jpg',
                 'sizes' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-                'is_active' => false,
+                'is_active' => true,
+            ]
+        );
+
+        MerchandiseItem::firstOrCreate(
+            ['name' => 'Camp Hoodie 2026'],
+            [
+                'name' => 'Camp Hoodie 2026',
+                'price' => 550.00,
+                'image' => 'camp/tshirt.jpg',
+                'sizes' => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+                'is_active' => true,
             ]
         );
     }

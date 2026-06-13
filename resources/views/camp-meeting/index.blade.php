@@ -262,26 +262,38 @@
         </div>
     </section>
 
-    {{-- ─── T-SHIRT ───────────────────────────────────────────────────── --}}
-    @if($tshirt)
+    {{-- ─── MERCHANDISE ───────────────────────────────────────────────── --}}
+    @if($merchandiseItems->isNotEmpty())
     <section class="py-16 px-6" style="background: var(--color-cream);">
         <div class="max-w-5xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <img src="{{ asset('images/camp/tshirt.jpg') }}" alt="Camp T-Shirt 2026"
-                         class="w-full rounded-2xl shadow-lg object-cover max-h-96">
+            <div class="text-center mb-10">
+                <span class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 block">Limited edition</span>
+                <h2 class="pma-heading text-3xl md:text-4xl mb-3" style="color: var(--color-indigo);">Camp Merchandise</h2>
+                <p class="pma-body text-gray-500 text-sm">Order your gear below. Add a donation on top to support the camp.</p>
+            </div>
+
+            {{-- Product cards --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                @foreach($merchandiseItems as $item)
+                <div class="rounded-2xl overflow-hidden flex flex-col" style="background: white; border: 1px solid #e5e7eb;">
+                    @if($item->image)
+                    <img src="{{ asset('images/'.$item->image) }}" alt="{{ $item->name }}"
+                         class="w-full h-52 object-cover">
+                    @endif
+                    <div class="p-5">
+                        <h3 class="pma-heading text-base mb-1" style="color: var(--color-indigo);">{{ $item->name }}</h3>
+                        <p class="text-2xl font-bold mb-1" style="color: var(--color-pma-green);">R{{ number_format($item->price, 0) }}</p>
+                        <p class="text-xs pma-body text-gray-400">Sizes: {{ implode(', ', $item->sizes ?? []) }}</p>
+                    </div>
                 </div>
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2 block">Limited edition</span>
-                    <h2 class="pma-heading text-3xl mb-2" style="color: var(--color-indigo);">{{ $tshirt->name }}</h2>
-                    <p class="pma-body text-gray-500 mb-1 text-sm">
-                        <strong class="text-2xl font-bold" style="color: var(--color-pma-green);">R{{ number_format($tshirt->price, 0) }}</strong> per shirt
-                    </p>
-                    <p class="text-sm pma-body text-gray-400 mb-6">
-                        Available in: {{ implode(', ', $tshirt->sizes) }} · Add a suggested donation on top to support the camp.
-                    </p>
-                    <livewire:camp-tshirt-form :item="$tshirt" />
-                </div>
+                @endforeach
+            </div>
+
+            {{-- Unified order form --}}
+            <div class="rounded-2xl p-6 md:p-10" style="background: white; border: 1px solid #e5e7eb;">
+                <h3 class="pma-heading text-2xl mb-1" style="color: var(--color-indigo);">Place Your Order</h3>
+                <p class="pma-body text-gray-500 mb-8 text-sm">Select products, sizes and quantities. Pay securely via PayFast.</p>
+                <livewire:camp-tshirt-form />
             </div>
         </div>
     </section>
