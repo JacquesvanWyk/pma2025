@@ -44,6 +44,7 @@ new class extends Component {
                 'total_units' => $t->total_units,
                 'available_units' => $t->availableUnits(),
                 'is_full' => $t->isFull(),
+                'is_day_visitor' => $t->is_day_visitor,
             ])
             ->toArray();
     }
@@ -56,6 +57,7 @@ new class extends Component {
         if ($this->selectedType) {
             $this->adults = $this->selectedType['base_adults'];
             $this->children = 0;
+            $this->nights = $this->selectedType['is_day_visitor'] ? 1 : 1;
         }
 
         $this->recalculate();
@@ -138,7 +140,7 @@ new class extends Component {
             Mail::to($booking->email)->send(new CampBookingConfirmationMail($booking, $this->eftReference));
         }
 
-        Mail::to(['jvw679@gmail.com', 'virgilcarolus@gmail.com'])->send(new CampBookingAdminNotificationMail($booking, $this->eftReference));
+        Mail::to(['jvw679@gmail.com', 'virgilcarolus@gmail.com', 'stefanievantaak@hotmail.com'])->send(new CampBookingAdminNotificationMail($booking, $this->eftReference));
     }
 }; ?>
 
@@ -219,17 +221,19 @@ new class extends Component {
             </div>
 
             {{-- Guests — always visible --}}
+            @php $isDayVisitor = $selectedType && $selectedType['is_day_visitor']; @endphp
             <div class="grid grid-cols-3 gap-4">
-                <div>
+                <div class="{{ $isDayVisitor ? 'col-span-3' : '' }}">
                     <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">
-                        Adults
-                        @if($selectedType) <span class="text-xs text-gray-400">(max {{ $selectedType['max_adults'] }})</span> @endif
+                        {{ $isDayVisitor ? 'Number of Visitors' : 'Adults' }}
+                        @if($selectedType && ! $isDayVisitor) <span class="text-xs text-gray-400">(max {{ $selectedType['max_adults'] }})</span> @endif
                     </label>
                     <input type="number" wire:model.live="adults" min="1"
                            max="{{ $selectedType ? $selectedType['max_adults'] : 20 }}"
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body @error('adults') border-red-500 @enderror">
                     @error('adults')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
+                @if(! $isDayVisitor)
                 <div>
                     <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">
                         Children
@@ -247,15 +251,22 @@ new class extends Component {
                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body @error('nights') border-red-500 @enderror">
                     @error('nights')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
+                @endif
             </div>
 
             {{-- Live price — only once type selected --}}
             @if($selectedType && $estimatedTotal > 0)
             <div class="rounded-xl p-4 grid grid-cols-2 gap-2 text-sm pma-body" style="background: var(--color-cream);">
+                @if($isDayVisitor)
+                <span class="text-gray-600">{{ $adults }} visitor{{ $adults > 1 ? 's' : '' }} × R{{ number_format($selectedType['base_price'], 0) }}/person</span>
+                <span class="font-semibold text-right">R {{ number_format($estimatedTotal, 2) }}</span>
+                <span class="text-gray-600 col-span-2 text-xs">Paid at the gate on arrival</span>
+                @else
                 <span class="text-gray-600">Estimated total ({{ $nights }} night{{ $nights > 1 ? 's' : '' }}, {{ $adults }} adult{{ $adults > 1 ? 's' : '' }}{{ $children > 0 ? ', '.$children.' child'.($children > 1 ? 'ren' : '') : '' }})</span>
                 <span class="font-semibold text-right">R {{ number_format($estimatedTotal, 2) }}</span>
                 <span class="text-gray-600">50% deposit due by {{ \Carbon\Carbon::parse(config('camp.deposit_deadline'))->format('j F Y') }}</span>
                 <span class="font-bold text-right" style="color: var(--color-pma-green);">R {{ number_format($depositAmount, 2) }}</span>
+                @endif
             </div>
             @endif
 

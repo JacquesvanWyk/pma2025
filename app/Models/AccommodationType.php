@@ -25,6 +25,7 @@ class AccommodationType extends Model
         'total_units',
         'sort_order',
         'is_active',
+        'is_day_visitor',
     ];
 
     protected function casts(): array
@@ -39,6 +40,7 @@ class AccommodationType extends Model
             'total_units' => 'integer',
             'sort_order' => 'integer',
             'is_active' => 'boolean',
+            'is_day_visitor' => 'boolean',
         ];
     }
 

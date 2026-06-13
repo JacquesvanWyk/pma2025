@@ -124,7 +124,7 @@
                             </div>
                             @endforeach
                         </div>
-                        <p class="text-xs text-gray-400 mt-3">Day visitors: R{{ config('camp.day_visitor_fee') }} at gate · Conference room: R{{ number_format(config('camp.conference_room_rate'), 0) }}/day</p>
+                        <p class="text-xs text-gray-400 mt-3">Day visitors: R{{ config('camp.day_visitor_fee') }} at the gate</p>
                     </div>
                 </div>
             </div>
@@ -221,9 +221,10 @@
         <div class="relative z-10 max-w-3xl mx-auto text-center">
             <span class="inline-block text-xs font-semibold uppercase tracking-widest mb-4 px-3 py-1.5 rounded-full" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);">Make it possible</span>
             <h2 class="pma-heading text-3xl md:text-4xl text-white mb-4">Support the Camp</h2>
-            <p class="pma-body text-white/70 text-lg mb-8 max-w-xl mx-auto">
-                We need finances for venue setup, ministry costs, and to help those who can't cover the full cost.
-                Every contribution matters.
+            <p class="pma-body text-white/70 text-lg mb-4 max-w-xl mx-auto">
+                Running camp involves real costs — conference room hire (R{{ number_format(config('camp.conference_room_rate'), 0) }}/day),
+                speaker travel from across the country, sound equipment, and more.
+                Your gift helps make it possible for everyone.
             </p>
 
             <form action="https://payment.payfast.io/eng/process" method="POST" class="flex flex-col items-center gap-5">

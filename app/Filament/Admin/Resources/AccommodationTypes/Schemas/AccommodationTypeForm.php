@@ -39,7 +39,7 @@ class AccommodationTypeForm
                     Forms\Components\FileUpload::make('image')
                         ->label('Image')
                         ->image()
-                        ->disk('public')
+                        ->disk('public_images')
                         ->directory('camp')
                         ->columnSpanFull(),
                 ]),

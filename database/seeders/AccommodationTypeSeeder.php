@@ -86,6 +86,22 @@ class AccommodationTypeSeeder extends Seeder
                 'sort_order' => 5,
                 'is_active' => true,
             ],
+            [
+                'name' => 'Day Visitor',
+                'slug' => 'day-visitor',
+                'description' => 'Not staying overnight? Join us for the day. R60 per person, paid at the gate.',
+                'image' => 'camp/camp.jpeg',
+                'base_price' => 60.00,
+                'base_adults' => 1,
+                'extra_adult_price' => 60.00,
+                'extra_child_price' => null,
+                'max_adults' => 100,
+                'max_children' => 0,
+                'total_units' => null,
+                'sort_order' => 6,
+                'is_active' => true,
+                'is_day_visitor' => true,
+            ],
         ];
 
         foreach ($types as $type) {
