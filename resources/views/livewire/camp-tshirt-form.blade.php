@@ -10,6 +10,7 @@ new class extends Component {
     public string $email = '';
     public string $phone = '';
     public string $website = ''; // Honeypot
+    public string $delivery = 'collect'; // collect|pudo
     public float $donationAmount = 0;
     public bool $submitted = false;
     public ?int $orderId = null;
@@ -20,6 +21,7 @@ new class extends Component {
     ];
 
     public float $unitPrice = 0;
+    public float $deliveryFee = 0;
     public float $subtotal = 0;
     public float $total = 0;
     public int $totalQuantity = 0;
@@ -27,6 +29,8 @@ new class extends Component {
     public string $payFastMerchantId = '';
     public array $payFastFields = [];
     public bool $readyToPayFast = false;
+
+    const PUDO_FEE = 60.00;
 
     public function mount(MerchandiseItem $item): void
     {
@@ -52,12 +56,14 @@ new class extends Component {
 
     public function updatedLines(): void { $this->recalculate(); }
     public function updatedDonationAmount(): void { $this->recalculate(); }
+    public function updatedDelivery(): void { $this->recalculate(); }
 
     private function recalculate(): void
     {
         $this->totalQuantity = array_sum(array_column($this->lines, 'quantity'));
         $this->subtotal = round($this->totalQuantity * $this->unitPrice, 2);
-        $this->total = round($this->subtotal + max(0, (float) $this->donationAmount), 2);
+        $this->deliveryFee = $this->delivery === 'pudo' ? self::PUDO_FEE : 0;
+        $this->total = round($this->subtotal + $this->deliveryFee + max(0, (float) $this->donationAmount), 2);
     }
 
     public function submit(): void
@@ -71,13 +77,14 @@ new class extends Component {
             'name' => ['required', 'string', 'min:2', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', new ValidEmailDomain],
             'phone' => ['nullable', 'string', 'max:20'],
+            'delivery' => ['required', 'in:collect,pudo'],
             'donationAmount' => ['numeric', 'min:0', 'max:10000'],
             'lines' => ['required', 'array', 'min:1'],
             'lines.*.size' => ['required', 'string'],
             'lines.*.quantity' => ['required', 'integer', 'min:1', 'max:10'],
         ]);
 
-        $totalQty = $this->$totalQuantity;
+        $totalQty = $this->totalQuantity;
         $sizeSummary = collect($this->lines)
             ->map(fn ($l) => $l['size'].' ×'.$l['quantity'])
             ->join(', ');
@@ -86,6 +93,8 @@ new class extends Component {
             'name' => $validated['name'],
             'email' => $validated['email'] ?? null,
             'phone' => $validated['phone'] ?? null,
+            'delivery' => $this->delivery,
+            'delivery_fee' => $this->deliveryFee,
             'size' => $sizeSummary,
             'quantity' => $totalQty,
             'unit_price' => $this->unitPrice,
@@ -109,7 +118,7 @@ new class extends Component {
             'm_payment_id' => (string) $order->id,
             'amount' => number_format($this->total, 2, '.', ''),
             'item_name' => 'Camp T-Shirt Order',
-            'item_description' => $sizeSummary,
+            'item_description' => $sizeSummary.($this->delivery === 'pudo' ? ' (Pudo delivery)' : ' (Collect at camp)'),
         ];
 
         $this->readyToPayFast = true;
@@ -191,6 +200,33 @@ new class extends Component {
                 </button>
             </div>
 
+            {{-- Delivery --}}
+            <div>
+                <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">
+                    Delivery <span class="text-red-500">*</span>
+                </label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all {{ $delivery === 'collect' ? 'border-pma-green bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300' }}"
+                           style="{{ $delivery === 'collect' ? 'border-color: var(--color-pma-green); background: #f0fdf4;' : '' }}">
+                        <input type="radio" wire:model.live="delivery" value="collect" class="sr-only">
+                        <div>
+                            <div class="pma-heading-light text-sm font-semibold" style="color: var(--color-indigo);">Collect at camp</div>
+                            <div class="text-xs pma-body text-gray-400 mt-0.5">Free · Pick up at camp in October</div>
+                        </div>
+                        <div class="ml-auto text-sm font-bold" style="color: var(--color-pma-green);">Free</div>
+                    </label>
+                    <label class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all {{ $delivery === 'pudo' ? 'border-pma-green bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300' }}"
+                           style="{{ $delivery === 'pudo' ? 'border-color: var(--color-pma-green); background: #f0fdf4;' : '' }}">
+                        <input type="radio" wire:model.live="delivery" value="pudo" class="sr-only">
+                        <div>
+                            <div class="pma-heading-light text-sm font-semibold" style="color: var(--color-indigo);">Pudo delivery</div>
+                            <div class="text-xs pma-body text-gray-400 mt-0.5">Courier to your door</div>
+                        </div>
+                        <div class="ml-auto text-sm font-bold" style="color: var(--color-indigo);">+R60</div>
+                    </label>
+                </div>
+            </div>
+
             {{-- Personal details --}}
             <div>
                 <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">Full Name <span class="text-red-500">*</span></label>
@@ -236,6 +272,12 @@ new class extends Component {
                 </div>
                 @endif
                 @endforeach
+                @if($deliveryFee > 0)
+                <div class="flex justify-between text-gray-600">
+                    <span>Pudo delivery</span>
+                    <span>R{{ number_format($deliveryFee, 0) }}</span>
+                </div>
+                @endif
                 @if($donationAmount > 0)
                 <div class="flex justify-between text-gray-600">
                     <span>Donation</span>

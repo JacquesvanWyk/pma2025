@@ -14,6 +14,8 @@ class CampTshirtOrder extends Model
         'name',
         'email',
         'phone',
+        'delivery',
+        'delivery_fee',
         'size',
         'quantity',
         'unit_price',
@@ -30,6 +32,7 @@ class CampTshirtOrder extends Model
         return [
             'quantity' => 'integer',
             'unit_price' => 'decimal:2',
+            'delivery_fee' => 'decimal:2',
             'donation_amount' => 'decimal:2',
             'total' => 'decimal:2',
             'lines' => 'array',
