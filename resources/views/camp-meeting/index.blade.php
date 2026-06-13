@@ -221,7 +221,7 @@
                 <div class="rounded-2xl overflow-hidden flex flex-col" style="background: white; border: 1px solid #e5e7eb;">
                     @if($item->image)
                     <img src="{{ asset('images/'.$item->image) }}" alt="{{ $item->name }}"
-                         class="w-full h-52 object-cover">
+                         class="w-full object-contain bg-white p-4">
                     @endif
                     <div class="p-5">
                         <h3 class="pma-heading text-base mb-1" style="color: var(--color-indigo);">{{ $item->name }}</h3>
