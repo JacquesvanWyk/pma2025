@@ -92,7 +92,6 @@ Route::get('/api/exchange-rate', [DonateController::class, 'getExchangeRate'])->
 
 // Camp meeting routes
 Route::get('/camp-meeting', [CampMeetingController::class, 'index'])->name('camp-meeting');
-Route::post('/camp-meeting/unlock', [CampMeetingController::class, 'unlock'])->name('camp-meeting.unlock');
 Route::get('/camp-meeting/thank-you', [CampMeetingController::class, 'thankYou'])->name('camp-meeting.thank-you');
 Route::post('/camp-meeting/payfast/notify', [CampPaymentController::class, 'notify'])->name('camp-meeting.payfast.notify');
 

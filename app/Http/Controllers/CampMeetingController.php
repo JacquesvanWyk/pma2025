@@ -8,31 +8,12 @@ use Illuminate\Http\Request;
 
 class CampMeetingController extends Controller
 {
-    private const PASSWORD = 'pma2026';
-
-    private const SESSION_KEY = 'camp_access';
-
     public function index()
     {
-        if (! session(self::SESSION_KEY)) {
-            return view('camp-meeting.gate');
-        }
-
         $accommodationTypes = AccommodationType::active()->get();
         $merchandiseItems = MerchandiseItem::active()->get();
 
         return view('camp-meeting.index', compact('accommodationTypes', 'merchandiseItems'));
-    }
-
-    public function unlock(Request $request)
-    {
-        if ($request->input('password') === self::PASSWORD) {
-            session([self::SESSION_KEY => true]);
-
-            return redirect()->route('camp-meeting');
-        }
-
-        return back()->withErrors(['password' => 'Incorrect password.']);
     }
 
     public function thankYou(Request $request)
