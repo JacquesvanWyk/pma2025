@@ -8,24 +8,38 @@ use App\Rules\ValidEmailDomain;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $website = ''; // Honeypot
+
     public ?int $accommodation_type_id = null;
+
     public ?int $adults = 2;
+
     public ?int $children = 0;
+
     public ?int $nights = 1;
+
     public string $notes = '';
+
     public bool $submitted = false;
+
     public ?int $bookingId = null;
+
     public string $eftReference = '';
 
     public float $estimatedTotal = 0;
+
     public float $depositAmount = 0;
 
     public array $accommodationTypes = [];
+
     public ?array $selectedType = null;
 
     public function mount(): void
@@ -70,15 +84,27 @@ new class extends Component {
         $this->recalculate();
     }
 
-    public function updatedAdults(): void { $this->recalculate(); }
-    public function updatedChildren(): void { $this->recalculate(); }
-    public function updatedNights(): void { $this->recalculate(); }
+    public function updatedAdults(): void
+    {
+        $this->recalculate();
+    }
+
+    public function updatedChildren(): void
+    {
+        $this->recalculate();
+    }
+
+    public function updatedNights(): void
+    {
+        $this->recalculate();
+    }
 
     private function recalculate(): void
     {
         if (! $this->selectedType) {
             $this->estimatedTotal = 0;
             $this->depositAmount = 0;
+
             return;
         }
 
@@ -101,6 +127,7 @@ new class extends Component {
     {
         if (! empty($this->website)) {
             $this->submitted = true;
+
             return;
         }
 
@@ -132,6 +159,7 @@ new class extends Component {
 
         if ($type->isFull()) {
             $this->addError('accommodation_type_id', 'Sorry, this accommodation type is fully booked.');
+
             return;
         }
 
@@ -233,24 +261,36 @@ new class extends Component {
 
             <div class="rounded-xl p-5 space-y-3" style="background: white; border: 1px solid var(--color-pma-green-light);">
                 <h4 class="pma-heading text-base" style="color: var(--color-indigo);">EFT Payment Details</h4>
-                <div class="grid grid-cols-2 gap-2 text-sm pma-body">
-                    <span class="text-gray-500">Account Name</span>
-                    <span class="font-semibold">{{ config('camp.eft.account_name') }}</span>
-                    <span class="text-gray-500">Bank</span>
-                    <span class="font-semibold">{{ config('camp.eft.bank') }}</span>
+                <dl class="text-sm pma-body divide-y divide-gray-100">
+                    <div class="flex items-baseline justify-between gap-4 py-2">
+                        <dt class="text-gray-500 shrink-0">Account Name</dt>
+                        <dd class="font-semibold text-right">{{ config('camp.eft.account_name') }}</dd>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-4 py-2">
+                        <dt class="text-gray-500 shrink-0">Bank</dt>
+                        <dd class="font-semibold text-right">{{ config('camp.eft.bank') }}</dd>
+                    </div>
                     @if(config('camp.eft.account_number'))
-                    <span class="text-gray-500">Account No.</span>
-                    <span class="font-semibold">{{ config('camp.eft.account_number') }}</span>
+                    <div class="flex items-baseline justify-between gap-4 py-2">
+                        <dt class="text-gray-500 shrink-0">Account No.</dt>
+                        <dd class="font-semibold text-right tabular-nums">{{ config('camp.eft.account_number') }}</dd>
+                    </div>
                     @endif
                     @if(config('camp.eft.branch_code'))
-                    <span class="text-gray-500">Branch Code</span>
-                    <span class="font-semibold">{{ config('camp.eft.branch_code') }}</span>
+                    <div class="flex items-baseline justify-between gap-4 py-2">
+                        <dt class="text-gray-500 shrink-0">Branch Code</dt>
+                        <dd class="font-semibold text-right tabular-nums">{{ config('camp.eft.branch_code') }}</dd>
+                    </div>
                     @endif
-                    <span class="text-gray-500">Reference</span>
-                    <span class="font-bold text-base" style="color: var(--color-pma-green);">{{ $eftReference }}</span>
-                    <span class="text-gray-500">Deposit Amount</span>
-                    <span class="font-bold text-base" style="color: var(--color-pma-green);">R {{ number_format($depositAmount, 2) }}</span>
-                </div>
+                    <div class="flex items-baseline justify-between gap-4 py-2">
+                        <dt class="text-gray-500 shrink-0">Reference</dt>
+                        <dd class="font-bold text-base text-right break-all" style="color: var(--color-pma-green);">{{ $eftReference }}</dd>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-4 py-2">
+                        <dt class="text-gray-500 shrink-0">Deposit Amount</dt>
+                        <dd class="font-bold text-base text-right whitespace-nowrap" style="color: var(--color-pma-green);">R {{ number_format($depositAmount, 2) }}</dd>
+                    </div>
+                </dl>
             </div>
 
             <p class="text-sm pma-body text-gray-600">
