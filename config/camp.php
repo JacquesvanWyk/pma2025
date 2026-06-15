@@ -7,8 +7,8 @@ return [
     'eft' => [
         'account_name' => 'Pioneer Missions Africa',
         'bank' => 'Standard Bank',
-        'account_number' => '',
-        'branch_code' => '',
+        'account_number' => '146865340',
+        'branch_code' => '051001',
         'reference_format' => 'CAMP-{id}-{surname}',
     ],
 
