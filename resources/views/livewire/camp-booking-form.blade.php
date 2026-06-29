@@ -333,8 +333,8 @@ new class extends Component
 
             {{-- Guests — always visible --}}
             @php $isDayVisitor = $selectedType && $selectedType['is_day_visitor']; @endphp
-            <div class="grid grid-cols-3 gap-4">
-                <div class="{{ $isDayVisitor ? 'col-span-2' : '' }}">
+            <div class="grid grid-cols-1 gap-4">
+                <div>
                     <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">
                         {{ $isDayVisitor ? 'Number of Visitors' : 'Adults' }}
                         @if($selectedType && ! $isDayVisitor) <span class="text-xs text-gray-400">(max {{ $selectedType['max_adults'] }})</span> @endif

@@ -2,16 +2,21 @@
 
 namespace App\Filament\Admin\Resources\CampBookings\Tables;
 
+use App\Mail\CampBookingConfirmationMail;
 use App\Models\AccommodationType;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class CampBookingsTable
 {
@@ -97,7 +102,7 @@ class CampBookingsTable
                     ->color('gray')
                     ->extraAttributes(fn ($record) => [
                         'x-data' => '',
-                        'x-on:click' => 'navigator.clipboard.writeText('.json_encode(
+                        'x-on:click.stop' => 'navigator.clipboard.writeText('.json_encode(
                             implode("\n", array_filter([
                                 'CAMP MEETING 2026 — BANKING DETAILS',
                                 '',
@@ -108,9 +113,29 @@ class CampBookingsTable
                                 'Reference: '.$record->eftReference(),
                                 'Amount: R '.number_format($record->deposit_amount, 2),
                             ]))
-                        ).').then(() => $dispatch(\'open-notification\', { title: \'Copied!\', color: \'success\' }))',
+                        ).')',
                     ])
-                    ->action(fn () => null),
+                    ->action(function ($record) {
+                        Notification::make()
+                            ->title('Banking details copied to clipboard')
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('send_reminder')
+                    ->label('Send Reminder')
+                    ->icon('heroicon-o-envelope')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalDescription(fn ($record) => 'Resend booking confirmation & EFT details to '.$record->email.'?')
+                    ->action(function ($record) {
+                        Mail::to($record->email)->send(
+                            new CampBookingConfirmationMail($record, $record->eftReference())
+                        );
+                        Notification::make()
+                            ->title('Reminder sent to '.$record->email)
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('mark_deposit_paid')
                     ->label('Mark Deposit Paid')
                     ->icon('heroicon-o-check-badge')
@@ -124,6 +149,25 @@ class CampBookingsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    BulkAction::make('send_reminders')
+                        ->label('Send Reminder')
+                        ->icon('heroicon-o-envelope')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalDescription('Resend booking confirmation & EFT details to all selected bookings?')
+                        ->action(function (Collection $records) {
+                            $sent = 0;
+                            foreach ($records as $record) {
+                                Mail::to($record->email)->send(
+                                    new CampBookingConfirmationMail($record, $record->eftReference())
+                                );
+                                $sent++;
+                            }
+                            Notification::make()
+                                ->title("Reminder sent to {$sent} booking(s)")
+                                ->success()
+                                ->send();
+                        }),
                     DeleteBulkAction::make(),
                 ]),
             ])
