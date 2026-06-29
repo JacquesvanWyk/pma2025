@@ -96,31 +96,32 @@ class CampBookingsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('copy_banking_details')
-                    ->label('Copy Banking Details')
-                    ->icon('heroicon-o-clipboard-document')
+                Action::make('banking_details')
+                    ->label('Banking Details')
+                    ->icon('heroicon-o-banknotes')
                     ->color('gray')
-                    ->extraAttributes(fn ($record) => [
-                        'x-data' => '',
-                        'x-on:click.stop' => 'navigator.clipboard.writeText('.json_encode(
-                            implode("\n", array_filter([
-                                'CAMP MEETING 2026 — BANKING DETAILS',
-                                '',
-                                'Account Name: '.config('camp.eft.account_name'),
-                                'Bank: '.config('camp.eft.bank'),
-                                config('camp.eft.account_number') ? 'Account Number: '.config('camp.eft.account_number') : null,
-                                config('camp.eft.branch_code') ? 'Branch Code: '.config('camp.eft.branch_code') : null,
-                                'Reference: '.$record->eftReference(),
-                                'Amount: R '.number_format($record->deposit_amount, 2),
-                            ]))
-                        ).')',
-                    ])
-                    ->action(function ($record) {
-                        Notification::make()
-                            ->title('Banking details copied to clipboard')
-                            ->success()
-                            ->send();
-                    }),
+                    ->modalHeading('EFT Banking Details')
+                    ->modalContent(fn ($record) => new \Illuminate\Support\HtmlString(
+                        collect([
+                            ['Account Name', config('camp.eft.account_name')],
+                            ['Bank', config('camp.eft.bank')],
+                            config('camp.eft.account_number') ? ['Account Number', config('camp.eft.account_number')] : null,
+                            config('camp.eft.branch_code') ? ['Branch Code', config('camp.eft.branch_code')] : null,
+                            ['Reference', $record->eftReference()],
+                            ['Deposit Amount', 'R '.number_format($record->deposit_amount, 2)],
+                        ])
+                            ->filter()
+                            ->map(fn ($row) => '<div class="flex justify-between py-2 border-b border-gray-100 last:border-0">
+                            <span class="text-sm text-gray-500">'.$row[0].'</span>
+                            <span class="text-sm font-semibold text-gray-900 select-all">'.$row[1].'</span>
+                        </div>')
+                            ->prepend('<div class="divide-y divide-gray-100">')
+                            ->push('</div>')
+                            ->implode('')
+                    ))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->action(fn () => null),
                 Action::make('send_reminder')
                     ->label('Send Reminder')
                     ->icon('heroicon-o-envelope')
