@@ -314,11 +314,14 @@ new class extends Component
                 <label class="block pma-heading-light text-sm mb-2" style="color: var(--color-indigo);">
                     Accommodation Type <span class="text-red-500">*</span>
                 </label>
-                <select wire:model.live="accommodation_type_id"
+                <select
+                        x-on:change="$wire.set('accommodation_type_id', $event.target.value ? Number($event.target.value) : null)"
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 pma-body @error('accommodation_type_id') border-red-500 @enderror">
                     <option value="">— Select accommodation —</option>
                     @foreach($accommodationTypes as $type)
-                        <option value="{{ $type['id'] }}" {{ $type['is_full'] ? 'disabled' : '' }}>
+                        <option value="{{ $type['id'] }}"
+                                @selected($accommodation_type_id === $type['id'])
+                                {{ $type['is_full'] ? 'disabled' : '' }}>
                             {{ $type['name'] }} — R{{ number_format($type['base_price'], 0) }}/{{ $type['is_day_visitor'] ? 'person/day' : 'night' }}
                             @if($type['total_units'] !== null)
                                 ({{ $type['is_full'] ? 'FULL' : $type['available_units'].' available' }})
